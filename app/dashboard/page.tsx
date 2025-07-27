@@ -1,23 +1,21 @@
 'use client'
 import { useSession, signOut } from "next-auth/react"
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 
 export default function Dashboard() {
   const { data: session, status } = useSession()
   const router = useRouter()
-  const params = useSearchParams()
 
-  // If user navigates to /dashboard but is not logged in, redirect to custom /login page.
+  // Redirect to login if unauthenticated
   useEffect(() => {
     if (status === "unauthenticated") {
-      // You can change the text below if you want to use e.g. toast/alert/etc.
-      router.replace(`/login?callbackUrl=/dashboard`)
+      router.replace('/login?callbackUrl=/dashboard')
     }
   }, [status, router])
 
-  // Optional: if redirecting above, you may skip showing the prompt below; otherwise keep for slow network fallback.
-  if (status === "loading")
+  // Show loading spinner while session state is "loading"
+  if (status === "loading") {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
         <svg className="animate-spin h-8 w-8 text-indigo-600" fill="none" viewBox="0 0 24 24">
@@ -26,21 +24,22 @@ export default function Dashboard() {
         </svg>
       </div>
     );
+  }
 
-  // While redirecting unauthenticated users above, this fallback will never actually show.
-  if (!session)
-    return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center">
-        <p className="mb-4 text-lg font-semibold">You must be signed in to view the dashboard.</p>
-        <button
-          className="px-5 py-2 rounded bg-indigo-600 text-white font-semibold hover:bg-indigo-700"
-          onClick={() => router.push('/login?callbackUrl=/dashboard')}
-        >
-          Sign In
-        </button>
-      </div>
-    )
+  // If the session is loaded but user or role is not set correctly, sign out defensively (session corrupt or missing required fields)
+  if (!session || !session.user?.role) {
+    signOut({ callbackUrl: "/login" })
+    return null
+  }
 
+  // (Optional) If you want to auto-redirect admins to the admin dashboard, add this:
+  // useEffect(() => {
+  //   if (session.user.role === "admin") {
+  //     router.replace("/admin/dashboard")
+  //   }
+  // }, [session, router])
+
+  // Main Dashboard Content
   return (
     <main className="min-h-[85vh] max-w-2xl mx-auto py-8 px-2 flex flex-col gap-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
@@ -61,6 +60,9 @@ export default function Dashboard() {
           <li>Register for events directly.</li>
           <li>Live bracket and results (coming soon).</li>
         </ul>
+        <div className="mt-4 text-sm text-zinc-500">
+          Your role: <span className="font-mono">{session.user.role}</span>
+        </div>
       </div>
     </main>
   )

@@ -27,7 +27,7 @@ const handler = NextAuth({
         await connectDB()
         const user = await User.findOne({ email: credentials.email })
 
-        if (!user) return null
+        if (!user || !user.password) return null
         const valid = await bcrypt.compare(credentials.password, user.password)
         if (!valid) return null
 
@@ -41,24 +41,46 @@ const handler = NextAuth({
   ],
   secret: process.env.NEXTAUTH_SECRET,
 
-  // --- ADD THIS CALLBACK HERE ---
   callbacks: {
+    // Ensures users who login with OAuth are saved to DB with a role field
     async signIn({ user, account, profile }) {
-      if (account?.provider === "google" || account?.provider === "github") {
-        await connectDB();
-        const existingUser = await User.findOne({ email: user.email });
-        if (!existingUser) {
-          await User.create({
-  email: user.email,
-  name: user.name,
-  provider: account.provider, // "google", "github", etc.
-});
-
+      try {
+        if (account?.provider === "google" || account?.provider === "github") {
+          await connectDB()
+          const existingUser = await User.findOne({ email: user.email })
+          if (!existingUser) {
+            await User.create({
+              email: user.email,
+              name: user.name,
+              provider: account.provider,
+              role: "player" // default role (you can tweak this if needed)
+            })
+          }
         }
+        return true
+      } catch (err) {
+        console.error("SignIn callback error:", err)
+        return false
       }
-      return true;
+    },
+
+    // ★ YOU ASKED ABOUT THIS ONE:
+    async session({ session, token }) {
+  await connectDB()
+  if (session.user?.email) {
+    const dbUser = await User.findOne({ email: session.user.email });
+    if (dbUser) {
+      (session.user as any).role = dbUser.role || "player"; // fallback
+      (session.user as any).id = dbUser._id.toString();
+    } else {
+      // If, for some reason, we can't find the user, fallback to guest/undefined
+      (session.user as any).role = undefined;
     }
   }
-});
+  return session;
+}
+
+}
+})
 
 export { handler as GET, handler as POST }

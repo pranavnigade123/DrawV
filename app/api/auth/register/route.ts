@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
 
     // Hash password before saving!
     const hashed = await bcrypt.hash(password, 10)
-    await User.create({ email, name, password: hashed })
+    await User.create({ email, name, password: hashed, role: "player" })
 
     return NextResponse.json({ success: true })
   } catch (err) {
