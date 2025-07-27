@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { useSession, signOut } from 'next-auth/react'
 import { useTheme } from 'next-themes'
 import { useEffect, useState } from 'react'
@@ -12,70 +13,70 @@ export default function Navbar() {
   useEffect(() => setMounted(true), [])
 
   return (
-    <nav
+     <nav
       className="
-        flex items-center justify-between px-4 py-2 border-b border-[color:var(--border)]
-        bg-[color:var(--background)] text-[color:var(--foreground)]
+        fixed top-6 left-1/2 transform -translate-x-1/2
+        w-[95vw] max-w-4xl
+        flex items-center justify-between
+        px-6 py-3           // <-- Increased vertical padding!
+        backdrop-blur-2xl
+        shadow-xl
+        border border-white/15 dark:border-white/10
+        rounded-2xl
         font-sans
-        sticky top-0 z-30
+        z-50
+        transition-all
       "
-      style={{ fontFamily: "var(--font-geist-sans), var(--font-sans), Arial, Helvetica, sans-serif" }}
+      style={{
+        fontFamily: "var(--font-geist-sans), var(--font-sans), Arial, Helvetica, sans-serif"
+      }}
     >
-      <div className="flex items-center gap-4">
-        <Link href="/" className="font-bold text-lg tracking-tight" style={{ color: "var(--primary)" }}>
-          MyApp
-        </Link>
-
-        {/* Role-based dashboards */}
-        {session?.user?.role === "player" && (
-          <Link href="/dashboard" className="hover:text-[color:var(--primary)] transition">
-            Player Dashboard
-          </Link>
-        )}
-        {session?.user?.role === "admin" && (
-          <Link href="/admin/dashboard" className="hover:text-[color:var(--primary)] transition">
-            Admin Dashboard
-          </Link>
-        )}
-
-        {/* Admin-only links */}
-        {session?.user?.role === "admin" && (
-          <>
-            <Link href="/admin/tournaments" className="hover:text-[color:var(--primary)] transition">
-              Manage Tournaments
-            </Link>
-            
-          </>
-        )}
-
-        {/* Player-only links */}
-        {session?.user?.role === "player" && (
-          <Link href="/tournaments" className="hover:text-[color:var(--primary)] transition">
-            Browse Tournaments
-          </Link>
-        )}
-
-        {/* Public informational pages */}
-        <Link href="/public-tools" className="hover:text-[color:var(--primary)] transition">
-          Tools
-        </Link>
-        <Link href="/about" className="hover:text-[color:var(--primary)] transition">
-          About Us
-        </Link>
-        <Link href="/contact" className="hover:text-[color:var(--primary)] transition">
-          Contact
+      {/* Logo at far left */}
+      <div className="flex items-center pr-3"> {/* gap omitted so logo isn't crowded */}
+        <Link href="/" className="select-none flex items-center">
+          {mounted && (
+            <Image
+              src={resolvedTheme === 'dark' ? '/logo-dark.png' : '/logo-light.png'}
+              alt="Draw V Logo"
+              width={96}
+  height={96}
+  className="rounded-xl object-contain"
+              priority
+            />
+          )}
         </Link>
       </div>
+
+      {/* Main nav links - center */}
+      <div className="flex items-center gap-2 sm:gap-4 text-base font-medium">
+        <Link href="/tournaments" className="px-3 py-1 rounded-lg hover:bg-[color:var(--background)]/60 transition">
+          Explore
+        </Link>
+        <Link href="/public-tools" className="px-3 py-1 rounded-lg hover:bg-[color:var(--background)]/60 transition">
+          Tools
+        </Link>
+        <Link href="/about" className="px-3 py-1 rounded-lg hover:bg-[color:var(--background)]/60 transition">
+          About Us
+        </Link>
+      </div>
+
+      {/* Auth/profile area - right */}
       <div className="flex items-center gap-2">
+        {status === "authenticated" && session?.user?.name && (
+          <span className="hidden sm:inline text-[color:var(--primary)] font-semibold mr-1 px-2">
+            {session.user.name.split(' ')[0]}
+          </span>
+        )}
         {status === "authenticated" ? (
           <button
             onClick={() => signOut({ callbackUrl: "/" })}
             className="
-              ml-4 px-3 py-1 rounded
-              bg-[color:var(--surface)] text-[color:var(--foreground)]
-              hover:bg-[color:var(--primary)] hover:text-white
-              border border-[color:var(--border)]
-              text-sm transition
+              px-4 py-1 rounded-lg
+              bg-[color:var(--primary)]
+              text-white font-semibold
+              shadow-sm
+              hover:bg-[color:var(--primary-hover)]
+              transition
             "
           >
             Sign Out
@@ -84,22 +85,25 @@ export default function Navbar() {
           <Link
             href="/login"
             className="
-              ml-4 px-3 py-1 rounded
-              bg-[color:var(--primary)] text-white
+              px-4 py-1 rounded-lg
+              bg-[color:var(--primary)]
+              text-white font-semibold
+              shadow-sm
               hover:bg-[color:var(--primary-hover)]
-              text-sm font-semibold transition
+              transition
             "
           >
             Login
           </Link>
         )}
-        {/* ==== Theme Toggle Button ==== */}
+
         {mounted && (
           <button
-            className="ml-2 px-2 py-1 rounded-full border border-[color:var(--border)] bg-[color:var(--surface)] hover:bg-[color:var(--accent)] transition"
+            className="ml-1 px-2 py-1 rounded-full border border-[color:var(--border)] bg-[color:var(--surface)] hover:bg-[color:var(--primary)] hover:text-white transition"
             onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
             aria-label={`Switch to ${resolvedTheme === "dark" ? "light" : "dark"} mode`}
             title={`Switch to ${resolvedTheme === "dark" ? "light" : "dark"} mode`}
+            style={{ minWidth: 32 }}
           >
             {resolvedTheme === 'dark'
               ? <span role="img" aria-label="Light mode">🌞</span>
