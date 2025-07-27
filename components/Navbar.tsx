@@ -1,40 +1,111 @@
 'use client'
-import Link from "next/link"
-import { useSession, signOut } from "next-auth/react"
+
+import Link from 'next/link'
+import { useSession, signOut } from 'next-auth/react'
+import { useTheme } from 'next-themes'
+import { useEffect, useState } from 'react'
 
 export default function Navbar() {
   const { data: session, status } = useSession()
+  const { resolvedTheme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
 
   return (
-    <nav className="w-full px-4 py-3 bg-white dark:bg-black shadow flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800">
-      <div className="flex items-center gap-6">
-        <Link href="/" className="text-xl font-bold tracking-tight text-indigo-600">
-          DRAW V
+    <nav
+      className="
+        flex items-center justify-between px-4 py-2 border-b border-[color:var(--border)]
+        bg-[color:var(--background)] text-[color:var(--foreground)]
+        font-sans
+        sticky top-0 z-30
+      "
+      style={{ fontFamily: "var(--font-geist-sans), var(--font-sans), Arial, Helvetica, sans-serif" }}
+    >
+      <div className="flex items-center gap-4">
+        <Link href="/" className="font-bold text-lg tracking-tight" style={{ color: "var(--primary)" }}>
+          MyApp
         </Link>
-        <Link href="/dashboard" className="hover:text-indigo-600 transition">Dashboard</Link>
-        <Link href="/public-tools" className="hover:text-indigo-600 transition">Tools</Link>
-        <Link href="/tournaments" className="hover:text-indigo-600 transition">Tournaments</Link>
-        <Link href="/about" className="hover:text-indigo-600 transition">About</Link>
-        <Link href="/contact" className="hover:text-indigo-600 transition">Contact</Link>
-      </div>
-      <div>
-        {status === "authenticated" ? (
-          <div className="flex items-center gap-3">
-            <span className="text-zinc-600 dark:text-zinc-300">{session.user?.name || session.user?.email}</span>
-            <button
-              className="px-3 py-1 rounded bg-indigo-600 text-white hover:bg-indigo-700"
-              onClick={() => signOut({ callbackUrl: "/" })}
-            >
-              Sign Out
-            </button>
-          </div>
-        ) : status === "loading" ? (
-          <span className="text-zinc-400">...</span>
-        ) : (
+
+        {/* Role-based dashboards */}
+        {session?.user?.role === "player" && (
+          <Link href="/dashboard" className="hover:text-[color:var(--primary)] transition">
+            Player Dashboard
+          </Link>
+        )}
+        {session?.user?.role === "admin" && (
+          <Link href="/admin/dashboard" className="hover:text-[color:var(--primary)] transition">
+            Admin Dashboard
+          </Link>
+        )}
+
+        {/* Admin-only links */}
+        {session?.user?.role === "admin" && (
           <>
-            <Link href="/login" className="px-3 py-1 rounded hover:bg-indigo-100 text-indigo-600 font-semibold mr-2">Sign In</Link>
-            <Link href="/register" className="px-3 py-1 rounded bg-indigo-600 text-white hover:bg-indigo-700 font-semibold">Register</Link>
+            <Link href="/admin/tournaments" className="hover:text-[color:var(--primary)] transition">
+              Manage Tournaments
+            </Link>
+            
           </>
+        )}
+
+        {/* Player-only links */}
+        {session?.user?.role === "player" && (
+          <Link href="/tournaments" className="hover:text-[color:var(--primary)] transition">
+            Browse Tournaments
+          </Link>
+        )}
+
+        {/* Public informational pages */}
+        <Link href="/public-tools" className="hover:text-[color:var(--primary)] transition">
+          Tools
+        </Link>
+        <Link href="/about" className="hover:text-[color:var(--primary)] transition">
+          About Us
+        </Link>
+        <Link href="/contact" className="hover:text-[color:var(--primary)] transition">
+          Contact
+        </Link>
+      </div>
+      <div className="flex items-center gap-2">
+        {status === "authenticated" ? (
+          <button
+            onClick={() => signOut({ callbackUrl: "/" })}
+            className="
+              ml-4 px-3 py-1 rounded
+              bg-[color:var(--surface)] text-[color:var(--foreground)]
+              hover:bg-[color:var(--primary)] hover:text-white
+              border border-[color:var(--border)]
+              text-sm transition
+            "
+          >
+            Sign Out
+          </button>
+        ) : (
+          <Link
+            href="/login"
+            className="
+              ml-4 px-3 py-1 rounded
+              bg-[color:var(--primary)] text-white
+              hover:bg-[color:var(--primary-hover)]
+              text-sm font-semibold transition
+            "
+          >
+            Login
+          </Link>
+        )}
+        {/* ==== Theme Toggle Button ==== */}
+        {mounted && (
+          <button
+            className="ml-2 px-2 py-1 rounded-full border border-[color:var(--border)] bg-[color:var(--surface)] hover:bg-[color:var(--accent)] transition"
+            onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
+            aria-label={`Switch to ${resolvedTheme === "dark" ? "light" : "dark"} mode`}
+            title={`Switch to ${resolvedTheme === "dark" ? "light" : "dark"} mode`}
+          >
+            {resolvedTheme === 'dark'
+              ? <span role="img" aria-label="Light mode">🌞</span>
+              : <span role="img" aria-label="Dark mode">🌙</span>
+            }
+          </button>
         )}
       </div>
     </nav>

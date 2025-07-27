@@ -1,4 +1,5 @@
 'use client'
+
 import { useSession, signOut } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
@@ -14,7 +15,20 @@ export default function Dashboard() {
     }
   }, [status, router])
 
-  // Show loading spinner while session state is "loading"
+  // Handle corrupt/missing session (defensive sign out)
+  useEffect(() => {
+    if (status === "authenticated" && (!session || !session.user?.role)) {
+      signOut({ callbackUrl: "/login" })
+    }
+  }, [status, session])
+
+  // If the user is an admin, redirect to admin dashboard
+  useEffect(() => {
+    if (status === "authenticated" && session?.user?.role === "admin") {
+      router.replace("/admin/dashboard")
+    }
+  }, [status, session, router])
+
   if (status === "loading") {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
@@ -26,20 +40,17 @@ export default function Dashboard() {
     );
   }
 
-  // If the session is loaded but user or role is not set correctly, sign out defensively (session corrupt or missing required fields)
-  if (!session || !session.user?.role) {
-    signOut({ callbackUrl: "/login" })
+  // If not authenticated, or while redirecting, render nothing
+  if (
+    status === "unauthenticated"
+    || !session
+    || !session.user?.role
+    || session.user.role !== "player"
+  ) {
     return null
   }
 
-  // (Optional) If you want to auto-redirect admins to the admin dashboard, add this:
-  // useEffect(() => {
-  //   if (session.user.role === "admin") {
-  //     router.replace("/admin/dashboard")
-  //   }
-  // }, [session, router])
-
-  // Main Dashboard Content
+  // Main player dashboard
   return (
     <main className="min-h-[85vh] max-w-2xl mx-auto py-8 px-2 flex flex-col gap-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">

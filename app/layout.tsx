@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/Providers";
-import Navbar from "@/components/Navbar"; // Add your Navbar
+import Navbar from "@/components/Navbar";
+import { ThemeProvider } from "next-themes";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,11 +24,25 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[var(--background)] text-[var(--foreground)]`}>
+    <html lang="en" suppressHydrationWarning>
+      <body
+        className={`
+          ${geistSans.variable} ${geistMono.variable} antialiased
+          bg-[color:var(--background)] text-[color:var(--foreground)]
+          font-sans
+        `}
+        style={{
+          fontFamily:
+            "var(--font-geist-sans), var(--font-sans), Arial, Helvetica, sans-serif",
+        }}
+      >
         <Providers>
-          <Navbar />
-          {children}
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <Navbar />
+            <main className="max-w-5xl mx-auto w-full px-4 py-6">
+              {children}
+            </main>
+          </ThemeProvider>
         </Providers>
       </body>
     </html>
