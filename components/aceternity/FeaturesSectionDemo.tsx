@@ -5,48 +5,49 @@ import { cn } from "@/lib/utils";
 import { motion } from "motion/react";
 import { IconBrandYoutubeFilled } from "@tabler/icons-react";
 
+// -------- Bento Feature Grid --------
 export function FeaturesSectionDemo() {
   const features = [
     {
-      title: "Automated Bracket Builder",
+      title: "Triumph at Aarohan: Draw V’s Debut",
       description:
-        "Generate and manage knockout or round-robin brackets in seconds. No more manual bracket headaches!",
+        "From zero to champion organizers: our story began at Aarohan.",
       skeleton: <SkeletonOne />,
       className:
         "col-span-1 lg:col-span-4 border-b lg:border-r dark:border-neutral-800",
     },
     {
-      title: "Team & Player Management",
-      description:
-        "Let admins and players easily create teams, manage rosters, and register for events—on any device.",
+      title: "Behind the Scenes: Aarohan Moments",
       skeleton: <SkeletonTwo />,
       className: "border-b col-span-1 lg:col-span-2 dark:border-neutral-800",
     },
     {
-      title: "Tournament Highlights",
-      description:
-        "Catch all the DRAW V action: see match highlights, feature explainers, and event broadcasts on YouTube.",
+      // Intentionally omitting title/description; use only skeleton’s own.
       skeleton: <SkeletonThree />,
-      className: "col-span-1 lg:col-span-6 border-b lg:border-none", // Now full width!
+      className: "col-span-1 lg:col-span-6 border-b lg:border-none", // full width
     },
   ];
 
   return (
     <div className="relative z-20 py-10 lg:py-40 max-w-7xl mx-auto">
       <div className="px-8">
-        <h4 className="text-3xl lg:text-5xl lg:leading-tight max-w-5xl mx-auto text-center tracking-tight font-medium text-black dark:text-white">
-          Unlock your competitive edge with DRAW V
-        </h4>
-        <p className="text-sm lg:text-base  max-w-2xl  my-4 mx-auto text-neutral-500 text-center font-normal dark:text-neutral-300">
-          Design, manage, and grow esports tournaments and teams at scale. The all-in-one platform trusted by gamers and organizers.
-        </p>
-      </div>
+  <h4 className="text-3xl lg:text-5xl lg:leading-tight max-w-5xl mx-auto text-center tracking-tight font-medium text-black dark:text-white">
+    Where Champions and Communities Are Built
+  </h4>
+  <p className="text-sm lg:text-base max-w-2xl my-4 mx-auto text-neutral-500 text-center font-normal dark:text-neutral-300">
+    Power your events, connect your community, and level up your tournaments—all from one streamlined platform.
+  </p>
+</div>
+
       <div className="relative">
         <div className="grid grid-cols-1 lg:grid-cols-6 mt-12 xl:border rounded-md dark:border-neutral-800">
-          {features.map((feature) => (
-            <FeatureCard key={feature.title} className={feature.className}>
-              <FeatureTitle>{feature.title}</FeatureTitle>
-              <FeatureDescription>{feature.description}</FeatureDescription>
+          {features.map((feature, i) => (
+            <FeatureCard key={feature.title ? feature.title : `feature-${i}`} className={feature.className}>
+              {/* Only render title/desc if they exist (not for 3rd card, which handles its own) */}
+              {feature.title && <FeatureTitle>{feature.title}</FeatureTitle>}
+              {feature.description && (
+                <FeatureDescription>{feature.description}</FeatureDescription>
+              )}
               <div className="h-full w-full">{feature.skeleton}</div>
             </FeatureCard>
           ))}
@@ -70,9 +71,10 @@ const FeatureCard = ({
   );
 };
 
+// ---- ALL TITLES CENTERED ----
 const FeatureTitle = ({ children }: { children?: React.ReactNode }) => {
   return (
-    <p className="max-w-5xl mx-auto text-left tracking-tight text-black dark:text-white text-xl md:text-2xl md:leading-snug">
+    <p className="max-w-5xl mx-auto text-center tracking-tight text-black dark:text-white text-xl md:text-2xl md:leading-snug px-8">
       {children}
     </p>
   );
@@ -82,9 +84,8 @@ const FeatureDescription = ({ children }: { children?: React.ReactNode }) => {
   return (
     <p
       className={cn(
-        "text-sm md:text-base  max-w-4xl text-left mx-auto",
-        "text-neutral-500 text-center font-normal dark:text-neutral-300",
-        "text-left max-w-sm mx-0 md:text-sm my-2"
+        "text-sm md:text-base max-w-4xl text-center mx-auto my-2 px-8",
+        "text-neutral-500 font-normal dark:text-neutral-300"
       )}
     >
       {children}
@@ -92,128 +93,119 @@ const FeatureDescription = ({ children }: { children?: React.ReactNode }) => {
   );
 };
 
-// 1st Card: Bracket Builder
+
+
+// --- 1st Card: Bracket Builder (PARAGRAPH ONLY centered) ---
 export const SkeletonOne = () => {
   return (
-    <div className="relative flex py-8 px-2 gap-10 h-full">
-      <div className="w-full p-5 mx-auto bg-white dark:bg-neutral-900 shadow-2xl group h-full">
-        <div className="flex flex-1 w-full h-full flex-col space-y-2">
-          <img
-            src="/images/bracket-demo.png" // swap in your own image/screenshot/svg!
-            alt="Bracket Builder Demo"
-            width={800}
-            height={800}
-            className="h-full w-full aspect-square object-cover object-left-top rounded-sm"
-          />
-        </div>
+    <div className="relative flex flex-col items-center py-8 px-2 gap-6 h-full">
+      {/* Large and centered image */}
+      <div className="w-full flex justify-center mb-4">
+        <img
+          src="aarohan1.jpg"
+          alt="Aarohan Valorant Tournament"
+          width={1200}
+          height={700}
+          className="w-[100%] max-w-2xl rounded-xl shadow-lg object-contain bg-gray-100 dark:bg-neutral-800 mx-auto"
+        />
       </div>
-      <div className="absolute bottom-0 z-40 inset-x-0 h-60 bg-gradient-to-t from-white dark:from-black via-white dark:via-black to-transparent w-full pointer-events-none" />
-      <div className="absolute top-0 z-40 inset-x-0 h-60 bg-gradient-to-b from-white dark:from-black via-transparent to-transparent w-full pointer-events-none" />
+      {/* Centered event description below the image */}
+      <div className="w-full flex flex-col items-center text-center mt-2">
+        <p className="text-pretty text-base md:text-lg text-neutral-700 dark:text-neutral-200 leading-relaxed px-10 mt-12">
+          During Aarohan, the cultural fest of MIT-WPU, Draw V, a passionate and emerging gaming community, had the opportunity to collaborate with the fest team to organize an exciting Valorant tournament. Despite not being officially established at the time, Draw V stepped up to the challenge — and delivered beyond expectations.
+          <br /><br />
+          With just a week of planning, the tournament was executed with remarkable precision. Every member of the team worked tirelessly to ensure that each aspect of the event ran smoothly. From match scheduling to player coordination, everything was handled with professionalism and energy.
+          <br /><br />
+          The tournament was fully equipped with all the essentials for a top-tier experience — including a dedicated map veto website, a well-maintained Discord server, and clear communication channels that kept players and organizers perfectly in sync.
+          <br /><br />
+          This collaboration was a huge success and a proud moment for the Draw V community. It proved that with the right drive and teamwork, even a freshly formed group can pull off something extraordinary. The experience laid a strong foundation for future events and marked the beginning of Draw V’s journey in the collegiate esports scene.
+        </p>
+        {/* Logo below paragraph */}
+        <img
+  src="logo-dark.png"
+  alt="Draw V Logo"
+  width={160}
+  height={160}
+  className="mt-10 mb-10 mx-auto block"
+  style={{
+    background: "none",
+    border: "none",
+    boxShadow: "none",
+  }}
+/>
+
+      </div>
+      {/* Bottom gradients remain for bento styling */}
+      <div className="absolute bottom-0 z-40 inset-x-0 h-40 bg-gradient-to-t from-black/40 via-black/10 to-transparent dark:from-black/60 dark:via-black/20 dark:to-transparent w-full pointer-events-none" />
+      <div className="absolute top-0 z-40 inset-x-0 h-24 bg-gradient-to-b from-white/30 via-transparent to-transparent dark:from-black/30 dark:via-transparent dark:to-transparent w-full pointer-events-none" />
     </div>
   );
 };
 
-// 2nd Card: Team Management (Hydration-safe random rotations)
+
+// --- 2nd Card: Team Management BTS photo stack (images occupy most width) ---
 export const SkeletonTwo = () => {
   const images = [
-    "/images/teams-1.png",
-    "/images/teams-2.png",
-    "/images/teams-3.png",
-    "/images/teams-4.png",
-    "/images/teams-5.png",
+    "aarohan2.jpg",
+    "aarohan3.jpg", 
+    "aarohan6.jpg",
   ];
-
-  const NUM_IMAGES = images.length;
-  const [rotates, setRotates] = useState<number[]>([]);
-
-  useEffect(() => {
-    setRotates(
-      Array(NUM_IMAGES * 2)
-        .fill(0)
-        .map(() => Math.random() * 20 - 10)
-    );
-  }, [NUM_IMAGES]);
-
-  if (rotates.length < NUM_IMAGES * 2) return null;
-
-  const imageVariants = {
-    whileHover: { scale: 1.1, rotate: 0, zIndex: 100 },
-    whileTap: { scale: 1.1, rotate: 0, zIndex: 100 },
-  };
-
   return (
-    <div className="relative flex flex-col items-start p-8 gap-10 h-full overflow-hidden">
-      <div className="flex flex-row -ml-20">
-        {images.map((image, idx) => (
-          <motion.div
-            variants={imageVariants}
-            key={"images-first" + idx}
-            style={{
-              rotate: rotates[idx] || 0,
-            }}
-            whileHover="whileHover"
-            whileTap="whileTap"
-            className="rounded-xl -mr-4 mt-4 p-1 bg-white dark:bg-neutral-800 dark:border-neutral-700 border border-neutral-100 shrink-0 overflow-hidden"
-          >
-            <img
-              src={image}
-              alt="teams features"
-              width="500"
-              height="500"
-              className="rounded-lg h-20 w-20 md:h-40 md:w-40 object-cover shrink-0"
-            />
-          </motion.div>
-        ))}
-      </div>
-      <div className="flex flex-row">
-        {images.map((image, idx) => (
-          <motion.div
-            key={"images-second" + idx}
-            style={{
-              rotate: rotates[NUM_IMAGES + idx] || 0,
-            }}
-            variants={imageVariants}
-            whileHover="whileHover"
-            whileTap="whileTap"
-            className="rounded-xl -mr-4 mt-4 p-1 bg-white dark:bg-neutral-800 dark:border-neutral-700 border border-neutral-100 shrink-0 overflow-hidden"
-          >
-            <img
-              src={image}
-              alt="teams features"
-              width="500"
-              height="500"
-              className="rounded-lg h-20 w-20 md:h-40 md:w-40 object-cover shrink-0"
-            />
-          </motion.div>
-        ))}
-      </div>
-      <div className="absolute left-0 z-[100] inset-y-0 w-20 bg-gradient-to-r from-white dark:from-black to-transparent h-full pointer-events-none" />
-      <div className="absolute right-0 z-[100] inset-y-0 w-20 bg-gradient-to-l from-white dark:from-black to-transparent h-full pointer-events-none" />
+    <div className="flex flex-col items-center gap-4 py-4 px-2 w-full h-full">
+      {images.map((src, idx) => (
+        <img
+          key={src || idx}
+          src={src}
+          alt={`Aarohan behind the scenes ${idx + 1}`}
+          className="w-[96%] max-w-3xl rounded-xl object-cover shadow-md bg-gray-200 dark:bg-neutral-800"
+        />
+      ))}
     </div>
   );
 };
 
-// 3rd Card: Tournament Highlights (YouTube, now full-width)
+
+// --- 3rd Card: Tournament Highlights ("YouTube light" embed) ---
 export const SkeletonThree = () => {
+  const [playing, setPlaying] = useState(false);
+
   return (
-    <a
-      href="https://www.youtube.com/live/i3F9-oyMslU?si=IBZ_jd30uSJ5FVZA"
-      target="__blank"
-      className="relative flex gap-10 h-full group/image"
-    >
-      <div className="w-full mx-auto bg-transparent dark:bg-transparent group h-full">
-        <div className="flex flex-1 w-full h-full flex-col space-y-2 relative">
-          <IconBrandYoutubeFilled className="h-20 w-20 absolute z-10 inset-0 text-red-500 m-auto" />
-          <img
-            src="Thumbnail-1.png" // Use your own YouTube video thumbnail
-            alt="DRAW V YouTube"
-            width={800}
-            height={800}
-            className="h-full w-full aspect-square object-contain object-center rounded-sm blur-none"
-            // ^^^^^^^^^^^
+    <div className="w-full flex flex-col items-center text-center mb-6">
+      <h3 className="text-2xl md:text-3xl font-semibold text-black dark:text-white mb-2">
+        Tournament Highlights
+      </h3>
+      <p className="text-base md:text-lg text-neutral-600 dark:text-neutral-300 mb-4">
+        Catch all the DRAW V action: see match highlights, feature explainers, and event broadcasts—live!
+      </p>
+      <div className="w-full aspect-video relative rounded-lg overflow-hidden shadow-lg bg-black">
+        {!playing ? (
+          <button
+            className="absolute inset-0 w-full h-full flex items-center justify-center group"
+            onClick={() => setPlaying(true)}
+            aria-label="Play tournament video"
+            style={{ cursor: "pointer" }}
+          >
+            <img
+              src="Thumbnail-1.png" // Your thumbnail
+              alt="DRAW V YouTube"
+              className="w-full h-full object-contain object-center"
+              width={800}
+              height={450}
+            />
+            <span className="absolute inset-0 flex items-center justify-center">
+              <IconBrandYoutubeFilled className="h-24 w-24 text-red-600 transition-opacity group-hover:opacity-80 opacity-90 drop-shadow-xl" />
+            </span>
+          </button>
+        ) : (
+          <iframe
+            src="https://www.youtube.com/embed/i3F9-oyMslU?autoplay=1"
+            title="DRAW V YouTube Live"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            className="w-full h-full absolute inset-0"
           />
-        </div>
+        )}
       </div>
-    </a>
+    </div>
   );
 };
