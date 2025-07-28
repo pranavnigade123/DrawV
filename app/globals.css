@@ -33,3 +33,11 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans);
 }
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  min-height: 100vh;
+  overflow-x: hidden;
+  /* ...your other styles */
+}

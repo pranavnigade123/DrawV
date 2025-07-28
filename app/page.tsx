@@ -36,7 +36,7 @@ export default function LandingPage() {
             left: 0,
             bottom: 0,
             width: "100vw",
-            height: "60vh", // covers bottom 50% of video
+            height: "70vh", // covers bottom 50% of video
             background: "linear-gradient(to top, black 0%, transparent 100%)",
             zIndex: 2,
             transition: "opacity 0.3s",
@@ -44,14 +44,17 @@ export default function LandingPage() {
         />
       </div>
 
-      <section className="w-full flex flex-col items-center mt-8 py-8">
-        <TypewriterEffect
-          words={[
-            { text: "Welcome to Aceternity!" },
-            { text: "Your journey starts here..." }
-          ]}
-        />
-      </section>
+    <section className="w-full flex flex-col items-center mt-32 py-8">
+  <TypewriterEffect
+    words={[
+      { text: "Welcome to DRAW", className: "text-blue-500" },
+      { text: "V", className: "text-[#191CFF]" } // Changed color of 'V' to #191CFF
+    ]}
+    className="text-center text-white text-3xl md:text-5xl lg:text-7xl font-extrabold tracking-tight drop-shadow-2xl"
+    cursorClassName="bg-purple-500"
+  />
+</section>
+
     </>
   );
 }
