@@ -16,7 +16,7 @@
   --font-sans: var(--font-geist-sans, Arial, Helvetica, sans-serif);
 }
 .dark {
-  --background: #0a0a0a;
+  --background: #000000;
   --surface: #181824;
   --foreground: #ededed;
   --primary: #375dfb;
