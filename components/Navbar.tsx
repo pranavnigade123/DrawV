@@ -16,7 +16,7 @@ export default function Navbar() {
      <nav
       className="
         fixed top-6 left-1/2 transform -translate-x-1/2
-        w-[95vw] max-w-4xl
+        w-[95vw] max-w-6xl
         flex items-center justify-between
         px-6 py-3           // <-- Increased vertical padding!
         backdrop-blur-2xl
@@ -40,7 +40,7 @@ export default function Navbar() {
               alt="Draw V Logo"
               width={96}
   height={96}
-  className="rounded-xl object-contain"
+  className=" object-contain"
               priority
             />
           )}
@@ -60,24 +60,33 @@ export default function Navbar() {
         </Link>
       </div>
 
-      {/* Auth/profile area - right */}
+       {/* Auth/profile area - right */}
       <div className="flex items-center gap-2">
         {status === "authenticated" && session?.user?.name && (
-          <span className="hidden sm:inline text-[color:var(--primary)] font-semibold mr-1 px-2">
+          <span className={`
+            hidden sm:inline font-semibold mr-1 px-2
+            ${resolvedTheme === "dark" ? "text-white" : "text-[color:var(--primary)]"}
+          `}>
             {session.user.name.split(' ')[0]}
           </span>
         )}
         {status === "authenticated" ? (
           <button
             onClick={() => signOut({ callbackUrl: "/" })}
-            className="
+            className={`
               px-4 py-1 rounded-lg
-              bg-[color:var(--primary)]
-              text-white font-semibold
-              shadow-sm
-              hover:bg-[color:var(--primary-hover)]
+              border border-[color:var(--primary)]
+              bg-transparent
+              text-black
+              font-semibold
               transition
-            "
+              hover:bg-[color:var(--primary)]/10
+              hover:text-[color:var(--primary-hover)]
+              dark:text-white dark:border-white/30
+              dark:hover:bg-white/10 dark:hover:text-white
+              shadow-sm
+            `}
+            style={{ minWidth: 90 }}
           >
             Sign Out
           </button>
@@ -97,20 +106,32 @@ export default function Navbar() {
           </Link>
         )}
 
+        {/* Theme toggle, unchanged */}
         {mounted && (
-          <button
-            className="ml-1 px-2 py-1 rounded-full border border-[color:var(--border)] bg-[color:var(--surface)] hover:bg-[color:var(--primary)] hover:text-white transition"
-            onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
-            aria-label={`Switch to ${resolvedTheme === "dark" ? "light" : "dark"} mode`}
-            title={`Switch to ${resolvedTheme === "dark" ? "light" : "dark"} mode`}
-            style={{ minWidth: 32 }}
-          >
-            {resolvedTheme === 'dark'
-              ? <span role="img" aria-label="Light mode">🌞</span>
-              : <span role="img" aria-label="Dark mode">🌙</span>
-            }
-          </button>
-        )}
+  <button
+    className={`
+      ml-1 px-2 py-1 rounded-full border
+      border-[color:var(--border)] bg-[color:var(--surface)]
+      hover:bg-[color:var(--primary)] hover:text-white
+      transition
+      dark:border-white/30         // ← softer, lighter border in dark mode!
+      dark:bg-transparent
+      dark:text-white
+      dark:hover:bg-white/10
+      dark:hover:text-white
+    `}
+    onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
+    aria-label={`Switch to ${resolvedTheme === "dark" ? "light" : "dark"} mode`}
+    title={`Switch to ${resolvedTheme === "dark" ? "light" : "dark"} mode`}
+    style={{ minWidth: 32 }}
+  >
+    {resolvedTheme === 'dark'
+      ? <span role="img" aria-label="Light mode">🌞</span>
+      : <span role="img" aria-label="Dark mode">🌙</span>
+    }
+  </button>
+)}
+
       </div>
     </nav>
   )

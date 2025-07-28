@@ -1,3 +1,4 @@
+// app/layout.tsx
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -39,9 +40,10 @@ export default function RootLayout({
         <Providers>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <Navbar />
-            <main className="max-w-5xl mx-auto w-full px-4 py-6">
-              {children}
-            </main>
+            <main>
+  {children}
+</main>
+
           </ThemeProvider>
         </Providers>
       </body>
