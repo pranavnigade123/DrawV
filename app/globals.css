@@ -47,3 +47,13 @@ html, body {
     0 0 8px rgba(88, 178, 255, 0.4),
     0 0 12px rgba(88, 178, 255, 0.2);
 }
+@media (max-width: 640px) {
+  .video-container {
+    position: relative;
+    top: -120px; /* Adjust this based on your navbar height */
+    height: calc(50vh + 56px); /* Increase height so bottom isn't cut off */
+    z-index: 0; /* Behind navbar, assuming navbar z-index > 0 */
+  }
+
+ 
+}

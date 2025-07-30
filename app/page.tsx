@@ -3,6 +3,7 @@
 import { TypewriterEffect } from "@/components/aceternity/typewriter-effect";
 import { ContainerScroll } from "@/components/aceternity/container-scroll-animation";
 import { FeaturesSectionDemo } from "@/components/aceternity/FeaturesSectionDemo"; 
+import BorderMagicButton from "@/components/aceternity/BorderMagicButton";
 
 export default function LandingPage() {
   return (
@@ -58,6 +59,9 @@ export default function LandingPage() {
           className="text-center text-white text-3xl md:text-5xl lg:text-7xl font-extrabold tracking-tight drop-shadow-2xl"
           cursorClassName="bg-purple-500"
         />
+        <div>
+      <BorderMagicButton />
+    </div>
       </section>
 
       {/* Scroll animation section */}
