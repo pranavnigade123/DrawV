@@ -111,7 +111,7 @@ export const SkeletonOne = () => {
       </div>
       {/* Centered event description below the image */}
       <div className="w-full flex flex-col items-center text-center mt-2">
-        <p className="text-pretty text-base md:text-lg text-neutral-700 dark:text-neutral-200 leading-relaxed px-10 mt-12">
+        <p className="text-pretty text-base md:text-lg text-neutral-700 dark:text-neutral-200 leading-relaxed px-10 mt-12 text-justify">
           During Aarohan, the cultural fest of MIT-WPU, Draw V, a passionate and emerging gaming community, had the opportunity to collaborate with the fest team to organize an exciting Valorant tournament. Despite not being officially established at the time, Draw V stepped up to the challenge — and delivered beyond expectations.
           <br /><br />
           With just a week of planning, the tournament was executed with remarkable precision. Every member of the team worked tirelessly to ensure that each aspect of the event ran smoothly. From match scheduling to player coordination, everything was handled with professionalism and energy.
