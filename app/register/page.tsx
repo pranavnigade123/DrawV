@@ -1,6 +1,7 @@
 'use client'
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -95,7 +96,9 @@ export default function RegisterPage() {
           {error && <p className="text-red-600 text-center mt-2">{error}</p>}
         </div>
         <div className="text-sm text-center text-zinc-500">
-          Already have an account? <a className="underline hover:text-indigo-600" href="/login">Sign in</a>
+          Already have an account? <Link href="/login" className="underline hover:text-indigo-600">
+  Sign in
+</Link>
         </div>
       </div>
     </main>

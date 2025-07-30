@@ -2,7 +2,7 @@
 
 import { TypewriterEffect } from "@/components/aceternity/typewriter-effect";
 import { ContainerScroll } from "@/components/aceternity/container-scroll-animation";
-import { FeaturesSectionDemo } from "@/components/aceternity/FeaturesSectionDemo"; // <= named import
+import { FeaturesSectionDemo } from "@/components/aceternity/FeaturesSectionDemo"; 
 
 export default function LandingPage() {
   return (
@@ -72,7 +72,7 @@ export default function LandingPage() {
 >
   <div className="flex items-center justify-center h-full w-full">
     <img
-      src="/valo1.png" // Adjust if your image has a different path or filename
+      src="/valo1.png" 
       alt="Valorant Tournament"
       className="w-full h-full object-cover rounded-xl"
     />

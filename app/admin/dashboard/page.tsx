@@ -1,18 +1,19 @@
 import { getServerSession } from "next-auth"
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"
+import { authOptions } from "@/lib/authOptions";
+
 import { redirect } from "next/navigation"
 import Link from "next/link"
 
 export default async function AdminDashboardPage() {
-  // This runs on the server: check session/role BEFORE rendering the page
+
   const session = await getServerSession(authOptions)
 
-  // Deny all access if no session, or role is not 'admin'
+
   if (!session?.user?.role || session.user.role !== "admin") {
-    redirect("/") // Optionally: redirect("/login?unauthorized=1")
+    redirect("/") 
   }
 
-  // You may safely show admin-only content below
+  
   return (
     <main className="mx-auto max-w-2xl py-12">
       <h1 className="text-3xl font-bold mb-4 text-indigo-700">Admin Dashboard</h1>
