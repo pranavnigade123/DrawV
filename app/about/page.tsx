@@ -20,7 +20,36 @@ export default function AboutPage() {
   return (
     <main className="w-full flex flex-col items-center py-12 bg-[var(--background)] text-[var(--foreground)] min-h-screen">
 
-
+{/* --- MODIFIED VIDEO SECTION --- */}
+          <div
+        style={{
+          position: "relative",
+          width: "90vw", // Slightly wider for better mobile fit
+          maxWidth: "980px", // A max-width for very large screens
+          margin: "15vh auto 0", // Adjusted margin for better vertical positioning
+          aspectRatio: "16 / 9", // This is the key property
+          overflow: "hidden",
+          borderRadius: "1rem"
+        }}
+      >
+        <video
+          src="/dv-animation.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "contain", // Use contain now that the container has the right ratio
+            display: "block",
+            background: "#000"
+          }}
+        />
+      </div>
 
 
       {/* Huge static gradient headline at page top */}
@@ -32,6 +61,7 @@ export default function AboutPage() {
         </div>
       </div>
 
+        
       {/* About Us Section */}
       <div className="w-full max-w-6xl px-4 pt-20">
 

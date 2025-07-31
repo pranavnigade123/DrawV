@@ -15,10 +15,7 @@ export default function Navbar() {
 
   useEffect(() => setMounted(true), [])
 
-  const getDashboardLink = () => {
-    if (!session?.user?.role) return '/user/dashboard'
-    return session.user.role === 'admin' ? '/admin/dashboard' : '/dashboard'
-  }
+  const getDashboardLink = () => '/';
 
   const handleMenuToggle = () => setIsMenuOpen(!isMenuOpen)
   const closeMenu = () => setIsMenuOpen(false)

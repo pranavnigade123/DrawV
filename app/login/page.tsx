@@ -24,12 +24,12 @@ export default function LoginPage() {
     if (res?.error) {
       setError("Invalid credentials. Please try again.")
     } else {
-      router.push("/dashboard")
+      router.push("/")
     }
   }
 
  function handleSocialSignIn(provider: "google" | "github") {
-  signIn(provider, { callbackUrl: "/dashboard" })
+  signIn(provider, { callbackUrl: "/" })
 }
 
   return (
