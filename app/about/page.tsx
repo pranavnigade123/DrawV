@@ -47,8 +47,8 @@ export default function AboutPage() {
             objectFit: "contain", // Use contain now that the container has the right ratio
             display: "block",
             background: "#000"
-          }}
-        />
+       }}
+/>
       </div>
 
 
