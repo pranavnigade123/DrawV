@@ -70,9 +70,12 @@ export default function LandingPage() {
       <BorderStaticButton onClick={() => window.location.href = "/about"}>
         About Us
       </BorderStaticButton>
-      <BorderMagicButton onClick={() => window.location.href = "/register"}>
-        Register
-      </BorderMagicButton>
+      <BorderMagicButton
+  onClick={() => window.location.href = "https://docs.google.com/forms/d/e/1FAIpQLScR0fjDlbXETAqZdPx3Eab3spt4EaeZzqPCDJ9sGh6neHML9w/viewform?usp=dialoginstaed"}
+>
+  Register
+</BorderMagicButton>
+
     </div>
   </div>
 </div>
