@@ -13,7 +13,7 @@ const pins = [
   { title: "Pin Five", img: "/pranav1.jpg", name: "Pranav Nigade", designation: "Technical Head" },
   { title: "Pin Six", img: "/sashwat.jpg", name: "Shaswat Nande", designation: "Innovation Hub President" },
   { title: "Pin Seven", img: "/swastik.jpg", name: "Swastik Singh", designation: "Innovation Hub Vice President" },
-  { title: "Pin Eight", img: "/viraj.jpg", name: "Viraj Pawar", designation: "Design Mentor", href: "/somewhere8" },
+  { title: "Pin Eight", img: "/Viraj.jpg", name: "Viraj Pawar", designation: "Design Mentor", href: "/somewhere8" },
 ];
 
 export default function AboutPage() {
