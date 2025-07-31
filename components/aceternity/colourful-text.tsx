@@ -10,8 +10,8 @@ export function ColourfulText({
 }) {
   // Define your color palettes inside the component
   const blueShades = [
-    "#191CFF", "#2749F8", "#2D91FB", "#4BD1FF", "#2969E9",
-    "#1050C0", "#3280EC", "#0053A4", "#006BDB", "#81C4FF"
+    
+     "#38BDF8", "#3B82F6", "#6366F1", 
   ];
 
   const redYellowShades = [
@@ -25,8 +25,8 @@ export function ColourfulText({
 
   React.useEffect(() => {
     const interval = setInterval(() => {
-      const shuffled = [...colors].sort(() => Math.random() - 0.5);
-      setCurrentColors(shuffled);
+      const shuffled = [...colors];
+      setCurrentColors;
       setCount((prev) => prev + 1);
     }, 5000);
     return () => clearInterval(interval);

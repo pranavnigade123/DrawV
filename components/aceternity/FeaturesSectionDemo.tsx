@@ -5,7 +5,6 @@ import { cn } from "@/lib/utils";
 import { motion } from "motion/react";
 import { IconBrandYoutubeFilled } from "@tabler/icons-react";
 
-// -------- Bento Feature Grid --------
 export function FeaturesSectionDemo() {
   const features = [
     {
@@ -22,9 +21,9 @@ export function FeaturesSectionDemo() {
       className: "border-b col-span-1 lg:col-span-2 dark:border-neutral-800",
     },
     {
-      // Intentionally omitting title/description; use only skeleton’s own.
+    
       skeleton: <SkeletonThree />,
-      className: "col-span-1 lg:col-span-6 border-b lg:border-none", // full width
+      className: "col-span-1 lg:col-span-6 border-b lg:border-none", 
     },
   ];
 
@@ -71,7 +70,7 @@ const FeatureCard = ({
   );
 };
 
-// ---- ALL TITLES CENTERED ----
+
 const FeatureTitle = ({ children }: { children?: React.ReactNode }) => {
   return (
     <p className="max-w-5xl mx-auto text-center tracking-tight text-black dark:text-white text-xl md:text-2xl md:leading-snug px-8">
@@ -94,11 +93,9 @@ const FeatureDescription = ({ children }: { children?: React.ReactNode }) => {
 };
 
 
-
-// --- 1st Card: Bracket Builder (PARAGRAPH ONLY centered) ---
 export const SkeletonOne = () => {
   return (
-    <div className="relative flex flex-col items-center py-8 px-2 gap-6 h-full">
+    <div className="relative flex flex-col items-center py-8 px-4 gap-6 h-full">
       {/* Large and centered image */}
       <div className="w-full flex justify-center mb-4">
         <img
@@ -111,7 +108,7 @@ export const SkeletonOne = () => {
       </div>
       {/* Centered event description below the image */}
       <div className="w-full flex flex-col items-center text-center mt-2">
-        <p className="text-pretty text-base md:text-lg text-neutral-700 dark:text-neutral-200 leading-relaxed px-10 mt-12 text-justify">
+        <p className="text-pretty text-base md:text-lg text-neutral-700 dark:text-neutral-200 leading-relaxed px-4 mt-12 text-justify">
           During Aarohan, the cultural fest of MIT-WPU, Draw V, a passionate and emerging gaming community, had the opportunity to collaborate with the fest team to organize an exciting Valorant tournament. Despite not being officially established at the time, Draw V stepped up to the challenge — and delivered beyond expectations.
           <br /><br />
           With just a week of planning, the tournament was executed with remarkable precision. Every member of the team worked tirelessly to ensure that each aspect of the event ran smoothly. From match scheduling to player coordination, everything was handled with professionalism and energy.

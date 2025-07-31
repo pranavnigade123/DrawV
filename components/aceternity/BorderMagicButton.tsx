@@ -1,4 +1,4 @@
-// components/BorderMagicButton.tsx
+
 export default function BorderMagicButton({ children = "Border Magic", ...props }) {
   return (
     <button
