@@ -109,7 +109,11 @@ export default function Footer() {
             <p className="text-sm text-neutral-500">
               © {new Date().getFullYear()} Draw V. All Rights Reserved.
             </p>
+            <p className="text-sm text-neutral-500">
+              Made by Pranav & Saket.
+            </p>
           </div>
+          
 
           {/* Right side: Social Links */}
           <div className="flex flex-wrap justify-center items-center gap-5">
