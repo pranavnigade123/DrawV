@@ -110,7 +110,7 @@ export default function Footer() {
               © {new Date().getFullYear()} Draw V. All Rights Reserved.
             </p>
             <p className="text-sm text-neutral-500">
-              Made by Pranav & Saket.
+              Developed by Pranav & Saket.
             </p>
           </div>
           
