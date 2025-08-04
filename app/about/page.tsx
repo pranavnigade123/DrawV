@@ -201,14 +201,17 @@ export default function AboutPage() {
         </div>
         
         {/* Innovation Hub section */}
-        <h3 className="text-center text-3xl sm:text-3xl font-extrabold text-white mt-16 mb-8">
-          Innovation Hub
-        </h3>
-        <div className="flex flex-col sm:flex-row gap-8 justify-center items-center">
-          {innovationPins.map((pin, index) => (
-            <TeamCard key={index} pin={pin} />
-          ))}
-        </div>
+        <h3 className="text-center text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mt-16 mb-8">
+  Innovation Hub
+</h3>
+
+        <div className="flex flex-col sm:flex-row gap-4 lg:gap-32 justify-center items-center">
+  {innovationPins.map((pin, index) => (
+    <TeamCard key={index} pin={pin} />
+  ))}
+</div>
+
+
       </div>
 
       {/* Features Section */}

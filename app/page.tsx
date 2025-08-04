@@ -83,27 +83,38 @@ export default function LandingPage() {
 
       </section>
 
-      {/* Scroll animation section */}
-      <div className="w-full flex justify-center mb-12">
-        <ContainerScroll
-  titleComponent={
-    <div>
-      <h2 className="text-3xl md:text-5xl font-bold text-white mb-2">Scroll to Discover</h2>
-      <p className="text-lg md:text-2xl text-gray-200">Unleash the Power of Draw V!</p>
-    </div>
-  }
->
-  <div className="flex items-center justify-center h-full w-full">
-    <img
-      src="/valo1.png" 
-      alt="Valorant Tournament"
-      className="w-full h-full object-cover rounded-xl"
-    />
-  </div>
-</ContainerScroll>
-
-
+    {/* Scroll animation section */}
+<div className="w-full flex flex-col items-center justify-center mb-12">
+  <ContainerScroll
+    titleComponent={
+      <div>
+        <h2 className="text-3xl md:text-5xl font-bold text-white mb-2">Scroll to Discover</h2>
+        <p className="text-lg md:text-2xl text-gray-200">Unleash the Power of Draw V!</p>
       </div>
+    }
+  >
+    <a
+      href="https://liquipedia.net/valorant/MIT_Aarohan_Valorant_Cup_2025"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="flex flex-col items-center gap-4 w-full h-full"
+    >
+      <img
+        src="/valo1.png"
+        alt="Valorant Tournament"
+        className="w-full h-full object-cover rounded-xl"
+      />
+      <span className="text-white underline cursor-pointer select-none">
+        View on Liquipedia
+      </span>
+    </a>
+  </ContainerScroll>
+</div>
+
+
+
+
+      
 
       {/* FeaturesSectionDemo (OG bento grid with globe/YouTube/cards) */}
       <FeaturesSectionDemo />
