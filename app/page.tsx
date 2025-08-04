@@ -84,7 +84,7 @@ export default function LandingPage() {
       </section>
 
     {/* Scroll animation section */}
-<div className="w-full flex flex-col items-center justify-center mb-12">
+<div className="w-full flex flex-col items-center justify-center">
   <ContainerScroll
     titleComponent={
       <div>
@@ -104,20 +104,16 @@ export default function LandingPage() {
         alt="Valorant Tournament"
         className="w-full h-full object-cover rounded-xl"
       />
-      <span className="text-white underline cursor-pointer select-none">
-        View on Liquipedia
-      </span>
     </a>
   </ContainerScroll>
 </div>
 
+{/* Reduce/remove any padding or margin ABOVE this if present */}
+<div className="-mt-38 w-full">
+  <FeaturesSectionDemo />
+</div>
 
 
-
-      
-
-      {/* FeaturesSectionDemo (OG bento grid with globe/YouTube/cards) */}
-      <FeaturesSectionDemo />
     </>
   );
 }
