@@ -4,16 +4,41 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useSession, signOut } from 'next-auth/react'
 import { useTheme } from 'next-themes'
-import { useEffect, useState } from 'react'
-import { Menu, X } from 'lucide-react'
+// React hooks with types
+import { useEffect, useState, useRef } from 'react'
+// Icons from lucide-react
+import { Menu, X, ChevronDown } from 'lucide-react'
 
 export default function Navbar() {
   const { data: session, status } = useSession()
   const { resolvedTheme, setTheme } = useTheme()
-  const [mounted, setMounted] = useState(false)
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  
+  // State variables are typed using generics
+  const [mounted, setMounted] = useState<boolean>(false)
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false)
+  const [isExploreOpen, setIsExploreOpen] = useState<boolean>(false)
+
+  // The ref is typed to expect a DIV element
+  const exploreRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => setMounted(true), [])
+
+  // Effect to handle closing the dropdown when clicking outside
+  useEffect(() => {
+    // The event parameter is explicitly typed as MouseEvent
+    function handleClickOutside(event: MouseEvent) {
+      if (exploreRef.current && !exploreRef.current.contains(event.target as Node)) {
+        setIsExploreOpen(false)
+      }
+    }
+    // Bind the event listener
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      // Unbind the event listener on clean up
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [exploreRef])
+
 
   const getDashboardLink = () => '/';
 
@@ -57,12 +82,55 @@ export default function Navbar() {
 
       {/* Main nav links - Desktop */}
       <div className="hidden sm:flex items-center gap-2 sm:gap-4 text-base font-medium">
-        <Link
-          href="/tournaments"
-          className="px-3 py-1 rounded-lg hover:bg-[color:var(--background)]/60 transition"
-        >
-          Explore
-        </Link>
+        
+        {/* Explore Dropdown Container */}
+        <div className="relative" ref={exploreRef}>
+          <button
+            onClick={() => setIsExploreOpen(!isExploreOpen)}
+            className="flex items-center gap-1 px-3 py-1 rounded-lg hover:bg-[color:var(--background)]/60 transition"
+          >
+            Explore
+            {/* Arrow icon disappears when dropdown is open */}
+            {!isExploreOpen && <ChevronDown size={16} />}
+          </button>
+          
+          {/* Dropdown Menu */}
+          {isExploreOpen && (
+            <div
+              className="
+                absolute top-full mt-2 w-48
+                bg-white dark:bg-neutral-900
+                border border-gray-200 dark:border-white/20
+                shadow-lg rounded-lg
+                flex flex-col
+                animate-slide-down
+              "
+            >
+              <Link
+                href="/tournaments"
+                className="px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-neutral-800 rounded-t-lg"
+                onClick={() => setIsExploreOpen(false)}
+              >
+                Tournaments
+              </Link>
+              <Link
+                href="/gamedev"
+                className="px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-neutral-800"
+                onClick={() => setIsExploreOpen(false)}
+              >
+                Game Dev
+              </Link>
+              <Link
+                href="/events"
+                className="px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-neutral-800 rounded-b-lg"
+                onClick={() => setIsExploreOpen(false)}
+              >
+                Events
+              </Link>
+            </div>
+          )}
+        </div>
+        
         <Link
           href="/public-tools"
           className="px-3 py-1 rounded-lg hover:bg-[color:var(--background)]/60 transition"
@@ -128,29 +196,6 @@ export default function Navbar() {
             Login
           </Link>
         )}
-
-        {/* Theme toggle - commented out for now */}
-        {/*
-        {mounted && (
-          <button
-            className="
-              ml-1 px-2 py-1 rounded-full border
-              border-[color:var(--border)] bg-[color:var(--surface)]
-              hover:bg-[color:var(--primary)] hover:text-white
-              transition
-              dark:border-white/30
-              dark:bg-transparent
-              dark:text-white
-              dark:hover:bg-white/10
-            "
-            onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
-            aria-label={`Switch to ${resolvedTheme === 'dark' ? 'light' : 'dark'} mode`}
-            style={{ minWidth: 32 }}
-          >
-            {resolvedTheme === 'dark' ? '🌞' : '🌙'}
-          </button>
-        )}
-        */}
       </div>
 
       {/* Hamburger - Mobile only */}
@@ -174,46 +219,38 @@ export default function Navbar() {
             animate-slide-down
           "
         >
-          <Link href="/tournaments" className="py-2" onClick={closeMenu}>Explore</Link>
+          {/* Replaced single Explore link with individual links for better mobile UX */}
+          <Link href="/tournaments" className="py-2" onClick={closeMenu}>Tournaments</Link>
+          <Link href="/gamedev" className="py-2" onClick={closeMenu}>Game Dev</Link>
+          <Link href="/events" className="py-2" onClick={closeMenu}>Events</Link>
+          
           <Link href="/public-tools" className="py-2" onClick={closeMenu}>Tools</Link>
           <Link href="/about" className="py-2" onClick={closeMenu}>About Us</Link>
 
           {status === 'authenticated' && session?.user?.name && (
-            <Link href={getDashboardLink()} className="py-2" onClick={closeMenu}>
-               ({session.user.name.split(' ')[0]})
+            <Link href={getDashboardLink()} className="py-2 font-semibold" onClick={closeMenu}>
+                Dashboard ({session.user.name.split(' ')[0]})
             </Link>
           )}
           {status === 'authenticated' ? (
             <button
               onClick={() => {
-                signOut({ callbackUrl: '/' })
-                closeMenu()
+                signOut({ callbackUrl: '/' });
+                closeMenu();
               }}
-              className="px-4 py-2 rounded-lg border border-gray-300 dark:border-white/30"
+              className="px-4 py-2 rounded-lg border border-gray-300 dark:border-white/30 text-left"
             >
               Sign Out
             </button>
           ) : (
             <Link
               href="/login"
-              className="px-4 py-2 rounded-lg bg-[color:var(--primary)] text-white"
+              className="px-4 py-2 rounded-lg bg-[color:var(--primary)] text-white text-center"
               onClick={closeMenu}
             >
               Login
             </Link>
           )}
-
-          {/* Theme toggle - commented out for now */}
-          {/*
-          {mounted && (
-            <button
-              className="mt-2 px-4 py-2 rounded-lg border border-gray-300 dark:border-white/30"
-              onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
-            >
-              Switch to {resolvedTheme === 'dark' ? 'Light' : 'Dark'} Mode
-            </button>
-          )}
-          */}
         </div>
       )}
     </nav>
