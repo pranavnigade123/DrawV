@@ -19,7 +19,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "DRAW V - Esports Platform",
+  title: "DRAW Five - Esports Platform",
   description: "A modern, interactive esports tournament management platform.",
 };
 
