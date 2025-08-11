@@ -6,7 +6,8 @@ import Providers from "@/components/Providers";
 import Navbar from "@/components/Navbar";
 import { ThemeProvider } from "next-themes";
 import Footer from "@/components/Footer";
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from "@vercel/analytics/next";
+import Script from "next/script"; // 1. Import the Script component
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,12 +29,26 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      {/* 2. Add Google Analytics scripts */}
+      <Script
+        src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}
+        strategy="afterInteractive"
+      />
+      <Script id="google-analytics" strategy="afterInteractive">
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', '${process.env.NEXT_PUBLIC_GA_ID}');
+        `}
+      </Script>
+
       <body
         className={`
-          ${geistSans.variable} ${geistMono.variable} antialiased
-          bg-[color:var(--background)] text-[color:var(--foreground)]
-          font-sans
-        `}
+         ${geistSans.variable} ${geistMono.variable} antialiased
+         bg-[color:var(--background)] text-[color:var(--foreground)]
+         font-sans
+       `}
         style={{
           fontFamily:
             "var(--font-geist-sans), var(--font-sans), Arial, Helvetica, sans-serif",
@@ -43,11 +58,10 @@ export default function RootLayout({
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <Navbar />
             <main>
-  {children}
-  <Analytics />
-</main>
-<Footer></Footer>
-
+              {children}
+              <Analytics />
+            </main>
+            <Footer />
           </ThemeProvider>
         </Providers>
       </body>
