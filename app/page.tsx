@@ -6,6 +6,7 @@ import { FeaturesSectionDemo } from "@/components/aceternity/FeaturesSectionDemo
 import BorderMagicButton from "@/components/aceternity/BorderMagicButton";
 import { BorderStaticButton } from "@/components/border-static-btn"; 
 
+
 export default function LandingPage() {
   return (
     <>
