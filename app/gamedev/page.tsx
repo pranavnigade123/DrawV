@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react';
+import BorderMagicButton from "@/components/aceternity/BorderMagicButton";
 // Corrected import for Next.js Link
 import { Zap, Brush, Lightbulb, Code, Gamepad, Users } from 'lucide-react';
 
@@ -39,16 +40,23 @@ export default function GameDevPage() {
             From player to creator. Learn the fundamentals, discover powerful tools, and join a community that builds together. Your adventure starts now.
           </p>
           <div className="mt-8 flex justify-center gap-4">
-            <a href="#start-roadmap" className="px-6 py-3 rounded-full bg-indigo-600 text-white font-semibold shadow-md hover:bg-indigo-700 transition-colors duration-300">
-              Beginner's Roadmap
-            </a>
-          </div>
+  <BorderMagicButton
+    onClick={() => {
+      const targetElement = document.querySelector('#start-roadmap');
+      if (targetElement) {
+        targetElement.scrollIntoView({ behavior: 'smooth' });
+      }
+    }}
+  >
+    Beginner's Roadmap
+  </BorderMagicButton>
+</div>
         </section>
 
         {/* Placeholder for a large, inspiring image */}
         <div className="mb-20 sm:mb-24">
             <img 
-                src="https://placehold.co/1024x576/1e1b4b/93c5fd?text=Game+Engine+Editor" 
+                src="/gd-bg.jpg" 
                 alt="Game Development Environment" 
                 className="w-full h-auto rounded-2xl shadow-2xl object-cover"
             />
@@ -92,19 +100,19 @@ export default function GameDevPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {/* Unity */}
                 <div className="bg-white dark:bg-zinc-800/50 p-6 rounded-2xl border border-zinc-200 dark:border-zinc-700">
-                    <img src="https://placehold.co/400x200/e0e7ff/3730a3?text=Unity" alt="Unity Engine" className="w-full h-auto rounded-lg mb-4"/>
+                    <img src="/unity.png" alt="Unity Engine" className="w-full h-auto rounded-lg mb-4"/>
                     <h4 className="text-xl font-bold">Unity</h4>
                     <p className="text-zinc-600 dark:text-zinc-400 mt-2">The world's most popular engine, especially for mobile and indie games. Versatile for both 2D and 3D. Uses C#.</p>
                 </div>
                 {/* Unreal */}
                 <div className="bg-white dark:bg-zinc-800/50 p-6 rounded-2xl border border-zinc-200 dark:border-zinc-700">
-                    <img src="https://placehold.co/400x200/d1d5db/1f2937?text=Unreal+Engine" alt="Unreal Engine" className="w-full h-auto rounded-lg mb-4"/>
+                    <img src="ue5.png" alt="Unreal Engine" className="w-full h-auto rounded-lg mb-4"/>
                     <h4 className="text-xl font-bold">Unreal Engine</h4>
                     <p className="text-zinc-600 dark:text-zinc-400 mt-2">A powerhouse known for stunning graphics. Great for AAA-style games. Uses C++ and visual Blueprints.</p>
                 </div>
                 {/* Godot */}
                 <div className="bg-white dark:bg-zinc-800/50 p-6 rounded-2xl border border-zinc-200 dark:border-zinc-700">
-                    <img src="https://placehold.co/400x200/ccfbf1/115e59?text=Godot" alt="Godot Engine" className="w-full h-auto rounded-lg mb-4"/>
+                    <img src="/gadot.png" alt="Godot Engine" className="w-full h-auto rounded-lg mb-4"/>
                     <h4 className="text-xl font-bold">Godot Engine</h4>
                     <p className="text-zinc-600 dark:text-zinc-400 mt-2">A rising open-source star. It's lightweight, easy to use, and fantastic for 2D game development.</p>
                 </div>
@@ -126,14 +134,19 @@ export default function GameDevPage() {
                         <li className="flex items-center gap-3"><Zap size={20} /> Network with Industry Professionals</li>
                     </ul>
                      <div className="mt-8">
-                        {/* Replace with your actual community link */}
-                        <a href="/community" className="px-6 py-3 rounded-full bg-white text-indigo-600 font-semibold shadow-md hover:bg-zinc-100 transition-colors duration-300">
-                            Join Our Community
-                        </a>
-                    </div>
+  {/* Replace with your actual community link */}
+  <a 
+    href="https://chat.whatsapp.com/F2qNzLZpdHUEWqcev1Suwh?mode=ac_t" 
+    className="px-6 py-3 rounded-full bg-white text-indigo-600 font-semibold shadow-md hover:bg-zinc-100 transition-colors duration-300"
+    target="_blank" 
+    rel="noopener noreferrer"
+  >
+    Join Our Community
+  </a>
+</div>
                 </div>
                 <div className="hidden md:block">
-                    <img src="https://placehold.co/500x500/4f46e5/ffffff?text=Community" alt="Community Collaboration" className="rounded-xl shadow-lg"/>
+                    <img src="/Bento.png" alt="Community Collaboration" className="rounded-xl shadow-lg"/>
                 </div>
             </div>
         </section>

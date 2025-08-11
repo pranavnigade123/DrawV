@@ -72,7 +72,7 @@ export default function LandingPage() {
         About Us
       </BorderStaticButton>
       <BorderMagicButton
-  onClick={() => window.location.href = "https://docs.google.com/forms/d/e/1FAIpQLScR0fjDlbXETAqZdPx3Eab3spt4EaeZzqPCDJ9sGh6neHML9w/viewform?usp=dialoginstaed"}
+  onClick={() => window.open("https://docs.google.com/forms/d/e/1FAIpQLScR0fjDlbXETAqZdPx3Eab3spt4EaeZzqPCDJ9sGh6neHML9w/viewform?usp=dialoginstaed", "_blank")}
 >
   Register
 </BorderMagicButton>
