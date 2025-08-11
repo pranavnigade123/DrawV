@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Image from "next/image";
 
 interface Map {
   value: string;
@@ -14,10 +13,10 @@ type VetoSelections = {
 
 const MAPS: Map[] = [
   { value: "haven", name: "Haven" },
-  { value: "pearl", name: "Pearl" },
-  { value: "abyss", name: "Abyss" },
-  { value: "fracture", name: "Fracture" },
-  { value: "split", name: "Split" },
+  { value: "ascent", name: "Ascent" },
+  { value: "icebox", name: "Icebox" },
+  { value: "sunset", name: "Sunset" },
+  { value: "corrode", name: "Corrode" },
   { value: "lotus", name: "Lotus" },
   { value: "bind", name: "Bind" },
 ];
@@ -30,28 +29,29 @@ const getBanTeamOrder = (tossWinner: string | null, tossLoser: string | null) =>
 const MapVeto = () => {
   const [teamA, setTeamA] = useState("");
   const [teamB, setTeamB] = useState("");
-  const [tossResult, setTossResult] = useState("");
   const [tossWinner, setTossWinner] = useState<string | null>(null);
   const [tossLoser, setTossLoser] = useState<string | null>(null);
   const [vetoStep, setVetoStep] = useState(0);
   const [vetoSelections, setVetoSelections] = useState<VetoSelections>({});
-  const [finalMap, setFinalMap] = useState<string | null>(null);
+  const [finalMapInfo, setFinalMapInfo] = useState<{name: string, value: string} | null>(null);
   const [teamSides, setTeamSides] = useState<string | null>(null);
 
   const banOrder = getBanTeamOrder(tossWinner, tossLoser);
-  const bansMade = Object.values(vetoSelections).slice(0, 6).filter(Boolean).length;
+  const bansMade = Object.values(vetoSelections).filter(Boolean).length;
   const currentBanIndex = bansMade;
   const currentBanningTeam = banOrder[currentBanIndex] || null;
 
   useEffect(() => {
-    if (bansMade === 6 && vetoSelections[6] === undefined) {
-      const bannedMaps = Object.values(vetoSelections).slice(0, 6);
-      const remainingMap = MAPS.find((map) => !bannedMaps.includes(map.value));
-      if (remainingMap) {
-        setVetoSelections((prev) => ({ ...prev, 6: remainingMap.value }));
+    // When 6 bans are made, automatically determine the decider map
+    if (bansMade === 6) {
+      const bannedMapValues = Object.values(vetoSelections);
+      const remainingMap = MAPS.find((map) => !bannedMapValues.includes(map.value));
+      if (remainingMap && !finalMapInfo) { // Ensure we only set it once
+        setFinalMapInfo({ name: remainingMap.name, value: remainingMap.value });
+        setVetoStep(7); // Move to side selection
       }
     }
-  }, [bansMade, vetoSelections]);
+  }, [bansMade, vetoSelections, finalMapInfo]);
 
   const handleToss = () => {
     if (!teamA.trim() || !teamB.trim()) {
@@ -63,54 +63,32 @@ const MapVeto = () => {
     const loser = teams.find((team) => team !== winner) ?? "";
     setTossWinner(winner);
     setTossLoser(loser);
-    setTossResult(`${winner} wins the toss!`);
     setVetoStep(1);
   };
 
   const handleMapBan = (mapValue: string) => {
-    if (vetoStep < 1 || vetoStep > 6) return;
-    if (currentBanIndex !== vetoStep - 1) {
-      alert("Not the current ban step.");
-      return;
-    }
-    if (!banOrder[currentBanIndex]) {
-      alert("Ban order not defined.");
-      return;
-    }
-    if (Object.values(vetoSelections).includes(mapValue)) {
-      alert("Map is already banned or selected.");
-      return;
-    }
+    if (vetoStep > 6) return;
     setVetoSelections((prev) => ({ ...prev, [currentBanIndex]: mapValue }));
-    if (vetoStep === 6) {
-      setVetoStep(7);
-    } else {
-      setVetoStep(vetoStep + 1);
-    }
+    // Don't increment vetoStep here, let the useEffect handle it
   };
 
   const handleSideSelection = (chosenSide: "Attack" | "Defense") => {
-    if (!tossLoser || !tossWinner || !vetoSelections[6]) {
+    if (!tossLoser || !tossWinner || !finalMapInfo) {
       alert("Decider map or toss info is missing.");
       return;
     }
     const otherSide = chosenSide === "Attack" ? "Defense" : "Attack";
-    const mapName =
-      MAPS.find((map) => map.value === vetoSelections[6])?.name ?? vetoSelections[6];
-
-    setFinalMap(`Final Map: ${mapName}`);
     setTeamSides(`${tossLoser} chooses ${chosenSide}, ${tossWinner} starts ${otherSide}`);
-    setVetoStep(8);
+    setVetoStep(8); // Move to final summary
   };
 
-  const bannedMaps = Object.values(vetoSelections).slice(0, 6);
-  const deciderMap = vetoSelections[6] ?? null;
+  const bannedMaps = Object.values(vetoSelections);
 
   const renderStepContent = () => {
     switch (vetoStep) {
       case 0:
         return (
-          <div className="max-w-xl w-full bg-[#121212] rounded-lg p-8 border border-gray-700 shadow-md mx-auto">
+          <div className="max-w-xl w-full mx-auto">
             <h2 className="text-2xl font-semibold mb-6 text-white text-center">
               Enter Team Names & Toss
             </h2>
@@ -132,7 +110,7 @@ const MapVeto = () => {
             </div>
             <button
               onClick={handleToss}
-              className={`w-full px-6 py-3 bg-[#383bff] rounded font-semibold text-white hover:bg-[#5359ff] transition disabled:opacity-50 disabled:cursor-not-allowed`}
+              className="w-full px-6 py-3 bg-[#383bff] rounded font-semibold text-white hover:bg-[#5359ff] transition disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={!teamA.trim() || !teamB.trim()}
             >
               Toss
@@ -147,35 +125,32 @@ const MapVeto = () => {
       case 5:
       case 6:
         return (
-          <div className="max-w-4xl w-full flex flex-col items-center mx-auto">
-            <h2 className="text-3xl font-bold text-white mb-4 text-center">
-              {currentBanningTeam}&apos;s turn to ban a map ({bansMade + 1}/6)
+          <div className="w-full flex flex-col items-center mx-auto">
+            <h2 className="text-2xl font-semibold text-blue-400 mb-6 text-center">
+                {currentBanningTeam}'s turn to <span className="text-red-500">BAN</span> a map ({bansMade + 1}/6)
             </h2>
-            <p className="mb-6 text-gray-400 text-center">
-              Click on a map below to ban it.
-            </p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-6 w-full px-4">
+            <div className="flex flex-col items-center gap-6 w-full p-4 lg:flex-row lg:justify-center lg:overflow-x-auto">
               {MAPS.map((map) => {
-                const isSelected = Object.values(vetoSelections).includes(map.value);
+                const isSelected = bannedMaps.includes(map.value);
                 return (
                   <button
                     key={map.value}
                     disabled={isSelected}
                     onClick={() => handleMapBan(map.value)}
-                    title={map.name + (isSelected ? " (Taken)" : "")}
-                    className={`relative aspect-[4/3] rounded-lg overflow-hidden shadow-lg transition-transform focus:outline-none focus:ring-4 focus:ring-[#383bff]
-                      ${isSelected ? "grayscale opacity-60 cursor-not-allowed" : "hover:scale-105 cursor-pointer"}
+                    title={map.name + (isSelected ? " (Banned)" : "")}
+                    className={`relative w-36 flex-shrink-0 aspect-[3/4] rounded-lg overflow-hidden shadow-lg transition-transform focus:outline-none focus:ring-4 focus:ring-[#383bff]
+                      ${isSelected ? "cursor-not-allowed" : "hover:scale-105 cursor-pointer"}
                     `}
-                    aria-disabled={isSelected}
                   >
-                    <Image
+                    <img
                       src={`/maps/${map.value}.jpg`}
                       alt={map.name}
-                      fill
-                      sizes="(max-width: 768px) 100vw, 25vw"
-                      className="object-cover"
-                      unoptimized
-                      priority={true}
+                      className="absolute inset-0 w-full h-full object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.onerror = null;
+                        target.src='https://placehold.co/300x400/121212/FFFFFF?text=Map+Image';
+                      }}
                     />
                     <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2">
                       <p className="text-white font-bold text-center text-sm sm:text-base truncate">
@@ -183,9 +158,7 @@ const MapVeto = () => {
                       </p>
                     </div>
                     {isSelected && (
-                      <div className="absolute top-2 right-2 bg-[#383bff] rounded-full w-7 h-7 flex items-center justify-center shadow-md text-white font-bold select-none">
-                        ✓
-                      </div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-red-900/80 to-transparent"></div>
                     )}
                   </button>
                 );
@@ -195,19 +168,11 @@ const MapVeto = () => {
         );
 
       case 7:
-        if (!deciderMap) {
-          return (
-            <p className="text-red-500 font-semibold text-center">Decider map not selected yet.</p>
-          );
-        }
         return (
-          <div className="max-w-md w-full bg-[#121212] p-8 rounded-lg border border-[#383bff] shadow-md text-center mx-auto">
-            <h2 className="text-2xl mb-4 text-white font-semibold">
-              {tossLoser}, choose your starting side for decider map:
+          <div className="max-w-md w-full text-center mx-auto">
+            <h2 className="text-2xl font-semibold text-blue-400 mb-6">
+              {tossLoser}, choose your starting side for <span className="font-bold">{finalMapInfo?.name}</span>
             </h2>
-            <p className="mb-6 font-semibold text-gray-300">{`Decider Map: ${
-              MAPS.find((m) => m.value === deciderMap)?.name ?? deciderMap
-            }`}</p>
             <div className="flex justify-center gap-12">
               {["Attack", "Defense"].map((side) => (
                 <button
@@ -224,40 +189,40 @@ const MapVeto = () => {
 
       case 8:
         return (
-          <div className="max-w-4xl w-full bg-[#121212] rounded-lg p-8 border border-[#969696] shadow-lg mx-auto">
-            <h2 className="text-3xl text-white font-bold mb-6 text-center">
+          <div className="max-w-5xl w-full mx-auto text-left">
+            <h2 className="text-3xl text-white font-bold mb-8 text-center">
               Veto Completed
             </h2>
-            <div className="mb-6">
-              <p className="text-lg font-semibold text-center mb-4">{finalMap}</p>
-              <p className="text-lg text-center text-gray-300">{teamSides}</p>
+            <div className="flex justify-center mb-8">
+                {finalMapInfo && (
+                     <div className="bg-gray-900/50 border border-gray-700 rounded-lg overflow-hidden flex flex-col w-full max-w-xs">
+                        <div className="relative w-full aspect-[4/3]">
+                             <img
+                                src={`/maps/${finalMapInfo.value}.jpg`}
+                                alt={finalMapInfo.name}
+                                className="absolute inset-0 w-full h-full object-cover"
+                                onError={(e) => {
+                                    const target = e.target as HTMLImageElement;
+                                    target.onerror = null; 
+                                    target.src='https://placehold.co/400x300/121212/FFFFFF?text=Map+Image';
+                                }}
+                            />
+                        </div>
+                        <div className="p-2 md:p-3 text-center flex-grow flex flex-col justify-between">
+                            <div>
+                                <p className="text-[10px] sm:text-xs text-blue-400">DECIDER MAP</p>
+                                <h3 className="text-base sm:text-lg font-bold text-white my-1">{finalMapInfo.name}</h3>
+                            </div>
+                            {teamSides && (
+                                <p className="text-gray-300 text-xs sm:text-sm mt-2">{teamSides}</p>
+                            )}
+                        </div>
+                    </div>
+                )}
             </div>
             <div>
-              <h3 className="text-xl font-semibold mb-4 border-b border-[#686868] pb-2 text-gray-400">
-                Banned Maps
-              </h3>
-              <ul className="flex flex-wrap gap-4 justify-center">
-                {bannedMaps.map((val) => {
-                  const mapName = MAPS.find((m) => m.value === val)?.name || val;
-                  return (
-                    <li
-                      key={val}
-                      className="bg-red-500 rounded-lg p-2 px-4 text-white font-semibold shadow"
-                      title="Banned Map"
-                    >
-                      {mapName}
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-            <div className="mt-6">
-              <h3 className="text-xl font-semibold mb-4 border-b border-[#b8b8b8] pb-2 text-gray-400">
-                Decider Map
-              </h3>
-              <p className="text-center text-lg font-semibold text-green-500">
-                {MAPS.find((m) => m.value === deciderMap)?.name || deciderMap}
-              </p>
+              <h3 className="text-center text-lg font-semibold text-gray-400 mb-2">Banned Maps</h3>
+              <p className="text-center text-gray-500">{MAPS.filter(m => bannedMaps.includes(m.value)).map(m => m.name).join(" • ")}</p>
             </div>
           </div>
         );
@@ -268,11 +233,13 @@ const MapVeto = () => {
   };
 
   return (
-    <main className="min-h-screen bg-black flex flex-col items-center justify-center p-6">
-      <h1 className="text-4xl text-white font-bold mb-10 text-center">
+    <main className="min-h-screen bg-black p-4 sm:p-6 pt-24 flex flex-col items-center">
+      <h1 className="text-4xl font-bold text-white mb-10 text-center select-none">
         Best of 1 Map Veto
       </h1>
-      <div className="w-full max-w-7xl">{renderStepContent()}</div>
+      <div className="w-full max-w-7xl rounded-xl border border-gray-700 bg-[#121212]/50 p-6 sm:p-8 min-h-[400px] flex items-center justify-center">
+        {renderStepContent()}
+      </div>
     </main>
   );
 };

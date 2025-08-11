@@ -1,7 +1,8 @@
 export default function TournamentsListPage() {
   // Placeholder content — replace with real tournament cards/list when ready!
   return (
-    <main className="max-w-3xl mx-auto py-12 px-4">
+    // MODIFIED: Changed py-12 to pt-28 and pb-12 to add space at the top
+    <main className="max-w-3xl mx-auto pt-28 pb-12 px-4">
       <h1 className="text-3xl font-bold mb-4 text-indigo-700">Tournaments</h1>
       <p className="mb-6 text-zinc-600 dark:text-zinc-300">
         Browse upcoming and ongoing tournaments. Join events, see details and live brackets!
