@@ -162,10 +162,11 @@ export default function AboutPage() {
             <h2 className="text-left font-extrabold text-3xl sm:text-4xl tracking-tight mb-6 text-white">
               What is <ColourfulText text="DRAW V" colorTheme="blue" />?
             </h2>
-            <p className="text-gray-300 text-base leading-relaxed">
-              Draw V was born from the spark of a simple dream — a few passionate gamers and creators who dared to believe in building something unique, together. What started as casual conversations turned into bold plans. From hosting friendly tournaments and late-night strategies to slowly finding our place in the collegiate eSports community, every step taught us something.<br /><br />
-              We didn’t begin as champions. We began as believers — learning, falling, rising, and most importantly, never stopping. Our strength lies not just in gameplay, but in our unity, creativity, and will to grow. Today, Draw V stands as a team, a family, and a movement — constantly evolving and empowering.
-            </p>
+            <p className="text-gray-300 text-base leading-relaxed text-justify">
+    Here in Pune, Draw V was born from the spark of a simple dream—a few passionate gamers and gaming content creators who dared to believe in building a unique Indian gaming community together. What started as casual conversations on Discord about competitive gaming and scrims turned into bold plans for our future as a professional eSports team. From hosting local esports tournaments for games like [Your Main Game, e.g. Valorant] and live streaming our late-night strategy sessions, to slowly finding our place in the collegiate esports circuit of Maharashtra, every step has taught us something.
+    <br /><br />
+    We didn’t begin as champions. We began as believers—learning, falling, rising, and most importantly, never stopping. The strength of our eSports organization lies not just in high-level gameplay, but in our unity, creativity, and a shared will to build legitimate gaming careers. Today, Draw V stands as a competitive team, a supportive gaming family, and a grassroots movement. We are constantly evolving, empowering the next generation of esports athletes from Pune and beyond, and building a powerful presence in the Indian esports ecosystem.
+</p>
           </section>
           <div className="flex items-center justify-center p-6">
   <img src="/logo-dark.png" alt="Draw V Logo" className="h-24 w-auto hidden md:block" />
@@ -175,13 +176,13 @@ export default function AboutPage() {
         {/* Bottom Row: Innovation Hub */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
           <div className="flex items-center justify-center p-6">
-            <img src="/IH-logo.jpg" alt="Innovation Hub Logo" className="h-34 w-auto" />
+            <img src="/ih-logo.png" alt="Innovation Hub Logo" className="h-34 w-auto" />
           </div>
           <section className="flex flex-col justify-center p-6 ">
             <h2 className="text-left font-extrabold text-3xl sm:text-4xl tracking-tight mb-6 text-white">
               What is <ColourfulText text="Innovation Hub" colorTheme="redYellow" />?
             </h2>
-            <p className="text-gray-300 text-base leading-relaxed">
+            <p className="text-gray-300 text-base leading-relaxed text-justify">
               The Innovation Hub at MIT-WPU is the official Student Innovation Council, fueled by curiosity and collaboration. It cultivates a culture of innovation by equipping students with practical skills through workshops, hackathons, and mentorship in technology, design, and entrepreneurship. With a diverse team and strong community, it drives impactful projects, national wins, and research publications. The Hub supports students’ journeys from ideation to execution, bridging gaps in confidence and career readiness to shape future leaders and changemakers.
             </p>
           </section>
