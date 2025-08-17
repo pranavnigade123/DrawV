@@ -1,36 +1,31 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+DRAW V — Esports Management Platform
 
-## Getting Started
+Proprietary — Confidential. This repository contains confidential code for [Club Name]. Access is restricted to authorized members. Do not copy, distribute, or disclose without written permission.
 
-First, run the development server:
+Overview
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+A secure esports management platform for teams, players, and match operations, built with Next.js and a MongoDB-backed API, with a focus on clean UX and admin workflows.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Key Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Role-based access control (RBAC) with authenticated admin dashboard.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Team and player management (profiles, stats, permissions).
 
-## Learn More
+Match lifecycle: create, schedule, veto workflow, record results.
 
-To learn more about Next.js, take a look at the following resources:
+Optimized asset handling for maps and UI performance.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Responsive UI with accessible components and subtle animations.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Tech Stack
 
-## Deploy on Vercel
+Frontend: Next.js (React), TypeScript (if applicable), CSS Modules/Tailwind.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Backend: Next.js API routes or dedicated server (confirm).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Database: MongoDB Atlas via Mongoose/official driver.
+
+Auth: NextAuth/Auth.js or custom JWT provider (confirm).
+
+Deployment: Vercel with environment-scoped configs.

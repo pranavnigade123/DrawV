@@ -149,7 +149,7 @@ export default function Navbar() {
       <div className="hidden sm:flex items-center gap-2">
         {status === 'authenticated' && session?.user?.name && (
           <Link
-            href={getDashboardLink()}
+            href="/dashboard"
             className={`
               hidden sm:inline font-semibold mr-1 px-2
               ${resolvedTheme === 'dark' ? 'text-white' : 'text-[color:var(--primary)]'}
