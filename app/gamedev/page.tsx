@@ -112,7 +112,7 @@ export default function GameDevPage() {
                 </div>
                 {/* Godot */}
                 <div className="bg-white dark:bg-zinc-800/50 p-6 rounded-2xl border border-zinc-200 dark:border-zinc-700">
-                    <img src="/gadot.png" alt="Godot Engine" className="w-full h-auto rounded-lg mb-4"/>
+                    <img src="/gadot1.png" alt="Godot Engine" className="w-full h-auto rounded-lg mb-4"/>
                     <h4 className="text-xl font-bold">Godot Engine</h4>
                     <p className="text-zinc-600 dark:text-zinc-400 mt-2">A rising open-source star. It's lightweight, easy to use, and fantastic for 2D game development.</p>
                 </div>
