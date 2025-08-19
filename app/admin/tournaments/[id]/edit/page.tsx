@@ -72,16 +72,14 @@ function Card({
   );
 }
 
-export default async function EditTournamentPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default async function EditTournamentPage(props: { params: Promise<{ id: string }> }) {
+  const { id } = await props.params;
+
   const session = await getServerSession(authOptions);
   if (!session?.user?.role || session.user.role !== "admin") redirect("/");
 
   await connectDB();
-  const t = await Tournament.findById(params.id).lean();
+  const t = await Tournament.findById(id).lean();
 
   if (!t) {
     redirect("/admin/tournaments?deleted=1");
@@ -89,6 +87,7 @@ export default async function EditTournamentPage({
 
   return (
     <>
+      {/* Top admin navbar */}
       <AdminToolbar title="Edit Tournament" />
 
       <div className="mx-auto max-w-5xl space-y-5 px-3 md:px-0 pb-10">
@@ -101,21 +100,19 @@ export default async function EditTournamentPage({
               Update tournament details and set status manually.
             </p>
           </div>
-          {/* Right side spacer to balance layout without a back button */}
+          {/* Spacer to balance header since we removed the back link */}
           <div className="w-24" />
         </div>
 
         <form
           action={async (formData) => {
             "use server";
-            await updateTournament(params.id, formData);
+            await updateTournament(id, formData);
           }}
           className="space-y-5"
         >
-          <Card
-            title="Core details"
-            description="Name, game, and basic configuration."
-          >
+          {/* Core details */}
+          <Card title="Core details" description="Name, game, and basic configuration.">
             <Field label="Name" htmlFor="name" required>
               <input
                 id="name"
@@ -166,6 +163,7 @@ export default async function EditTournamentPage({
             </Field>
           </Card>
 
+          {/* Timeline */}
           <Card
             title="Timeline"
             description="Registration and event dates. Close and end are saved as end-of-day."
@@ -175,27 +173,17 @@ export default async function EditTournamentPage({
                 id="registrationOpenAt"
                 type="date"
                 name="registrationOpenAt"
-                defaultValue={(() => {
-                  const d = (t as any).registrationOpenAt;
-                  return d ? toInputDate(d) : "";
-                })()}
+                defaultValue={toInputDate((t as any).registrationOpenAt)}
                 className="w-full rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500/40"
               />
             </Field>
 
-            <Field
-              label="Registration close"
-              htmlFor="registrationCloseAt"
-              help="Inclusive of the whole day."
-            >
+            <Field label="Registration close" htmlFor="registrationCloseAt" help="Inclusive of the whole day.">
               <input
                 id="registrationCloseAt"
                 type="date"
                 name="registrationCloseAt"
-                defaultValue={(() => {
-                  const d = (t as any).registrationCloseAt;
-                  return d ? toInputDate(d) : "";
-                })()}
+                defaultValue={toInputDate((t as any).registrationCloseAt)}
                 className="w-full rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500/40"
               />
             </Field>
@@ -205,10 +193,7 @@ export default async function EditTournamentPage({
                 id="startDate"
                 type="date"
                 name="startDate"
-                defaultValue={(() => {
-                  const d = (t as any).startDate;
-                  return d ? toInputDate(d) : "";
-                })()}
+                defaultValue={toInputDate((t as any).startDate)}
                 className="w-full rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500/40"
               />
             </Field>
@@ -218,15 +203,13 @@ export default async function EditTournamentPage({
                 id="endDate"
                 type="date"
                 name="endDate"
-                defaultValue={(() => {
-                  const d = (t as any).endDate;
-                  return d ? toInputDate(d) : "";
-                })()}
+                defaultValue={toInputDate((t as any).endDate)}
                 className="w-full rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500/40"
               />
             </Field>
           </Card>
 
+          {/* Details */}
           <Card title="Details" description="Optional details for participants.">
             <Field label="Max participants" htmlFor="maxParticipants" help="Leave empty for unlimited.">
               <input
@@ -278,6 +261,7 @@ export default async function EditTournamentPage({
             </div>
           </Card>
 
+          {/* Status */}
           <Card title="Status" description="Manual status only. Change as the tournament progresses.">
             <div className="md:col-span-2">
               <Field label="Status (manual)" htmlFor="status">
@@ -296,6 +280,7 @@ export default async function EditTournamentPage({
             </div>
           </Card>
 
+          {/* Footer actions */}
           <div className="sticky bottom-0 z-10 -mx-3 md:mx-0 bg-gradient-to-t from-white/90 dark:from-zinc-950/90 to-transparent pt-4">
             <div className="rounded-xl border border-zinc-200/70 dark:border-zinc-800/70 bg-white/70 dark:bg-zinc-900/60 p-3 flex items-center justify-end gap-2">
               <button
