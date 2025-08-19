@@ -32,8 +32,8 @@ export default function Navbar() {
   const handleMenuToggle = () => setIsMenuOpen(!isMenuOpen)
   const closeMenu = () => setIsMenuOpen(false)
 
-  const isAdmin =
-    status === 'authenticated' && (session as any)?.user?.role === 'admin'
+  const isAuthed = status === 'authenticated'
+  const isAdmin = isAuthed && (session as any)?.user?.role === 'admin'
 
   return (
     <nav
@@ -132,9 +132,9 @@ export default function Navbar() {
         </Link>
       </div>
 
-      {/* Auth/profile - Desktop (no name; only Admin switch + auth buttons) */}
+      {/* Auth/profile - Desktop (no name) */}
       <div className="hidden sm:flex items-center gap-2">
-        {/* Admin entry (desktop only) */}
+        {/* Admin switch for admins */}
         {isAdmin && (
           <Link
             href="/admin/dashboard"
@@ -151,7 +151,24 @@ export default function Navbar() {
           </Link>
         )}
 
-        {status === 'authenticated' ? (
+        {/* User dashboard for authenticated non-admins */}
+        {isAuthed && !isAdmin && (
+          <Link
+            href="/dashboard"
+            className="
+              hidden sm:inline px-3 py-1 rounded-lg
+              border border-[color:var(--primary)]/40
+              text-sm
+              hover:bg-[color:var(--background)]/60
+              transition
+            "
+            aria-label="Open dashboard"
+          >
+            Dashboard
+          </Link>
+        )}
+
+        {isAuthed ? (
           <button
             onClick={() => signOut({ callbackUrl: '/' })}
             className="
@@ -226,7 +243,7 @@ export default function Navbar() {
             About Us
           </Link>
 
-          {/* Mobile Dashboard link — only for admins, points to /admin/dashboard */}
+          {/* Mobile: show the right dashboard link */}
           {isAdmin && (
             <Link
               href="/admin/dashboard"
@@ -236,8 +253,17 @@ export default function Navbar() {
               Dashboard
             </Link>
           )}
+          {isAuthed && !isAdmin && (
+            <Link
+              href="/dashboard"
+              className="py-2 font-semibold"
+              onClick={closeMenu}
+            >
+              Dashboard
+            </Link>
+          )}
 
-          {status === 'authenticated' ? (
+          {isAuthed ? (
             <button
               onClick={() => {
                 signOut({ callbackUrl: '/' })
