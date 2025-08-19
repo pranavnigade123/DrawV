@@ -4,8 +4,8 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { connectDB } from "@/lib/db";
 import Tournament from "@/lib/models/Tournament";
-import { toSlug } from "@/lib/slug";
 import { ensureAdmin } from "@/lib/authz";
+import { toSlug } from "@/lib/slug";
 import { createTournamentSchema } from "./_schemas";
 
 // Normalize a date to end-of-day (23:59:59.999)
@@ -16,6 +16,7 @@ function toEndOfDay(d: Date | null): Date | null {
   return nd;
 }
 
+// CREATE
 export async function createTournament(formData: FormData): Promise<void> {
   const session = await ensureAdmin();
 
@@ -54,7 +55,6 @@ export async function createTournament(formData: FormData): Promise<void> {
     description,
   } = parsed.data;
 
-  // Normalize close/end to end-of-day
   const normRegistrationOpenAt = registrationOpenAt || null;
   const normRegistrationCloseAt = toEndOfDay(registrationCloseAt || null);
   const normStartDate = startDate || null;
@@ -100,6 +100,7 @@ export async function createTournament(formData: FormData): Promise<void> {
   redirect("/admin/tournaments?created=1");
 }
 
+// UPDATE
 export async function updateTournament(id: string, formData: FormData): Promise<void> {
   const session = await ensureAdmin();
 
@@ -119,13 +120,11 @@ export async function updateTournament(id: string, formData: FormData): Promise<
     status: formData.get("status")?.toString() ?? "draft",
   };
 
-  // Validate status
   const allowed = new Set(["draft", "open", "ongoing", "completed"]);
   if (!allowed.has(raw.status)) {
     throw new Error("Invalid status");
   }
 
-  // Validate/parse the rest with your Zod schema
   const parsed = createTournamentSchema.safeParse(raw);
   if (!parsed.success) {
     throw new Error(parsed.error.issues[0]?.message || "Invalid input");
@@ -146,7 +145,6 @@ export async function updateTournament(id: string, formData: FormData): Promise<
     description,
   } = parsed.data;
 
-  // Normalize close/end to end-of-day
   const normRegistrationOpenAt = registrationOpenAt || null;
   const normRegistrationCloseAt = toEndOfDay(registrationCloseAt || null);
   const normStartDate = startDate || null;
@@ -177,4 +175,52 @@ export async function updateTournament(id: string, formData: FormData): Promise<
   revalidatePath("/admin/tournaments");
   revalidatePath(`/admin/tournaments/${id}/edit`);
   redirect("/admin/tournaments?updated=1");
+}
+
+// ARCHIVE: soft-hide (reversible)
+export async function archiveTournament(id: string): Promise<void> {
+  const session = await ensureAdmin();
+  await connectDB();
+
+  await Tournament.findByIdAndUpdate(
+    id,
+    { archivedAt: new Date() },
+    { new: false }
+  );
+
+  revalidatePath("/admin/tournaments");
+  revalidatePath("/admin/tournaments/archived");
+  redirect("/admin/tournaments?archived=1");
+}
+
+// RESTORE: bring back to active list
+export async function restoreTournament(id: string): Promise<void> {
+  const session = await ensureAdmin();
+  await connectDB();
+
+  await Tournament.findByIdAndUpdate(
+    id,
+    { archivedAt: null },
+    { new: false }
+  );
+
+  revalidatePath("/admin/tournaments");
+  revalidatePath("/admin/tournaments/archived");
+  redirect("/admin/tournaments/archived?restored=1");
+}
+
+// DELETE: permanent removal
+export async function deleteTournament(id: string): Promise<void> {
+  const session = await ensureAdmin();
+  await connectDB();
+
+  // Optional: enforce archive-first
+  // const t = await Tournament.findById(id).select("archivedAt").lean();
+  // if (t && t.archivedAt == null) throw new Error("Archive first, then delete.");
+
+  await Tournament.findByIdAndDelete(id);
+
+  revalidatePath("/admin/tournaments");
+  revalidatePath("/admin/tournaments/archived");
+  redirect("/admin/tournaments/archived?deleted=1");
 }

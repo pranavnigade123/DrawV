@@ -1,19 +1,11 @@
+// app/admin/tournaments/page.tsx
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import AdminToolbar from "@/app/admin/admin-ui/AdminToolbar";
 import { connectDB } from "@/lib/db";
 import Tournament from "@/lib/models/Tournament";
-
-type Search = {
-  page?: string;
-  created?: string;
-  updated?: string;
-  archived?: string;
-  restored?: string;
-  deleted?: string;
-};
+import AdminToolbar from "@/app/admin/admin-ui/AdminToolbar";
 
 const PAGE_SIZE = 20;
 
@@ -38,16 +30,24 @@ function formatRange(start?: Date | null, end?: Date | null) {
   return s !== "—" ? s : e;
 }
 
-export default async function ManageTournamentsPage({
-  searchParams,
-}: {
-  searchParams: Search;
+export default async function TournamentsManagePage(props: {
+  searchParams: Promise<{ page?: string; created?: string; updated?: string; archived?: string }>;
 }) {
+  const sp = await props.searchParams;
+
+  const page = Math.max(parseInt(sp.page || "1", 10) || 1, 1);
+  const skip = (page - 1) * PAGE_SIZE;
+
+  const banner = sp.created
+    ? "Tournament created."
+    : sp.updated
+    ? "Tournament updated successfully."
+    : sp.archived
+    ? "Tournament archived."
+    : null;
+
   const session = await getServerSession(authOptions);
   if (!session?.user?.role || session.user.role !== "admin") redirect("/");
-
-  const page = Math.max(parseInt(searchParams.page || "1", 10) || 1, 1);
-  const skip = (page - 1) * PAGE_SIZE;
 
   await connectDB();
 
@@ -64,19 +64,6 @@ export default async function ManageTournamentsPage({
   ]);
 
   const totalPages = Math.max(Math.ceil(total / PAGE_SIZE), 1);
-
-  const banner =
-    searchParams.created
-      ? "Tournament created successfully."
-      : searchParams.updated
-      ? "Tournament updated successfully."
-      : searchParams.archived
-      ? "Tournament archived."
-      : searchParams.restored
-      ? "Tournament restored."
-      : searchParams.deleted
-      ? "Tournament deleted."
-      : null;
 
   return (
     <>
@@ -98,16 +85,7 @@ export default async function ManageTournamentsPage({
         </div>
 
         {items.length === 0 ? (
-          <div className="px-4 py-6 text-sm text-zinc-500">
-            No tournaments yet.{" "}
-            <Link
-              href="/admin/tournaments/create"
-              className="text-indigo-600 hover:underline"
-            >
-              Create one
-            </Link>
-            .
-          </div>
+          <div className="px-4 py-6 text-sm text-zinc-500">No tournaments found.</div>
         ) : (
           <ul className="divide-y divide-zinc-200/70 dark:divide-zinc-800/70">
             {items.map((t: any) => (
@@ -125,9 +103,7 @@ export default async function ManageTournamentsPage({
                       {t.name}
                     </Link>
                   </div>
-                  <div className="text-xs text-zinc-500">
-                    slug: {t.slug || "—"}
-                  </div>
+                  <div className="text-xs text-zinc-500">slug: {t.slug || "—"}</div>
                 </div>
 
                 <div className="col-span-2">{t.game || "—"}</div>
@@ -151,8 +127,7 @@ export default async function ManageTournamentsPage({
 
                 <div className="col-span-2">
                   <div className="text-xs text-zinc-500">
-                    Reg:{" "}
-                    {formatRange(t.registrationOpenAt, t.registrationCloseAt)}
+                    Reg: {formatRange(t.registrationOpenAt, t.registrationCloseAt)}
                   </div>
                   <div className="text-xs text-zinc-500">
                     Event: {formatRange(t.startDate, t.endDate)}
@@ -160,12 +135,31 @@ export default async function ManageTournamentsPage({
                 </div>
 
                 <div className="col-span-1 text-right">
-                  <Link
-                    href={`/admin/tournaments/${t._id.toString()}/edit`}
-                    className="text-indigo-600 hover:underline"
-                  >
-                    Edit
-                  </Link>
+                  <div className="inline-flex items-center gap-3">
+                    <Link
+                      href={`/admin/tournaments/${t._id.toString()}/edit`}
+                      className="text-indigo-600 hover:underline"
+                      title="Edit tournament"
+                    >
+                      Edit
+                    </Link>
+
+                    <form
+                      action={async () => {
+                        "use server";
+                        const { archiveTournament } = await import("./_actions");
+                        await archiveTournament(t._id.toString());
+                      }}
+                    >
+                      <button
+                        type="submit"
+                        className="text-zinc-500 hover:text-amber-600"
+                        title="Archive (hide from active list)"
+                      >
+                        Archive
+                      </button>
+                    </form>
+                  </div>
                 </div>
               </li>
             ))}
@@ -173,7 +167,6 @@ export default async function ManageTournamentsPage({
         )}
       </div>
 
-      {/* Pagination */}
       {totalPages > 1 && (
         <div className="mt-4 flex items-center justify-between text-sm">
           <div className="text-zinc-500">
@@ -193,10 +186,7 @@ export default async function ManageTournamentsPage({
               Prev
             </Link>
             <Link
-              href={`/admin/tournaments?page=${Math.min(
-                page + 1,
-                totalPages
-              )}`}
+              href={`/admin/tournaments?page=${page + 1}`}
               aria-disabled={page === totalPages}
               className={[
                 "px-3 py-1.5 rounded-lg border",
