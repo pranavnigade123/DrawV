@@ -1,9 +1,20 @@
-// app/admin/tournaments/create/page.tsx
+// app/admin/tournaments/[id]/edit/page.tsx
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
 import { redirect } from "next/navigation";
+import { connectDB } from "@/lib/db";
+import Tournament from "@/lib/models/Tournament";
+import { updateTournament } from "../../_actions";
 import AdminToolbar from "@/app/admin/admin-ui/AdminToolbar";
-import { createTournament } from "../_actions";
+
+function toInputDate(d?: Date | null) {
+  if (!d) return "";
+  const nd = new Date(d);
+  const y = nd.getFullYear();
+  const m = String(nd.getMonth() + 1).padStart(2, "0");
+  const day = String(nd.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
 
 function Field({
   label,
@@ -61,41 +72,56 @@ function Card({
   );
 }
 
-export default async function CreateTournamentPage() {
+export default async function EditTournamentPage({
+  params,
+}: {
+  params: { id: string };
+}) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.role || session.user.role !== "admin") redirect("/");
 
+  await connectDB();
+  const t = await Tournament.findById(params.id).lean();
+
+  if (!t) {
+    redirect("/admin/tournaments?deleted=1");
+  }
+
   return (
     <>
-      <AdminToolbar title="Create Tournament" />
+      <AdminToolbar title="Edit Tournament" />
 
       <div className="mx-auto max-w-5xl space-y-5 px-3 md:px-0 pb-10">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
-              New tournament
+              {(t as any).name}
             </h1>
             <p className="text-sm text-zinc-500 dark:text-zinc-400">
-              Fill the details below. Status will start as draft; change later on Edit.
+              Update tournament details and set status manually.
             </p>
           </div>
-          {/* Spacer to balance layout */}
+          {/* Right side spacer to balance layout without a back button */}
           <div className="w-24" />
         </div>
 
         <form
           action={async (formData) => {
             "use server";
-            await createTournament(formData);
+            await updateTournament(params.id, formData);
           }}
           className="space-y-5"
         >
-          <Card title="Core details" description="Name, game, and basic configuration.">
+          <Card
+            title="Core details"
+            description="Name, game, and basic configuration."
+          >
             <Field label="Name" htmlFor="name" required>
               <input
                 id="name"
                 type="text"
                 name="name"
+                defaultValue={(t as any).name}
                 required
                 placeholder="e.g., Symbiosis Valorant Cup 2025"
                 className="w-full rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500/40"
@@ -107,6 +133,7 @@ export default async function CreateTournamentPage() {
                 id="game"
                 type="text"
                 name="game"
+                defaultValue={(t as any).game || ""}
                 placeholder="e.g., Valorant, BGMI, CS2"
                 className="w-full rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500/40"
               />
@@ -116,7 +143,7 @@ export default async function CreateTournamentPage() {
               <select
                 id="format"
                 name="format"
-                defaultValue="single_elim"
+                defaultValue={(t as any).format}
                 className="w-full rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500/40"
               >
                 <option value="single_elim">Single elimination</option>
@@ -130,7 +157,7 @@ export default async function CreateTournamentPage() {
               <select
                 id="entryType"
                 name="entryType"
-                defaultValue="team"
+                defaultValue={(t as any).entryType}
                 className="w-full rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500/40"
               >
                 <option value="team">Team</option>
@@ -148,15 +175,27 @@ export default async function CreateTournamentPage() {
                 id="registrationOpenAt"
                 type="date"
                 name="registrationOpenAt"
+                defaultValue={(() => {
+                  const d = (t as any).registrationOpenAt;
+                  return d ? toInputDate(d) : "";
+                })()}
                 className="w-full rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500/40"
               />
             </Field>
 
-            <Field label="Registration close" htmlFor="registrationCloseAt" help="Inclusive of the whole day.">
+            <Field
+              label="Registration close"
+              htmlFor="registrationCloseAt"
+              help="Inclusive of the whole day."
+            >
               <input
                 id="registrationCloseAt"
                 type="date"
                 name="registrationCloseAt"
+                defaultValue={(() => {
+                  const d = (t as any).registrationCloseAt;
+                  return d ? toInputDate(d) : "";
+                })()}
                 className="w-full rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500/40"
               />
             </Field>
@@ -166,6 +205,10 @@ export default async function CreateTournamentPage() {
                 id="startDate"
                 type="date"
                 name="startDate"
+                defaultValue={(() => {
+                  const d = (t as any).startDate;
+                  return d ? toInputDate(d) : "";
+                })()}
                 className="w-full rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500/40"
               />
             </Field>
@@ -175,6 +218,10 @@ export default async function CreateTournamentPage() {
                 id="endDate"
                 type="date"
                 name="endDate"
+                defaultValue={(() => {
+                  const d = (t as any).endDate;
+                  return d ? toInputDate(d) : "";
+                })()}
                 className="w-full rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500/40"
               />
             </Field>
@@ -187,6 +234,7 @@ export default async function CreateTournamentPage() {
                 type="number"
                 name="maxParticipants"
                 min={1}
+                defaultValue={(t as any).maxParticipants ?? ""}
                 placeholder="e.g., 32"
                 className="w-full rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500/40"
               />
@@ -197,6 +245,7 @@ export default async function CreateTournamentPage() {
                 id="coverImage"
                 type="url"
                 name="coverImage"
+                defaultValue={(t as any).coverImage || ""}
                 placeholder="https://..."
                 className="w-full rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500/40"
               />
@@ -208,6 +257,7 @@ export default async function CreateTournamentPage() {
                   id="rules"
                   name="rules"
                   rows={6}
+                  defaultValue={(t as any).rules || ""}
                   placeholder="Key rules, format, penalties, pauses, etc."
                   className="w-full rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500/40"
                 />
@@ -220,9 +270,28 @@ export default async function CreateTournamentPage() {
                   id="description"
                   name="description"
                   rows={4}
+                  defaultValue={(t as any).description || ""}
                   placeholder="Overview, stream info, contact, etc."
                   className="w-full rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500/40"
                 />
+              </Field>
+            </div>
+          </Card>
+
+          <Card title="Status" description="Manual status only. Change as the tournament progresses.">
+            <div className="md:col-span-2">
+              <Field label="Status (manual)" htmlFor="status">
+                <select
+                  id="status"
+                  name="status"
+                  defaultValue={(t as any).status}
+                  className="w-full md:w-64 rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500/40"
+                >
+                  <option value="draft">Draft</option>
+                  <option value="open">Open</option>
+                  <option value="ongoing">Ongoing</option>
+                  <option value="completed">Completed</option>
+                </select>
               </Field>
             </div>
           </Card>
@@ -233,7 +302,7 @@ export default async function CreateTournamentPage() {
                 type="submit"
                 className="inline-flex items-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50"
               >
-                Create tournament
+                Save changes
               </button>
             </div>
           </div>
