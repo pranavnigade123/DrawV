@@ -4,52 +4,42 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useSession, signOut } from 'next-auth/react'
 import { useTheme } from 'next-themes'
-// React hooks with types
 import { useEffect, useState, useRef } from 'react'
-// Icons from lucide-react
 import { Menu, X, ChevronDown } from 'lucide-react'
 
 export default function Navbar() {
   const { data: session, status } = useSession()
-  const { resolvedTheme, setTheme } = useTheme()
-  
-  // State variables are typed using generics
+  const { resolvedTheme } = useTheme()
+
   const [mounted, setMounted] = useState<boolean>(false)
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false)
   const [isExploreOpen, setIsExploreOpen] = useState<boolean>(false)
 
-  // The ref is typed to expect a DIV element
   const exploreRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => setMounted(true), [])
 
-  // Effect to handle closing the dropdown when clicking outside
   useEffect(() => {
-    // The event parameter is explicitly typed as MouseEvent
     function handleClickOutside(event: MouseEvent) {
       if (exploreRef.current && !exploreRef.current.contains(event.target as Node)) {
         setIsExploreOpen(false)
       }
     }
-    // Bind the event listener
     document.addEventListener('mousedown', handleClickOutside)
-    return () => {
-      // Unbind the event listener on clean up
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [exploreRef])
-
-
-  const getDashboardLink = () => '/';
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   const handleMenuToggle = () => setIsMenuOpen(!isMenuOpen)
   const closeMenu = () => setIsMenuOpen(false)
 
+  const isAdmin =
+    status === 'authenticated' && (session as any)?.user?.role === 'admin'
+
   return (
     <nav
       className="
-        fixed top-6 left-1/2 transform -translate-x-1/2
-        w-[95vw] max-w-6xl
+        fixed top-6 left-1/2 -translate-x-1/2
+        w-[95vw] max-w-4xl
         flex items-center justify-between
         px-6 py-3
         backdrop-blur-2xl
@@ -61,10 +51,11 @@ export default function Navbar() {
         transition-all
       "
       style={{
-        fontFamily: 'var(--font-geist-sans), var(--font-sans), Arial, Helvetica, sans-serif',
+        fontFamily:
+          'var(--font-geist-sans), var(--font-sans), Arial, Helvetica, sans-serif',
       }}
     >
-      {/* Logo */}
+      {/* Logo links to site */}
       <div className="flex items-center pr-3">
         <Link href="/" className="select-none flex items-center" onClick={closeMenu}>
           {mounted && (
@@ -82,19 +73,15 @@ export default function Navbar() {
 
       {/* Main nav links - Desktop */}
       <div className="hidden sm:flex items-center gap-2 sm:gap-4 text-base font-medium">
-        
-        {/* Explore Dropdown Container */}
         <div className="relative" ref={exploreRef}>
           <button
             onClick={() => setIsExploreOpen(!isExploreOpen)}
             className="flex items-center gap-1 px-3 py-1 rounded-lg hover:bg-[color:var(--background)]/60 transition"
           >
             Explore
-            {/* Arrow icon disappears when dropdown is open */}
             {!isExploreOpen && <ChevronDown size={16} />}
           </button>
-          
-          {/* Dropdown Menu */}
+
           {isExploreOpen && (
             <div
               className="
@@ -130,7 +117,7 @@ export default function Navbar() {
             </div>
           )}
         </div>
-        
+
         <Link
           href="/public-tools"
           className="px-3 py-1 rounded-lg hover:bg-[color:var(--background)]/60 transition"
@@ -145,19 +132,22 @@ export default function Navbar() {
         </Link>
       </div>
 
-      {/* Auth/profile - Desktop */}
+      {/* Auth/profile - Desktop (no name; only Admin switch + auth buttons) */}
       <div className="hidden sm:flex items-center gap-2">
-        {status === 'authenticated' && session?.user?.name && (
+        {/* Admin entry (desktop only) */}
+        {isAdmin && (
           <Link
-            href="/dashboard"
-            className={`
-              hidden sm:inline font-semibold mr-1 px-2
-              ${resolvedTheme === 'dark' ? 'text-white' : 'text-[color:var(--primary)]'}
-              cursor-pointer
-            `}
-            aria-label="Go to your dashboard"
+            href="/admin/dashboard"
+            className="
+              hidden sm:inline px-3 py-1 rounded-lg
+              border border-[color:var(--primary)]/60
+              text-sm
+              hover:bg-[color:var(--background)]/60
+              transition
+            "
+            aria-label="Open admin"
           >
-            {session.user.name.split(' ')[0]}
+            Admin
           </Link>
         )}
 
@@ -219,24 +209,39 @@ export default function Navbar() {
             animate-slide-down
           "
         >
-          {/* Replaced single Explore link with individual links for better mobile UX */}
-          <Link href="/tournaments" className="py-2" onClick={closeMenu}>Tournaments</Link>
-          <Link href="/gamedev" className="py-2" onClick={closeMenu}>Game Dev</Link>
-          <Link href="/events" className="py-2" onClick={closeMenu}>Events</Link>
-          
-          <Link href="/public-tools" className="py-2" onClick={closeMenu}>Tools</Link>
-          <Link href="/about" className="py-2" onClick={closeMenu}>About Us</Link>
+          <Link href="/tournaments" className="py-2" onClick={closeMenu}>
+            Tournaments
+          </Link>
+          <Link href="/gamedev" className="py-2" onClick={closeMenu}>
+            Game Dev
+          </Link>
+          <Link href="/events" className="py-2" onClick={closeMenu}>
+            Events
+          </Link>
 
-          {status === 'authenticated' && session?.user?.name && (
-            <Link href={getDashboardLink()} className="py-2 font-semibold" onClick={closeMenu}>
-                Dashboard ({session.user.name.split(' ')[0]})
+          <Link href="/public-tools" className="py-2" onClick={closeMenu}>
+            Tools
+          </Link>
+          <Link href="/about" className="py-2" onClick={closeMenu}>
+            About Us
+          </Link>
+
+          {/* Mobile Dashboard link — only for admins, points to /admin/dashboard */}
+          {isAdmin && (
+            <Link
+              href="/admin/dashboard"
+              className="py-2 font-semibold"
+              onClick={closeMenu}
+            >
+              Dashboard
             </Link>
           )}
+
           {status === 'authenticated' ? (
             <button
               onClick={() => {
-                signOut({ callbackUrl: '/' });
-                closeMenu();
+                signOut({ callbackUrl: '/' })
+                closeMenu()
               }}
               className="px-4 py-2 rounded-lg border border-gray-300 dark:border-white/30 text-left"
             >

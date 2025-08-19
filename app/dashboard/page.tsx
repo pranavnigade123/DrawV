@@ -50,7 +50,6 @@ export default function Dashboard() {
     return null
   }
 
-  // Main player dashboard
   return (
     <main className="min-h-[85vh] max-w-2xl mx-auto py-8 px-2 flex flex-col gap-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
@@ -64,6 +63,23 @@ export default function Dashboard() {
           Sign Out
         </button>
       </div>
+
+      {/* DEBUG: Remove this block after testing */}
+      <pre
+        style={{
+          whiteSpace: 'pre-wrap',
+          fontSize: 12,
+          padding: 8,
+          background: '#0b0b0b',
+          color: '#eaeaea',
+          borderRadius: 8,
+          overflowX: 'auto'
+        }}
+      >
+{JSON.stringify({ status, session }, null, 2)}
+      </pre>
+      {/* END DEBUG */}
+
       <div className="bg-white/90 dark:bg-zinc-900/80 p-6 rounded-xl shadow border border-zinc-200 dark:border-zinc-800">
         <h2 className="font-semibold text-lg mb-2">Dashboard Features</h2>
         <ul className="list-disc list-inside space-y-1 text-zinc-600 dark:text-zinc-300">
