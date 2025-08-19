@@ -20,10 +20,10 @@ interface PickedMap {
 // --- CONSTANTS ---
 const MAPS: Map[] = [
   { value: "haven", name: "Haven" },
-  { value: "pearl", name: "Pearl" },
-  { value: "abyss", name: "Abyss" },
-  { value: "fracture", name: "Fracture" },
-  { value: "split", name: "Split" },
+  { value: "ascent", name: "Ascent" },
+  { value: "icebox", name: "Icebox" },
+  { value: "sunset", name: "Sunset" },
+  { value: "corrode", name: "Corrode" },
   { value: "lotus", name: "Lotus" },
   { value: "bind", name: "Bind" },
 ];
