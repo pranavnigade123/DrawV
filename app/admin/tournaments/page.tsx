@@ -138,7 +138,7 @@ export default async function TournamentsManagePage(props: {
                   <div className="inline-flex items-center gap-3">
                     <Link
                       href={`/admin/tournaments/${t._id.toString()}/edit`}
-                      className="text-indigo-600 hover:underline"
+                      className="text-indigo-600 "
                       title="Edit tournament"
                     >
                       Edit
