@@ -188,7 +188,7 @@ export default function AboutPage() {
             </p>
           </section>
           <div className="flex items-center justify-center p-6">
-            <img src="/logo-dark.png" alt="Draw V Logo" className="h-24 w-auto hidden md:block" />
+            <img src="/DVDark_bg.png" alt="Draw V Logo" className="h-24 w-auto hidden md:block" />
           </div>
         </div>
 

@@ -119,7 +119,7 @@ export const SkeletonOne = () => {
         </p>
         {/* Logo below paragraph */}
         <img
-  src="logo-dark.png"
+  src="DVDark_bg.png"
   alt="Draw V Logo"
   width={160}
   height={160}
