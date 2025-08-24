@@ -93,7 +93,7 @@ const CoinToss = () => {
   return (
     <>
       <style>{coinFlipStyles}</style>
-      <main className="max-w-2xl mx-auto py-16 px-4 flex flex-col items-center text-center">
+      <main className="max-w-2xl mx-auto py-16 px-4 flex flex-col items-center text-center mt-20">
         <h1 className="text-3xl font-bold mb-4 text-indigo-700">Fair Coin Toss</h1>
         <p className="mb-8 text-zinc-600 dark:text-zinc-300">
           Enter team names and click the button for a random toss.

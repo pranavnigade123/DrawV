@@ -86,12 +86,12 @@ export default async function TournamentsPage(props: {
   const totalPages = Math.max(Math.ceil(total / PAGE_SIZE), 1);
 
   return (
-    <div className="mx-auto max-w-6xl px-3 md:px-0 py-6 md:py-8">
+    <div className="mx-auto max-w-6xl px-3 md:px-0 py-6 md:py-8 mt-30">
       <div className="mb-5">
         <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
           Tournaments
         </h1>
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">
+        <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-8">
           Browse open, ongoing, and recently completed tournaments.
         </p>
       </div>
@@ -101,7 +101,7 @@ export default async function TournamentsPage(props: {
           No tournaments available right now.
         </div>
       ) : (
-        <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
           {paged.map((t: any) => (
             <li
               key={t.slug}

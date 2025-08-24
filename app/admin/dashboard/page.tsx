@@ -184,7 +184,7 @@ export default async function AdminOverviewPage() {
         <div className="xl:col-span-1">
           {/* Profile widget */}
           <div className="rounded-2xl border border-zinc-200/70 dark:border-zinc-800/70 bg-white/70 dark:bg-zinc-900/60 p-5">
-            <div className="text-sm text-zinc-500">Good Morning</div>
+            <div className="text-sm text-zinc-500">Welcome</div>
             <div className="mt-1 font-semibold text-lg">{firstName} 👋</div>
             <div className="mt-2 text-xs text-zinc-500">
               Continue building great events today.

@@ -60,7 +60,7 @@ export default function Navbar() {
         <Link href="/" className="select-none flex items-center" onClick={closeMenu}>
           {mounted && (
             <Image
-              src={resolvedTheme === 'dark' ? '/logo-dark.png' : '/logo-light.png'}
+              src={resolvedTheme === 'dark' ? '/DVDark_bg.png' : '/logo-light.png'}
               alt="Draw V Logo"
               width={96}
               height={96}
