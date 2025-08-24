@@ -182,9 +182,7 @@ export default function AboutPage() {
               What is <ColourfulText text="DRAW V" colorTheme="blue" />?
             </h2>
             <p className="text-gray-300 text-base leading-relaxed text-justify">
-              Here in Pune, Draw V was born from the spark of a simple dream—a few passionate gamers and gaming content creators who dared to believe in building a unique Indian gaming community together. What started as casual conversations on Discord about competitive gaming and scrims turned into bold plans for our future as a professional eSports team. From hosting local esports tournaments for games like [Your Main Game, e.g. Valorant] and live streaming our late-night strategy sessions, to slowly finding our place in the collegiate esports circuit of Maharashtra, every step has taught us something.
-              <br /><br />
-              We didn’t begin as champions. We began as believers—learning, falling, rising, and most importantly, never stopping. The strength of our eSports organization lies not just in high-level gameplay, but in our unity, creativity, and a shared will to build legitimate gaming careers. Today, Draw V stands as a competitive team, a supportive gaming family, and a grassroots movement. We are constantly evolving, empowering the next generation of esports athletes from Pune and beyond, and building a powerful presence in the Indian esports ecosystem.
+             Draw Five is the Game Tech Community of the Innovation Hub, dedicated to empowering the next generation of gaming professionals. We focus on building technical expertise and creative skills across game tech and tool development, esports and streaming, technical operations, design and web development, and community management. By combining innovation with hands-on learning, Draw Five equips aspiring creators, developers, and event professionals with the knowledge and experience needed to thrive in the fast-evolving gaming industry.
             </p>
           </section>
           <div className="flex items-center justify-center p-6">
