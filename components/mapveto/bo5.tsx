@@ -214,7 +214,7 @@ const MapVetoBo5 = () => {
             <h2 className="text-3xl text-white font-bold mb-8 text-center">
                 Veto Completed
             </h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-4 mb-8">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-4 mb-6">
                 {pickedMaps.map((pick, i) => (
                     <div key={i} className="bg-gray-900/50 border border-gray-700 rounded-lg overflow-hidden flex flex-col">
                         <div className="relative w-full aspect-[4/3]">

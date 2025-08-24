@@ -3,7 +3,7 @@
 import { ColourfulText } from "@/components/aceternity/colourful-text";
 import { FeaturesSectionDemo } from "@/components/aceternity/FeaturesSectionDemo";
 
-// Main team (first 6)
+// Main team (8 members -> 4x4 on large screens)
 const teamPins = [
   { 
     title: "Pin One", 
@@ -30,7 +30,7 @@ const teamPins = [
     title: "Pin Four", 
     img: "/saket.png", 
     name: "Saket Raja", 
-    designation: "Design Head",
+    designation: "General Secretary",
     linkedin: "https://www.linkedin.com/in/saketraja?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app/"
   },
   { 
@@ -41,12 +41,27 @@ const teamPins = [
     linkedin: "https://www.linkedin.com/in/pranav-nigade?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app/"
   },
   { 
+    title: "Pin Ten",
+    img: "/niyati.jpg",
+    name: "Niyati Mahawar",
+    designation: "Marketing Head",
+    linkedin: "https://www.linkedin.com/in/niyati-mahawar-601924310/"
+  },
+  { 
+    title: "Pin Nine",
+    img: "/Sanket.png",
+    name: "Sanket Kharche",
+    designation: "Design Head",
+    linkedin: "https://www.linkedin.com/in/sanket-kharche-67231b256/"
+  },
+  { 
     title: "Pin Eight", 
     img: "/Viraj.jpg", 
     name: "Viraj Pawar", 
     designation: "Design Mentor",
     linkedin: "https://www.linkedin.com/in/virajnpawar/"
   },
+  
 ];
 
 // Innovation hub team
@@ -76,7 +91,7 @@ type Pin = {
 };
 
 function TeamCard({ pin }: { pin: Pin }) {
-   const card = (
+  const card = (
     <div className="bg-transparent border border-white rounded-lg overflow-hidden flex flex-col items-center p-3 sm:p-4 mb-4 transition-transform duration-300 hover:scale-105 max-w-[200px] mx-auto">
       <div className="w-full aspect-square overflow-hidden rounded-md mb-2 sm:mb-3">
         <img
@@ -85,28 +100,32 @@ function TeamCard({ pin }: { pin: Pin }) {
           className="w-full h-full object-cover"
         />
       </div>
-      {/* Fixed height for consistent cards */}
-      <div style={{ minHeight: "3rem", width: "100%" }}>
-        <h3 className="text-base sm:text-lg font-bold text-center text-white break-words">{pin.name}</h3>
+
+      {/* Name */}
+      <div style={{ minHeight: "2.25rem", width: "100%" }}>
+        <h3 className="text-base sm:text-lg font-bold text-center text-white break-words leading-tight mb-1">
+          {pin.name}
+        </h3>
       </div>
-      <div style={{ minHeight: "2rem", width: "100%" }}>
-        <p className="text-xs sm:text-sm text-gray-300 text-center break-words">{pin.designation}</p>
+
+      {/* Designation */}
+      <div style={{ minHeight: "1.5rem", width: "100%" }}>
+        <p className="text-xs sm:text-sm text-gray-300 text-center break-words leading-tight mt-0">
+          {pin.designation}
+        </p>
       </div>
     </div>
   );
+
   return pin.linkedin ? (
-    <a
-      href={pin.linkedin}
-      target="_blank"
-      rel="noopener noreferrer"
-      style={{ textDecoration: "none" }}
-    >
+    <a href={pin.linkedin} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
       {card}
     </a>
   ) : (
     <div>{card}</div>
   );
 }
+
 
 export default function AboutPage() {
   return (
@@ -124,7 +143,7 @@ export default function AboutPage() {
         }}
       >
         <video
-          src="/dv-animation.mp4"
+          src="/logo-animation.mp4"
           autoPlay
           muted
           loop
@@ -163,16 +182,16 @@ export default function AboutPage() {
               What is <ColourfulText text="DRAW V" colorTheme="blue" />?
             </h2>
             <p className="text-gray-300 text-base leading-relaxed text-justify">
-    Here in Pune, Draw V was born from the spark of a simple dream—a few passionate gamers and gaming content creators who dared to believe in building a unique Indian gaming community together. What started as casual conversations on Discord about competitive gaming and scrims turned into bold plans for our future as a professional eSports team. From hosting local esports tournaments for games like [Your Main Game, e.g. Valorant] and live streaming our late-night strategy sessions, to slowly finding our place in the collegiate esports circuit of Maharashtra, every step has taught us something.
-    <br /><br />
-    We didn’t begin as champions. We began as believers—learning, falling, rising, and most importantly, never stopping. The strength of our eSports organization lies not just in high-level gameplay, but in our unity, creativity, and a shared will to build legitimate gaming careers. Today, Draw V stands as a competitive team, a supportive gaming family, and a grassroots movement. We are constantly evolving, empowering the next generation of esports athletes from Pune and beyond, and building a powerful presence in the Indian esports ecosystem.
-</p>
+              Here in Pune, Draw V was born from the spark of a simple dream—a few passionate gamers and gaming content creators who dared to believe in building a unique Indian gaming community together. What started as casual conversations on Discord about competitive gaming and scrims turned into bold plans for our future as a professional eSports team. From hosting local esports tournaments for games like [Your Main Game, e.g. Valorant] and live streaming our late-night strategy sessions, to slowly finding our place in the collegiate esports circuit of Maharashtra, every step has taught us something.
+              <br /><br />
+              We didn’t begin as champions. We began as believers—learning, falling, rising, and most importantly, never stopping. The strength of our eSports organization lies not just in high-level gameplay, but in our unity, creativity, and a shared will to build legitimate gaming careers. Today, Draw V stands as a competitive team, a supportive gaming family, and a grassroots movement. We are constantly evolving, empowering the next generation of esports athletes from Pune and beyond, and building a powerful presence in the Indian esports ecosystem.
+            </p>
           </section>
           <div className="flex items-center justify-center p-6">
-  <img src="/logo-dark.png" alt="Draw V Logo" className="h-24 w-auto hidden md:block" />
-</div>
-
+            <img src="/logo-dark.png" alt="Draw V Logo" className="h-24 w-auto hidden md:block" />
+          </div>
         </div>
+
         {/* Bottom Row: Innovation Hub */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
           <div className="flex items-center justify-center p-6">
@@ -194,25 +213,24 @@ export default function AboutPage() {
         <h2 className="text-center text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-12">
           Meet Our Team
         </h2>
-        {/* 3 columns and 2 rows: grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 justify-center">
+
+        {/* 1 col (mobile), 2 cols (sm), 4 cols (lg and up) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 justify-center">
           {teamPins.map((pin, index) => (
             <TeamCard key={index} pin={pin} />
           ))}
         </div>
-        
+
         {/* Innovation Hub section */}
         <h3 className="text-center text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mt-16 mb-8">
-  Innovation Hub
-</h3>
+          Innovation Hub
+        </h3>
 
         <div className="flex flex-col sm:flex-row gap-4 lg:gap-32 justify-center items-center">
-  {innovationPins.map((pin, index) => (
-    <TeamCard key={index} pin={pin} />
-  ))}
-</div>
-
-
+          {innovationPins.map((pin, index) => (
+            <TeamCard key={index} pin={pin} />
+          ))}
+        </div>
       </div>
 
       {/* Features Section */}
