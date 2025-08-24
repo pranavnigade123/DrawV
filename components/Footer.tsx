@@ -1,5 +1,9 @@
-import React from 'react';
+'use client'; // This directive is crucial for using React hooks
+
+import React, { useEffect, useState } from 'react';
 import Link from "next/link";
+import { cn } from "@/lib/utils";
+import { useTheme } from "next-themes";
 
 interface IconProps extends React.SVGProps<SVGSVGElement> {}
 
@@ -60,6 +64,15 @@ const IconBrandWhatsapp: React.FC<IconProps> = (props) => (
 );
 
 export default function Footer() {
+  const [mounted, setMounted] = useState(false);
+  const { resolvedTheme } = useTheme();
+
+  useEffect(() => setMounted(true), []);
+
+  if (!mounted) {
+    return null;
+  }
+  
   const socialLinks = [
     {
       icon: <IconBrandInstagram />,
@@ -84,7 +97,7 @@ export default function Footer() {
     {
       icon: <IconMail />,
       name: "Email",
-      href: "mailto:draw5.esports@gmail.com"  // Changed to mailto: for email link
+      href: "mailto:draw5.esports@gmail.com"
     },
     {
       icon: <IconBrandWhatsapp />,
@@ -94,23 +107,43 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="bg-neutral-950 border-t border-neutral-800 text-neutral-400">
+    <footer className={cn(
+      "border-t text-[color:var(--gray)]",
+      resolvedTheme === "dark" ? "bg-neutral-950 border-neutral-800" : "bg-zinc-100 border-zinc-200"
+    )}>
       <div className="max-w-7xl mx-auto px-8 py-12">
         <div className="flex flex-col sm:flex-row justify-between items-center gap-8">
           {/* Left side: Logo and Copyright */}
           <div className="text-center sm:text-left">
             <Link href="/" className="inline-block mb-4">
               <img
-                src="logo-dark.png"
+                src={resolvedTheme === "dark" ? "logo-dark.png" : "logo-light.png"}
                 alt="Draw V Logo"
                 className="h-8 w-auto"
               />
             </Link>
-            <p className="text-sm text-neutral-500">
+            <p className="text-sm text-[color:var(--gray)]">
               © {new Date().getFullYear()} Draw V. All Rights Reserved.
             </p>
-            <p className="text-sm text-neutral-500">
-              Developed by Pranav & Saket.
+            <p className="text-sm text-[color:var(--gray)]">
+              Developed by{" "}
+              <a
+                href="https://www.linkedin.com/in/pranav-nigade"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-[color:var(--primary)] transition-colors"
+              >
+                Pranav Nigade
+              </a>{" "}
+              &{" "}
+              <a
+                href="https://www.linkedin.com/in/saketraja"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-[color:var(--primary)] transition-colors"
+              >
+                Saket Raja
+              </a>.
             </p>
           </div>
           
@@ -124,7 +157,10 @@ export default function Footer() {
                 aria-label={link.name}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-neutral-500 hover:text-sky-400 transition-colors duration-300"
+                className={cn(
+                  "hover:text-[color:var(--primary)] transition-colors duration-300",
+                  resolvedTheme === "dark" ? "text-neutral-500" : "text-zinc-600"
+                )}
               >
                 {link.icon}
               </a>
