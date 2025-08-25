@@ -77,7 +77,7 @@ export default function Footer() {
     {
       icon: <IconBrandInstagram />,
       name: "Instagram",
-      href: "https://www.instagram.com/drawv.esports?igsh=a3hkNnJqdHFvbmwy&utm_source=qr"
+      href: "https://www.instagram.com/drawfive.esports?igsh=a3hkNnJqdHFvbmwy&utm_source=qr"
     },
     {
       icon: <IconBrandYoutube />,
@@ -108,7 +108,7 @@ export default function Footer() {
 
   return (
     <footer className={cn(
-      "border-t text-[color:var(--gray)]",
+      "border-t text-[color:var(--gray)] mb-0", 
       resolvedTheme === "dark" ? "bg-neutral-950 border-neutral-800" : "bg-zinc-100 border-zinc-200"
     )}>
       <div className="max-w-7xl mx-auto px-8 py-12">
