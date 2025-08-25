@@ -205,7 +205,7 @@ export default function AboutPage() {
         {/* Bottom Row: Innovation Hub */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
           <div className="flex items-center justify-center p-6">
-            <img src="/ih-logo2.png" alt="Innovation Hub Logo" className="h-44 w-auto" />
+            <img src="/ih-logo2.png" alt="Innovation Hub Logo" className="h-36 w-auto" />
           </div>
           <section className="flex flex-col justify-center p-6 ">
             <h2 className="text-left font-extrabold text-3xl sm:text-4xl tracking-tight mb-3 text-white">
