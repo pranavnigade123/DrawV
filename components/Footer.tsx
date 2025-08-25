@@ -77,7 +77,7 @@ export default function Footer() {
     {
       icon: <IconBrandInstagram />,
       name: "Instagram",
-      href: "https://www.instagram.com/drawv.esports?igsh=a3hkNnJqdHFvbmwy&utm_source=qr"
+      href: "https://www.instagram.com/drawfive.esports?igsh=a3hkNnJqdHFvbmwy&utm_source=qr"
     },
     {
       icon: <IconBrandYoutube />,
