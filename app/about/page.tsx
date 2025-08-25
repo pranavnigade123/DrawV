@@ -82,6 +82,18 @@ const innovationPins = [
   },
 ];
 
+// Faculty Mentor team
+const facultyPins = [
+  { 
+    title: "Faculty Mentor", 
+    img: "/nilam.png",  
+    name: "Dr. Nilam Pradhan", 
+    designation: "Faculty Mentor",
+    linkedin: "https://www.linkedin.com/in/nilam-pradhan-b45392a1/" 
+  },
+];
+
+
 type Pin = {
   title: string;
   img: string;
@@ -230,6 +242,18 @@ export default function AboutPage() {
           ))}
         </div>
       </div>
+
+{/* Faculty Mentor section */}
+<h3 className="text-center text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mt-12 mb-8">
+  Faculty Mentor
+</h3>
+
+<div className="flex flex-col sm:flex-row gap-4 lg:gap-32 justify-center items-center">
+  {facultyPins.map((pin, index) => (
+    <TeamCard key={index} pin={pin} />
+  ))}
+</div>
+
 
       {/* Features Section */}
       <div className="px-3 sm:px-6 md:px-8 py-10 w-full max-w-7xl">
