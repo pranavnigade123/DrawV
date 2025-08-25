@@ -10,20 +10,7 @@ export type StatusInputs = {
   now?: Date; // optional injection for testing
 };
 
-/**
- * Computes a tournament's derived status from date windows.
- *
- * Rules (from lowest to highest priority window):
- * - completed: now > endDate
- * - ongoing: startDate <= now <= endDate
- * - open: registrationOpenAt <= now <= registrationCloseAt
- * - draft: otherwise (missing windows or not yet open)
- *
- * Notes:
- * - If only some dates are provided, we fall back gracefully to the best-known state.
- * - If both reg window and event window are present and "now" overlaps both,
- *   event window takes precedence (ongoing/completed) over registration.
- */
+
 export function computeStatus(input: StatusInputs): TournamentStatus {
   const now = input.now ?? new Date();
 

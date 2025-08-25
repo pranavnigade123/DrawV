@@ -176,7 +176,7 @@ export default function AboutPage() {
       {/* About Us Section */}
       <div className="w-full max-w-6xl px-4 pt-20">
         {/* Top Row: DRAW V */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-44">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-40">
           <section className="flex flex-col justify-center p-6 pt-6 pb-2">
             <h2 className="text-left font-extrabold text-3xl sm:text-4xl tracking-tight mb-6 text-white">
               What is <ColourfulText text="DRAW V" colorTheme="blue" />?
@@ -193,10 +193,10 @@ export default function AboutPage() {
         {/* Bottom Row: Innovation Hub */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
           <div className="flex items-center justify-center p-6">
-            <img src="/ih-logo1.png" alt="Innovation Hub Logo" className="h-64 w-auto" />
+            <img src="/ih-logo2.png" alt="Innovation Hub Logo" className="h-44 w-auto" />
           </div>
           <section className="flex flex-col justify-center p-6 ">
-            <h2 className="text-left font-extrabold text-3xl sm:text-4xl tracking-tight mb-6 text-white">
+            <h2 className="text-left font-extrabold text-3xl sm:text-4xl tracking-tight mb-3 text-white">
               What is <ColourfulText text="Innovation Hub" colorTheme="redYellow" />?
             </h2>
             <p className="text-gray-300 text-base leading-relaxed text-justify">
@@ -207,7 +207,7 @@ export default function AboutPage() {
       </div>
 
       {/* Team Section */}
-      <div className="w-full max-w-6xl px-6 md:px-8 py-16 t-10">
+      <div className="w-full max-w-6xl px-6 md:px-8 py-16 t-10 mt-8">
         <h2 className="text-center text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-12">
           Meet Our Team
         </h2>

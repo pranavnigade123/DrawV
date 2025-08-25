@@ -63,7 +63,7 @@ export default async function TournamentDetailPage(props: {
   // If using an external registration link later, add t.externalSignupUrl to the model and use it here.
 
   return (
-    <div className="mx-auto max-w-5xl px-3 md:px-0 py-6 md:py-8">
+    <div className="mx-auto max-w-5xl px-3 md:px-0 py-6 md:py-8 mt-24">
       <div className="rounded-2xl border border-zinc-200/70 dark:border-zinc-800/70 overflow-hidden bg-white/70 dark:bg-zinc-900/60">
         {t.coverImage ? (
           // eslint-disable-next-line @next/next/no-img-element

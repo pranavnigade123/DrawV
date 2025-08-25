@@ -214,9 +214,7 @@ export async function deleteTournament(id: string): Promise<void> {
   const session = await ensureAdmin();
   await connectDB();
 
-  // Optional: enforce archive-first
-  // const t = await Tournament.findById(id).select("archivedAt").lean();
-  // if (t && t.archivedAt == null) throw new Error("Archive first, then delete.");
+
 
   await Tournament.findByIdAndDelete(id);
 
