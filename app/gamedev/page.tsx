@@ -27,13 +27,13 @@ const IconCard: React.FC<IconCardProps> = ({ icon, title, children }) => (
 export default function GameDevPage() {
   return (
     // The "dark" class is added here to force the dark theme
-    <div className="dark bg-zinc-50 dark:bg-neutral-900 text-zinc-800 dark:text-zinc-200 font-sans">
+    <div className="dark bg-zinc-50 dark:bg-black text-zinc-800 dark:text-zinc-200 font-sans">
       {/* Add top padding to account for a fixed navbar */}
       <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 sm:pt-32 pb-16">
         
         {/* Hero Section */}
         <section className="text-center mb-20 sm:mb-24">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-500 dark:from-indigo-400 dark:to-purple-400">
+          <h1 className="text-4xl sm:text-5xl mt-10 md:text-6xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-500 dark:from-indigo-400 dark:to-purple-400">
             Start Your Game Dev Journey
           </h1>
           <p className="mt-4 max-w-2xl mx-auto text-lg text-zinc-600 dark:text-zinc-300">

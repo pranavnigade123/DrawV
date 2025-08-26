@@ -20,7 +20,7 @@ export default function PublicToolsPage() {
         {/* Bracket Generator */}
         <a
           href="#"
-          className="block rounded-xl border border-zinc-200 dark:border-zinc-800 p-6 bg-white dark:bg-zinc-900 shadow hover:shadow-lg hover:border-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950 transition"
+          className="block rounded-xl border border-zinc-200 dark:border-zinc-800 p-6 bg-white dark:bg-zinc-900 shadow hover:shadow-lg hover:border-indigo-400  transition"
         >
           <h2 className="font-semibold text-lg mb-2 text-indigo-600">Bracket Generator</h2>
           <p className="text-zinc-600 dark:text-zinc-300 text-sm">
@@ -31,7 +31,7 @@ export default function PublicToolsPage() {
         {/* Coin Toss */}
         <a
           href="/cointoss"
-          className="block rounded-xl border border-zinc-200 dark:border-zinc-800 p-6 bg-white dark:bg-zinc-900 shadow hover:shadow-lg hover:border-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950 transition"
+          className="block rounded-xl border border-zinc-200 dark:border-zinc-800 p-6  dark:bg-zinc-900 shadow hover:shadow-lg hover:border-indigo-400  transition"
         >
           <h2 className="font-semibold text-lg mb-2 text-indigo-600">Coin Toss</h2>
           <p className="text-zinc-600 dark:text-zinc-300 text-sm">
@@ -42,7 +42,7 @@ export default function PublicToolsPage() {
         {/* Map Veto (with BO1/BO3/BO5 buttons) */}
         <div
           onClick={() => setShowVetoOptions(!showVetoOptions)}
-          className="cursor-pointer block rounded-xl border border-zinc-200 dark:border-zinc-800 p-6 bg-white dark:bg-zinc-900 shadow hover:shadow-lg hover:border-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950 transition"
+          className="cursor-pointer block rounded-xl border border-zinc-200 dark:border-zinc-800 p-6 bg-white dark:bg-zinc-900 shadow hover:shadow-lg hover:border-indigo-400   transition"
         >
           <h2 className="font-semibold text-lg mb-2 text-indigo-600">Map Veto</h2>
           <p className="text-zinc-600 dark:text-zinc-300 text-sm">

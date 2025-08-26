@@ -90,7 +90,7 @@ export default async function EditTournamentPage(props: { params: Promise<{ id: 
       {/* Top admin navbar */}
       <AdminToolbar title="Edit Tournament" />
 
-      <div className="mx-auto max-w-5xl space-y-5 px-3 md:px-0 pb-10">
+      <div className="mx-auto max-w-5xl space-y-5 px-3 md:px-0 pb-10 ">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">

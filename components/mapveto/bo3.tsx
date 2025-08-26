@@ -21,7 +21,7 @@ interface PickedMap {
 const MAPS: Map[] = [
   { value: "haven", name: "Haven" },
   { value: "ascent", name: "Ascent" },
-  { value: "icebox", name: "Icebox" },
+  { value: "abyss", name: "Abyss" },
   { value: "sunset", name: "Sunset" },
   { value: "corrode", name: "Corrode" },
   { value: "lotus", name: "Lotus" },

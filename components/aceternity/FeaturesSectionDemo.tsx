@@ -119,7 +119,7 @@ export const SkeletonOne = () => {
         </p>
         {/* Logo below paragraph */}
         <img
-  src="logo-dark.png"
+  src="DVDark_bg.png"
   alt="Draw V Logo"
   width={160}
   height={160}
@@ -183,7 +183,7 @@ export const SkeletonThree = () => {
             style={{ cursor: "pointer" }}
           >
             <img
-              src="Thumbnail-1.png" // Your thumbnail
+              src="Thumbnail-1.png"
               alt="DRAW V YouTube"
               className="w-full h-full object-contain object-center"
               width={800}
