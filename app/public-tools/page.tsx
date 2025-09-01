@@ -22,7 +22,7 @@ export default function PublicToolsPage() {
   return (
     // The main page background class has been removed
     <main className="max-w-2xl mt-20 mx-auto py-16 px-4 flex flex-col items-center">
-      <h1 className="text-6xl font-bold mb-10 text-center " style={headingGradientStyle}>
+      <h1 className="text-5xl font-bold mb-10 text-center " style={headingGradientStyle}>
         Esports Tools
       </h1>
       
