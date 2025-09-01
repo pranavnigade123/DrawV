@@ -82,42 +82,42 @@ export default function Navbar() {
             {!isExploreOpen && <ChevronDown size={16} />}
           </button>
 
-          {isExploreOpen && (
-            <div
-              className="
-                absolute top-full mt-2 w-48
-                bg-white dark:bg-neutral-900
-                border border-gray-200 dark:border-white/20
-                shadow-lg rounded-lg
-                flex flex-col
-                animate-slide-down
-              "
-            >
-              <Link
-                href="/tournaments"
-                className="px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-neutral-800 rounded-t-lg"
-                onClick={() => setIsExploreOpen(false)}
-              >
-                Tournaments
-              </Link>
-              <Link
-                href="/gamedev"
-                className="px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-neutral-800"
-                onClick={() => setIsExploreOpen(false)}
-              >
-                Game Dev
-              </Link>
-              <Link
-                href="/events"
-                className="px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-neutral-800 rounded-b-lg"
-                onClick={() => setIsExploreOpen(false)}
-              >
-                Events
-              </Link>
-            </div>
-          )}
-        </div>
+{isExploreOpen && (
+  <div
+    className="
+      absolute top-full mt-2 w-48
+      bg-neutral-900
+      border border-white/20
+      shadow-lg rounded-lg
+      flex flex-col
+      animate-slide-down
+    "
+  >
+    <Link
+      href="/tournaments"
+      className="px-4 py-2 text-left hover:bg-neutral-800 rounded-t-lg"
+      onClick={() => setIsExploreOpen(false)}
+    >
+      Tournaments
+    </Link>
+    <Link
+      href="/gamedev"
+      className="px-4 py-2 text-left hover:bg-neutral-800"
+      onClick={() => setIsExploreOpen(false)}
+    >
+      Game Dev
+    </Link>
+    <Link
+      href="/events"
+      className="px-4 py-2 text-left hover:bg-neutral-800 rounded-b-lg"
+      onClick={() => setIsExploreOpen(false)}
+    >
+      Events
+    </Link>
+  </div>
+)}
 
+        </div>
         <Link
           href="/public-tools"
           className="px-3 py-1 rounded-lg hover:bg-[color:var(--background)]/60 transition"

@@ -69,13 +69,13 @@ export default async function ArchivedTournamentsPage(props: {
       <AdminToolbar title="Archived Tournaments" />
 
       {banner && (
-        <div className="mb-3 rounded-lg border border-emerald-300/60 bg-emerald-50 dark:bg-emerald-900/20 px-3 py-2 text-sm text-emerald-700 dark:text-emerald-300">
+        <div className="mb-3 rounded-lg border border-emerald-800 bg-emerald-900/30 px-3 py-2 text-sm text-emerald-300">
           {banner}
         </div>
       )}
 
-      <div className="rounded-2xl border border-zinc-200/70 dark:border-zinc-800/70 bg-white/70 dark:bg-zinc-900/60">
-        <div className="grid grid-cols-12 bg-zinc-50 dark:bg-zinc-900/60 text-xs text-zinc-500 px-4 py-2 rounded-t-2xl border-b border-zinc-200/70 dark:border-zinc-800/70">
+      <div className="rounded-2xl border border-zinc-800 bg-zinc-900">
+        <div className="grid grid-cols-12 bg-zinc-900 text-xs text-zinc-400 px-4 py-2 rounded-t-2xl border-b border-zinc-800">
           <div className="col-span-5">Name</div>
           <div className="col-span-2">Game</div>
           <div className="col-span-2">Status</div>
@@ -84,19 +84,19 @@ export default async function ArchivedTournamentsPage(props: {
         </div>
 
         {items.length === 0 ? (
-          <div className="px-4 py-6 text-sm text-zinc-500">No archived tournaments.</div>
+          <div className="px-4 py-6 text-sm text-zinc-400">No archived tournaments.</div>
         ) : (
-          <ul className="divide-y divide-zinc-200/70 dark:divide-zinc-800/70">
+          <ul className="divide-y divide-zinc-800">
             {items.map((t: any) => (
               <li
                 key={t._id.toString()}
-                className="grid grid-cols-12 px-4 py-3 items-center text-sm"
+                className="grid grid-cols-12 px-4 py-3 items-center text-sm text-zinc-200"
               >
                 <div className="col-span-5">
                   <div className="font-medium">
                     <Link
                       href={`/admin/tournaments/${t._id.toString()}/edit`}
-                      className="hover:underline"
+                      className="hover:underline text-indigo-400"
                       title="Edit tournament"
                     >
                       {t.name}
@@ -113,12 +113,12 @@ export default async function ArchivedTournamentsPage(props: {
                     className={[
                       "inline-flex items-center rounded px-2 py-0.5 text-xs font-medium",
                       t.status === "open"
-                        ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300"
+                        ? "bg-emerald-900/30 text-emerald-300"
                         : t.status === "ongoing"
-                        ? "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300"
+                        ? "bg-indigo-900/30 text-indigo-300"
                         : t.status === "completed"
-                        ? "bg-zinc-200 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"
-                        : "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
+                        ? "bg-zinc-800 text-zinc-300"
+                        : "bg-amber-900/30 text-amber-300",
                     ].join(" ")}
                   >
                     {t.status}
@@ -145,7 +145,7 @@ export default async function ArchivedTournamentsPage(props: {
                     >
                       <button
                         type="submit"
-                        className="text-emerald-600 hover:underline"
+                        className="text-emerald-400 hover:underline"
                         title="Restore to active list"
                       >
                         Restore
@@ -161,7 +161,7 @@ export default async function ArchivedTournamentsPage(props: {
                     >
                       <button
                         type="submit"
-                        className="text-rose-600 hover:underline"
+                        className="text-rose-500 hover:underline"
                         title="Delete permanently"
                       >
                         Delete
@@ -176,8 +176,8 @@ export default async function ArchivedTournamentsPage(props: {
       </div>
 
       {totalPages > 1 && (
-        <div className="mt-4 flex items-center justify-between text-sm">
-          <div className="text-zinc-500">
+        <div className="mt-4 flex items-center justify-between text-sm text-zinc-400">
+          <div>
             Page {page} of {totalPages} • {total} total
           </div>
           <div className="flex gap-2">
@@ -185,10 +185,10 @@ export default async function ArchivedTournamentsPage(props: {
               href={`/admin/tournaments/archived?page=${Math.max(page - 1, 1)}`}
               aria-disabled={page === 1}
               className={[
-                "px-3 py-1.5 rounded-lg border",
+                "px-3 py-1.5 rounded-lg border border-zinc-700",
                 page === 1
-                  ? "pointer-events-none opacity-40 border-zinc-300 dark:border-zinc-700"
-                  : "hover:bg-zinc-50 dark:hover:bg-zinc-800 border-zinc-300 dark:border-zinc-700",
+                  ? "pointer-events-none opacity-40"
+                  : "hover:bg-zinc-800",
               ].join(" ")}
             >
               Prev
@@ -197,10 +197,10 @@ export default async function ArchivedTournamentsPage(props: {
               href={`/admin/tournaments/archived?page=${page + 1}`}
               aria-disabled={page === totalPages}
               className={[
-                "px-3 py-1.5 rounded-lg border",
+                "px-3 py-1.5 rounded-lg border border-zinc-700",
                 page === totalPages
-                  ? "pointer-events-none opacity-40 border-zinc-300 dark:border-zinc-700"
-                  : "hover:bg-zinc-50 dark:hover:bg-zinc-800 border-zinc-300 dark:border-zinc-700",
+                  ? "pointer-events-none opacity-40"
+                  : "hover:bg-zinc-800",
               ].join(" ")}
             >
               Next

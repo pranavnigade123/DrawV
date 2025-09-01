@@ -6,7 +6,7 @@ export default function ContactPage() {
         Have questions, suggestions, or need support? Reach out below!
       </p>
       <ul className="mb-4 text-zinc-600 dark:text-zinc-300">
-        <li>Email: <a className="text-indigo-600 underline" href="mailto:club@example.com">club@example.com</a></li>
+        <li>Email: <a className="text-indigo-600 underline" href="mailto:club@example.com">draw5.esports@gmail.com</a></li>
         <li>Discord: <a className="text-indigo-600 underline" href="https://discord.gg/your-server" target="_blank">Join our server</a></li>
       </ul>
       {/* Optionally add a contact form here in the future */}

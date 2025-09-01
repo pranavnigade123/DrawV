@@ -55,8 +55,8 @@ export default function LandingPage() {
       <section className="w-full flex flex-col items-center mt-32 py-8">
         <TypewriterEffect
           words={[
-            { text: "Welcome to DRAW", className: "text-blue-500" },
-            { text: "V", className: "text-[#191CFF]" }
+            { text: "Welcome to DRAW", className: "text-white" },
+            { text: "FIVE", className: "text-[#191CFF]" }
           ]}
           className="text-center text-white text-3xl md:text-5xl lg:text-7xl font-extrabold tracking-tight drop-shadow-2xl"
           cursorClassName="bg-purple-500"

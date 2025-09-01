@@ -33,8 +33,8 @@ export default function RegisterPage() {
   }
 
   return (
-    <main className="min-h-[85vh] flex flex-col items-center justify-center bg-[var(--background)] text-[var(--foreground)] px-4">
-      <div className="w-full max-w-[350px] rounded-2xl shadow bg-white/90 dark:bg-black/80 border border-zinc-200 dark:border-zinc-800 p-8 space-y-4">
+    <main className="min-h-[85vh] flex flex-col items-center justify-center bg-zinc-950 text-zinc-100 px-4">
+      <div className="w-full max-w-[350px] rounded-2xl shadow bg-black/80 border border-zinc-800 p-8 space-y-4">
         <h1 className="text-2xl font-bold mb-2 text-center">Create your account</h1>
         <form className="space-y-4" onSubmit={handleSubmit} autoComplete="off">
           <div>
@@ -42,7 +42,7 @@ export default function RegisterPage() {
             <input
               id="name"
               type="text"
-              className="w-full px-3 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-transparent outline-none focus:ring-2 focus:ring-indigo-500 transition"
+              className="w-full px-3 py-2 rounded-lg border border-zinc-700 bg-zinc-900 text-zinc-100 outline-none focus:ring-2 focus:ring-indigo-500 transition"
               value={form.name}
               autoFocus
               autoComplete="off"
@@ -56,7 +56,7 @@ export default function RegisterPage() {
             <input
               id="email"
               type="email"
-              className="w-full px-3 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-transparent outline-none focus:ring-2 focus:ring-indigo-500 transition"
+              className="w-full px-3 py-2 rounded-lg border border-zinc-700 bg-zinc-900 text-zinc-100 outline-none focus:ring-2 focus:ring-indigo-500 transition"
               value={form.email}
               autoComplete="off"
               onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
@@ -69,18 +69,21 @@ export default function RegisterPage() {
               <input
                 id="password"
                 type={showPassword ? "text" : "password"}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-transparent outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                className="w-full px-3 py-2 rounded-lg border border-zinc-700 bg-zinc-900 text-zinc-100 outline-none focus:ring-2 focus:ring-indigo-500 transition"
                 value={form.password}
                 onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
                 required
                 minLength={6}
               />
-              <button type="button"
+              <button
+                type="button"
                 tabIndex={-1}
                 aria-label={showPassword ? "Hide password" : "Show password"}
-                className="absolute right-2 top-2 px-1 text-xs text-zinc-400 hover:text-indigo-600 transition"
+                className="absolute right-2 top-2 px-1 text-xs text-zinc-400 hover:text-indigo-400 transition"
                 onClick={() => setShowPassword(v => !v)}
-              >{showPassword ? "Hide" : "Show"}</button>
+              >
+                {showPassword ? "Hide" : "Show"}
+              </button>
             </div>
           </div>
           <button
@@ -92,13 +95,14 @@ export default function RegisterPage() {
           </button>
         </form>
         <div>
-          {success && <p className="text-green-600 text-center mt-2">Registered! Redirecting…</p>}
-          {error && <p className="text-red-600 text-center mt-2">{error}</p>}
+          {success && <p className="text-green-500 text-center mt-2">Registered! Redirecting…</p>}
+          {error && <p className="text-red-500 text-center mt-2">{error}</p>}
         </div>
-        <div className="text-sm text-center text-zinc-500">
-          Already have an account? <Link href="/login" className="underline hover:text-indigo-600">
-  Sign in
-</Link>
+        <div className="text-sm text-center text-zinc-400">
+          Already have an account?{" "}
+          <Link href="/login" className="underline hover:text-indigo-400">
+            Sign in
+          </Link>
         </div>
       </div>
     </main>

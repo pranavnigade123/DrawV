@@ -7,24 +7,20 @@ export default function PublicToolsPage() {
   const [showVetoOptions, setShowVetoOptions] = useState(false);
 
   // Reusable button styles
-  const matteButtonStyles = "text-sm px-4 py-2 rounded text-center text-white bg-blue-600 border border-blue-700 hover:bg-blue-500 transition-colors duration-200";
+  const matteButtonStyles =
+    "text-sm px-4 py-2 rounded text-center text-white bg-blue-600 border border-blue-700 hover:bg-blue-500 transition-colors duration-200";
 
-  // Reusable blue gradient style for headings
-  const headingGradientStyle = {
-    background: 'linear-gradient(to right, #3b82f6, #22d3ee)', // Blue to cyan gradient
-    WebkitBackgroundClip: 'text',
-    WebkitTextFillColor: 'transparent'
-  };
-  
-  // Card styles with the background box restored
-  const cardStyles = "block rounded-xl border border-zinc-800 p-6 bg-zinc-900 shadow hover:shadow-lg hover:border-cyan-400 transition";
+  // Card styles
+  const cardStyles =
+    "block rounded-xl border border-zinc-800 p-6 bg-zinc-900 shadow hover:shadow-lg hover:border-cyan-400 transition";
 
   return (
-    // The main page background class has been removed
-    <main className="max-w-2xl mt-20 mx-auto py-16 px-4 flex flex-col items-center">
-      <h1 className="text-3xl font-bold mb-4 text-center" style={headingGradientStyle}>
-        Public Esports Tools
+    <main className="max-w-6xl mx-auto py-16 px-4 flex flex-col items-center">
+      <h1 className="text-4xl sm:text-5xl mt-10 md:text-6xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">
+        Gaming Tools
       </h1>
+      <br />
+
       <p className="mb-8 text-zinc-300 text-center">
         Open tournament tools for guests, players, and admins—useful for any event!
       </p>
@@ -32,7 +28,7 @@ export default function PublicToolsPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
         {/* Bracket Generator */}
         <a href="#" className={cardStyles}>
-          <h2 className="font-semibold text-lg mb-2" style={headingGradientStyle}>
+          <h2 className="font-semibold text-lg mb-2 text-indigo-400">
             Bracket Generator
           </h2>
           <p className="text-zinc-300 text-sm">
@@ -42,7 +38,7 @@ export default function PublicToolsPage() {
 
         {/* Coin Toss */}
         <a href="/cointoss" className={cardStyles}>
-          <h2 className="font-semibold text-lg mb-2" style={headingGradientStyle}>
+          <h2 className="font-semibold text-lg mb-2 text-indigo-400">
             Coin Toss
           </h2>
           <p className="text-zinc-300 text-sm">
@@ -50,12 +46,12 @@ export default function PublicToolsPage() {
           </p>
         </a>
 
-        {/* Map Veto (with BO1/BO3/BO5 buttons) */}
+        {/* Map Veto */}
         <div
           onClick={() => setShowVetoOptions(!showVetoOptions)}
           className={`cursor-pointer ${cardStyles}`}
         >
-          <h2 className="font-semibold text-lg mb-2" style={headingGradientStyle}>
+          <h2 className="font-semibold text-lg mb-2 text-indigo-400">
             Map Veto
           </h2>
           <p className="text-zinc-300 text-sm">

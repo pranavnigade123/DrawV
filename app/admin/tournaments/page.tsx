@@ -70,13 +70,13 @@ export default async function TournamentsManagePage(props: {
       <AdminToolbar title="Manage Tournaments" />
 
       {banner && (
-        <div className="mb-3 rounded-lg border border-emerald-300/60 bg-emerald-50 dark:bg-emerald-900/20 px-3 py-2 text-sm text-emerald-700 dark:text-emerald-300">
+        <div className="mb-3 rounded-lg border border-emerald-800/60 bg-emerald-900/20 px-3 py-2 text-sm text-emerald-300">
           {banner}
         </div>
       )}
 
-      <div className="rounded-2xl border border-zinc-200/70 dark:border-zinc-800/70 bg-white/70 dark:bg-zinc-900/60">
-        <div className="grid grid-cols-12 bg-zinc-50 dark:bg-zinc-900/60 text-xs text-zinc-500 px-4 py-2 rounded-t-2xl border-b border-zinc-200/70 dark:border-zinc-800/70">
+      <div className="rounded-2xl border border-zinc-800/70 bg-zinc-900/60">
+        <div className="grid grid-cols-12 bg-zinc-900/60 text-xs text-zinc-400 px-4 py-2 rounded-t-2xl border-b border-zinc-800/70">
           <div className="col-span-5">Name</div>
           <div className="col-span-2">Game</div>
           <div className="col-span-2">Status</div>
@@ -85,9 +85,9 @@ export default async function TournamentsManagePage(props: {
         </div>
 
         {items.length === 0 ? (
-          <div className="px-4 py-6 text-sm text-zinc-500">No tournaments found.</div>
+          <div className="px-4 py-6 text-sm text-zinc-400">No tournaments found.</div>
         ) : (
-          <ul className="divide-y divide-zinc-200/70 dark:divide-zinc-800/70">
+          <ul className="divide-y divide-zinc-800/70">
             {items.map((t: any) => (
               <li
                 key={t._id.toString()}
@@ -113,12 +113,12 @@ export default async function TournamentsManagePage(props: {
                     className={[
                       "inline-flex items-center rounded px-2 py-0.5 text-xs font-medium",
                       t.status === "open"
-                        ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300"
+                        ? "bg-emerald-900/30 text-emerald-300"
                         : t.status === "ongoing"
-                        ? "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300"
+                        ? "bg-indigo-900/30 text-indigo-300"
                         : t.status === "completed"
-                        ? "bg-zinc-200 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"
-                        : "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
+                        ? "bg-zinc-800 text-zinc-300"
+                        : "bg-amber-900/30 text-amber-300",
                     ].join(" ")}
                   >
                     {t.status}
@@ -138,7 +138,7 @@ export default async function TournamentsManagePage(props: {
                   <div className="inline-flex items-center gap-3">
                     <Link
                       href={`/admin/tournaments/${t._id.toString()}/edit`}
-                      className="text-indigo-600 "
+                      className="text-indigo-400 hover:text-indigo-300"
                       title="Edit tournament"
                     >
                       Edit
@@ -153,7 +153,7 @@ export default async function TournamentsManagePage(props: {
                     >
                       <button
                         type="submit"
-                        className="text-zinc-500 hover:text-amber-600"
+                        className="text-zinc-500 hover:text-amber-400"
                         title="Archive (hide from active list)"
                       >
                         Archive
@@ -179,8 +179,8 @@ export default async function TournamentsManagePage(props: {
               className={[
                 "px-3 py-1.5 rounded-lg border",
                 page === 1
-                  ? "pointer-events-none opacity-40 border-zinc-300 dark:border-zinc-700"
-                  : "hover:bg-zinc-50 dark:hover:bg-zinc-800 border-zinc-300 dark:border-zinc-700",
+                  ? "pointer-events-none opacity-40 border-zinc-700"
+                  : "hover:bg-zinc-800 border-zinc-700",
               ].join(" ")}
             >
               Prev
@@ -191,8 +191,8 @@ export default async function TournamentsManagePage(props: {
               className={[
                 "px-3 py-1.5 rounded-lg border",
                 page === totalPages
-                  ? "pointer-events-none opacity-40 border-zinc-300 dark:border-zinc-700"
-                  : "hover:bg-zinc-50 dark:hover:bg-zinc-800 border-zinc-300 dark:border-zinc-700",
+                  ? "pointer-events-none opacity-40 border-zinc-700"
+                  : "hover:bg-zinc-800 border-zinc-700",
               ].join(" ")}
             >
               Next

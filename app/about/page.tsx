@@ -5,78 +5,77 @@ import { FeaturesSectionDemo } from "@/components/aceternity/FeaturesSectionDemo
 
 // Main team (8 members -> 4x4 on large screens)
 const teamPins = [
-  { 
-    title: "Pin One", 
-    img: "/om.png", 
-    name: "Om Raja", 
+  {
+    title: "Pin One",
+    img: "/om.png",
+    name: "Om Raja",
     designation: "President",
     linkedin: "https://www.linkedin.com/in/om-raja-84850b240?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app/"
   },
-  { 
-    title: "Pin Two", 
-    img: "/vedant.png", 
-    name: "Vedant Mankar", 
+  {
+    title: "Pin Two",
+    img: "/vedant.png",
+    name: "Vedant Mankar",
     designation: "Vice President",
     linkedin: "https://www.linkedin.com/in/vedant-mankar-804723289?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app/"
   },
-  { 
-    title: "Pin Three", 
-    img: "/aditya.png", 
-    name: "Aditya Mathur", 
+  {
+    title: "Pin Three",
+    img: "/aditya.png",
+    name: "Aditya Mathur",
     designation: "General Secretary",
     linkedin: "https://www.linkedin.com/in/aditya-mathur-1185ab282?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app/"
   },
-  { 
-    title: "Pin Four", 
-    img: "/saket.png", 
-    name: "Saket Raja", 
+  {
+    title: "Pin Four",
+    img: "/saket.png",
+    name: "Saket Raja",
     designation: "General Secretary",
     linkedin: "https://www.linkedin.com/in/saketraja?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app/"
   },
-  { 
-    title: "Pin Five", 
-    img: "/pranav1.jpg", 
-    name: "Pranav Nigade", 
+  {
+    title: "Pin Five",
+    img: "/pranav1.jpg",
+    name: "Pranav Nigade",
     designation: "Technical Head",
     linkedin: "https://www.linkedin.com/in/pranav-nigade?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app/"
   },
-  { 
+  {
     title: "Pin Ten",
     img: "/niyati.jpg",
     name: "Niyati Mahawar",
     designation: "Marketing Head",
     linkedin: "https://www.linkedin.com/in/niyati-mahawar-601924310/"
   },
-  { 
+  {
     title: "Pin Nine",
     img: "/Sanket.png",
     name: "Sanket Kharche",
     designation: "Design Head",
     linkedin: "https://www.linkedin.com/in/sanket-kharche-67231b256/"
   },
-  { 
-    title: "Pin Eight", 
-    img: "/Viraj.jpg", 
-    name: "Viraj Pawar", 
+  {
+    title: "Pin Eight",
+    img: "/Viraj.jpg",
+    name: "Viraj Pawar",
     designation: "Design Mentor",
     linkedin: "https://www.linkedin.com/in/virajnpawar/"
   },
-  
 ];
 
 // Innovation hub team
 const innovationPins = [
-  { 
-    title: "Pin Six", 
-    img: "/Shaswat.jpg", 
-    name: "Shashwat Nande", 
+  {
+    title: "Pin Six",
+    img: "/Shaswat.jpg",
+    name: "Shashwat Nande",
     designation: "Innovation Hub President",
     linkedin: "https://www.linkedin.com/in/shashwat-nande-786bb0289?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app/"
   },
-  { 
-    title: "Pin Seven", 
-    img: "/swastik.jpg", 
-    name: "Swastik Singh", 
+  {
+    title: "Pin Seven",
+    img: "/swastik.jpg",
+    name: "Swastik Singh",
     designation: "Innovation Hub Vice President",
     linkedin: "https://www.linkedin.com/in/swastik-singh-b40466304?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app/"
   },
@@ -84,15 +83,14 @@ const innovationPins = [
 
 // Faculty Mentor team
 const facultyPins = [
-  { 
-    title: "Faculty Mentor", 
-    img: "/nilam.png",  
-    name: "Dr. Nilam Pradhan", 
+  {
+    title: "Faculty Mentor",
+    img: "/nilam.png",
+    name: "Dr. Nilam Pradhan",
     designation: "Faculty Mentor",
-    linkedin: "https://www.linkedin.com/in/nilam-pradhan-b45392a1/" 
+    linkedin: "https://www.linkedin.com/in/nilam-pradhan-b45392a1/"
   },
 ];
-
 
 type Pin = {
   title: string;
@@ -104,7 +102,7 @@ type Pin = {
 
 function TeamCard({ pin }: { pin: Pin }) {
   const card = (
-    <div className="bg-transparent border border-white rounded-lg overflow-hidden flex flex-col items-center p-3 sm:p-4 mb-4 transition-transform duration-300 hover:scale-105 max-w-[200px] mx-auto">
+    <div className="bg-transparent border border-border rounded-lg overflow-hidden flex flex-col items-center p-3 sm:p-4 mb-4 transition-transform duration-300 hover:scale-105 max-w-[200px] mx-auto">
       <div className="w-full aspect-square overflow-hidden rounded-md mb-2 sm:mb-3">
         <img
           src={pin.img}
@@ -115,14 +113,14 @@ function TeamCard({ pin }: { pin: Pin }) {
 
       {/* Name */}
       <div style={{ minHeight: "2.25rem", width: "100%" }}>
-        <h3 className="text-base sm:text-lg font-bold text-center text-white break-words leading-tight mb-1">
+        <h3 className="text-base sm:text-lg font-bold text-center text-foreground break-words leading-tight mb-1">
           {pin.name}
         </h3>
       </div>
 
       {/* Designation */}
       <div style={{ minHeight: "1.5rem", width: "100%" }}>
-        <p className="text-xs sm:text-sm text-gray-300 text-center break-words leading-tight mt-0">
+        <p className="text-xs sm:text-sm text-muted-foreground text-center break-words leading-tight mt-0">
           {pin.designation}
         </p>
       </div>
@@ -141,7 +139,7 @@ function TeamCard({ pin }: { pin: Pin }) {
 
 export default function AboutPage() {
   return (
-    <main className="w-full flex flex-col items-center py-12 bg-[var(--background)] text-[var(--foreground)] min-h-screen">
+    <main className="w-full flex flex-col items-center py-12 bg-background text-foreground min-h-screen">
       {/* --- MODIFIED VIDEO SECTION --- */}
       <div
         style={{
@@ -190,11 +188,11 @@ export default function AboutPage() {
         {/* Top Row: DRAW V */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-40">
           <section className="flex flex-col justify-center p-6 pt-6 pb-2">
-            <h2 className="text-left font-extrabold text-3xl sm:text-4xl tracking-tight mb-6 text-white">
+            <h2 className="text-left font-extrabold text-3xl sm:text-4xl tracking-tight mb-6 text-foreground">
               What is <ColourfulText text="DRAW V" colorTheme="blue" />?
             </h2>
-            <p className="text-gray-300 text-base leading-relaxed text-justify">
-             Draw Five is the Game Tech Community of the Innovation Hub, dedicated to empowering the next generation of gaming professionals. We focus on building technical expertise and creative skills across game tech and tool development, esports and streaming, technical operations, design and web development, and community management. By combining innovation with hands-on learning, Draw Five equips aspiring creators, developers, and event professionals with the knowledge and experience needed to thrive in the fast-evolving gaming industry.
+            <p className="text-muted-foreground text-base leading-relaxed text-justify">
+              Draw Five is the Game Tech Community of the Innovation Hub, dedicated to empowering the next generation of gaming professionals. We focus on building technical expertise and creative skills across game tech and tool development, esports and streaming, technical operations, design and web development, and community management. By combining innovation with hands-on learning, Draw Five equips aspiring creators, developers, and event professionals with the knowledge and experience needed to thrive in the fast-evolving gaming industry.
             </p>
           </section>
           <div className="flex items-center justify-center p-6">
@@ -208,10 +206,10 @@ export default function AboutPage() {
             <img src="/ih-logo2.png" alt="Innovation Hub Logo" className="h-36 w-auto" />
           </div>
           <section className="flex flex-col justify-center p-6 ">
-            <h2 className="text-left font-extrabold text-3xl sm:text-4xl tracking-tight mb-3 text-white">
+            <h2 className="text-left font-extrabold text-3xl sm:text-4xl tracking-tight mb-3 text-foreground">
               What is <ColourfulText text="Innovation Hub" colorTheme="redYellow" />?
             </h2>
-            <p className="text-gray-300 text-base leading-relaxed text-justify">
+            <p className="text-muted-foreground text-base leading-relaxed text-justify">
               The Innovation Hub at MIT-WPU is the official Student Innovation Council, fueled by curiosity and collaboration. It cultivates a culture of innovation by equipping students with practical skills through workshops, hackathons, and mentorship in technology, design, and entrepreneurship. With a diverse team and strong community, it drives impactful projects, national wins, and research publications. The Hub supports students’ journeys from ideation to execution, bridging gaps in confidence and career readiness to shape future leaders and changemakers.
             </p>
           </section>
@@ -220,7 +218,7 @@ export default function AboutPage() {
 
       {/* Team Section */}
       <div className="w-full max-w-6xl px-6 md:px-8 py-16 t-10 mt-8">
-        <h2 className="text-center text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-12">
+        <h2 className="text-center text-3xl sm:text-4xl md:text-5xl font-extrabold text-foreground mb-12">
           Meet Our Team
         </h2>
 
@@ -232,7 +230,7 @@ export default function AboutPage() {
         </div>
 
         {/* Innovation Hub section */}
-        <h3 className="text-center text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mt-16 mb-8">
+        <h3 className="text-center text-3xl sm:text-4xl md:text-5xl font-extrabold text-foreground mt-16 mb-8">
           Innovation Hub
         </h3>
 
@@ -243,16 +241,16 @@ export default function AboutPage() {
         </div>
       </div>
 
-{/* Faculty Mentor section */}
-<h3 className="text-center text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mt-12 mb-8">
-  Faculty Mentor
-</h3>
+      {/* Faculty Mentor section */}
+      <h3 className="text-center text-3xl sm:text-4xl md:text-5xl font-extrabold text-foreground mt-12 mb-8">
+        Faculty Mentor
+      </h3>
 
-<div className="flex flex-col sm:flex-row gap-4 lg:gap-32 justify-center items-center">
-  {facultyPins.map((pin, index) => (
-    <TeamCard key={index} pin={pin} />
-  ))}
-</div>
+      <div className="flex flex-col sm:flex-row gap-4 lg:gap-32 justify-center items-center">
+        {facultyPins.map((pin, index) => (
+          <TeamCard key={index} pin={pin} />
+        ))}
+      </div>
 
 
       {/* Features Section */}
