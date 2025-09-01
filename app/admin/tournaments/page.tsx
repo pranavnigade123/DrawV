@@ -7,6 +7,9 @@ import { connectDB } from "@/lib/db";
 import Tournament from "@/lib/models/Tournament";
 import AdminToolbar from "@/app/admin/admin-ui/AdminToolbar";
 
+// Icons (Heroicons v2)
+import { PencilSquareIcon, ArchiveBoxIcon } from "@heroicons/react/24/outline";
+
 const PAGE_SIZE = 20;
 
 function formatDate(d?: Date | null) {
@@ -38,13 +41,14 @@ export default async function TournamentsManagePage(props: {
   const page = Math.max(parseInt(sp.page || "1", 10) || 1, 1);
   const skip = (page - 1) * PAGE_SIZE;
 
-  const banner = sp.created
-    ? "Tournament created."
-    : sp.updated
-    ? "Tournament updated successfully."
-    : sp.archived
-    ? "Tournament archived."
-    : null;
+  const banner =
+    sp.created
+      ? "Tournament created."
+      : sp.updated
+      ? "Tournament updated successfully."
+      : sp.archived
+      ? "Tournament archived."
+      : null;
 
   const session = await getServerSession(authOptions);
   if (!session?.user?.role || session.user.role !== "admin") redirect("/");
@@ -135,15 +139,18 @@ export default async function TournamentsManagePage(props: {
                 </div>
 
                 <div className="col-span-1 text-right">
-                  <div className="inline-flex items-center gap-3">
+                  <div className="inline-flex items-center gap-2 sm:gap-3">
+                    {/* Edit (as icon link) */}
                     <Link
                       href={`/admin/tournaments/${t._id.toString()}/edit`}
-                      className="text-indigo-600 "
+                      className="inline-flex items-center justify-center rounded-md p-1.5 text-gray-100 hover:bg-indigo-50  dark:hover:bg-indigo-900/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                      aria-label="Edit tournament"
                       title="Edit tournament"
                     >
-                      Edit
+                      <PencilSquareIcon className="h-5 w-5" aria-hidden="true" />
                     </Link>
 
+                    {/* Archive (server action) */}
                     <form
                       action={async () => {
                         "use server";
@@ -153,10 +160,11 @@ export default async function TournamentsManagePage(props: {
                     >
                       <button
                         type="submit"
-                        className="text-zinc-500 hover:text-amber-600"
+                        className="inline-flex items-center justify-center rounded-md p-1.5 text-amber-600 hover:bg-amber-50 hover:text-amber-700 dark:hover:bg-amber-900/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
                         title="Archive (hide from active list)"
+                        aria-label="Archive tournament"
                       >
-                        Archive
+                        <ArchiveBoxIcon className="h-5 w-5" aria-hidden="true" />
                       </button>
                     </form>
                   </div>

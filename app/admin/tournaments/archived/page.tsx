@@ -7,6 +7,9 @@ import { connectDB } from "@/lib/db";
 import Tournament from "@/lib/models/Tournament";
 import AdminToolbar from "@/app/admin/admin-ui/AdminToolbar";
 
+// Icons
+import { ArchiveBoxArrowDownIcon, TrashIcon } from "@heroicons/react/24/outline";
+
 const PAGE_SIZE = 20;
 
 function formatDate(d?: Date | null) {
@@ -135,7 +138,8 @@ export default async function ArchivedTournamentsPage(props: {
                 </div>
 
                 <div className="col-span-1 text-right">
-                  <div className="inline-flex items-center gap-3">
+                  <div className="inline-flex items-center gap-2 sm:gap-3">
+                    {/* Restore */}
                     <form
                       action={async () => {
                         "use server";
@@ -145,13 +149,15 @@ export default async function ArchivedTournamentsPage(props: {
                     >
                       <button
                         type="submit"
-                        className="text-emerald-600 hover:underline"
+                        className="inline-flex items-center justify-center rounded-md p-1.5 text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700 dark:hover:bg-emerald-900/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
                         title="Restore to active list"
+                        aria-label="Restore tournament"
                       >
-                        Restore
+                        <ArchiveBoxArrowDownIcon className="h-5 w-5" aria-hidden="true" />
                       </button>
                     </form>
 
+                    {/* Delete */}
                     <form
                       action={async () => {
                         "use server";
@@ -161,10 +167,11 @@ export default async function ArchivedTournamentsPage(props: {
                     >
                       <button
                         type="submit"
-                        className="text-rose-600 hover:underline"
+                        className="inline-flex items-center justify-center rounded-md p-1.5 text-rose-600 hover:bg-rose-50 hover:text-rose-700 dark:hover:bg-rose-900/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500"
                         title="Delete permanently"
+                        aria-label="Delete tournament"
                       >
-                        Delete
+                        <TrashIcon className="h-5 w-5" aria-hidden="true" />
                       </button>
                     </form>
                   </div>

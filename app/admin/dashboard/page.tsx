@@ -17,9 +17,9 @@ function StatCard({
   sub?: string
 }) {
   return (
-    <div className="rounded-xl border border-zinc-200/70 dark:border-zinc-800/70 bg-white/70 dark:bg-zinc-900/60 p-4">
+    <div className="rounded-xl border border-zinc-800/70 bg-zinc-900/60 p-4">
       <div className="text-xs font-medium text-zinc-500">{title}</div>
-      <div className="mt-2 text-2xl font-semibold">{value}</div>
+      <div className="mt-2 text-2xl font-semibold text-white">{value}</div>
       {sub ? <div className="mt-1 text-xs text-zinc-500">{sub}</div> : null}
     </div>
   )
@@ -35,7 +35,7 @@ function ActionButton({
   return (
     <Link
       href={href}
-      className="inline-flex items-center justify-center px-3 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800 transition"
+      className="inline-flex items-center justify-center px-3 py-2 rounded-lg border border-zinc-700 text-sm hover:bg-zinc-800 transition text-white"
     >
       {label}
     </Link>
@@ -48,7 +48,7 @@ export default async function AdminOverviewPage() {
     redirect("/")
   }
 
-  const firstName = (session.user.name ?? "Admin").split(" ")[0]
+  const firstName = (session.user.name ?? "Admin").split(" ")
 
   return (
     <div className="px-6 pb-10">
@@ -62,7 +62,7 @@ export default async function AdminOverviewPage() {
                 <input
                   type="text"
                   placeholder="Search tournaments, users..."
-                  className="w-full rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-900/60 px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500/30"
+                  className="w-full rounded-xl border border-zinc-800 bg-zinc-900/60 px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500/30 text-white placeholder-zinc-400"
                 />
                 <div className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-zinc-400">
                   ⌘K
@@ -115,37 +115,37 @@ export default async function AdminOverviewPage() {
           <div className="mt-8">
             <div className="text-sm font-medium text-zinc-500 mb-3">Continue Managing</div>
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-              <div className="rounded-xl border border-zinc-200/70 dark:border-zinc-800/70 bg-white/70 dark:bg-zinc-900/60 overflow-hidden">
-                <div className="h-28 bg-zinc-200/60 dark:bg-zinc-800/60" />
+              <div className="rounded-xl border border-zinc-800/70 bg-zinc-900/60 overflow-hidden">
+                <div className="h-28 bg-zinc-800/60" />
                 <div className="p-4">
                   <div className="text-sm text-zinc-500">Tournament</div>
-                  <div className="font-semibold mt-1">Set rules and format</div>
+                  <div className="font-semibold mt-1 text-white">Set rules and format</div>
                   <div className="mt-3">
-                    <Link href="/admin/tournaments/create" className="text-indigo-600 hover:underline text-sm">
+                    <Link href="/admin/tournaments/create" className="text-indigo-400 hover:underline text-sm">
                       Configure →
                     </Link>
                   </div>
                 </div>
               </div>
-              <div className="rounded-xl border border-zinc-200/70 dark:border-zinc-800/70 bg-white/70 dark:bg-zinc-900/60 overflow-hidden">
-                <div className="h-28 bg-zinc-200/60 dark:bg-zinc-800/60" />
+              <div className="rounded-xl border border-zinc-800/70 bg-zinc-900/60 overflow-hidden">
+                <div className="h-28 bg-zinc-800/60" />
                 <div className="p-4">
                   <div className="text-sm text-zinc-500">Registrations</div>
-                  <div className="font-semibold mt-1">Open/close window</div>
+                  <div className="font-semibold mt-1 text-white">Open/close window</div>
                   <div className="mt-3">
-                    <Link href="/admin/tournaments" className="text-indigo-600 hover:underline text-sm">
+                    <Link href="/admin/tournaments" className="text-indigo-400 hover:underline text-sm">
                       Manage →
                     </Link>
                   </div>
                 </div>
               </div>
-              <div className="rounded-xl border border-zinc-200/70 dark:border-zinc-800/70 bg-white/70 dark:bg-zinc-900/60 overflow-hidden">
-                <div className="h-28 bg-zinc-200/60 dark:bg-zinc-800/60" />
+              <div className="rounded-xl border border-zinc-800/70 bg-zinc-900/60 overflow-hidden">
+                <div className="h-28 bg-zinc-800/60" />
                 <div className="p-4">
                   <div className="text-sm text-zinc-500">Brackets</div>
-                  <div className="font-semibold mt-1">Seed and schedule</div>
+                  <div className="font-semibold mt-1 text-white">Seed and schedule</div>
                   <div className="mt-3">
-                    <Link href="/admin/tournaments" className="text-indigo-600 hover:underline text-sm">
+                    <Link href="/admin/tournaments" className="text-indigo-400 hover:underline text-sm">
                       Open →
                     </Link>
                   </div>
@@ -158,13 +158,13 @@ export default async function AdminOverviewPage() {
           <div className="mt-8">
             <div className="flex items-center justify-between">
               <div className="text-sm font-medium text-zinc-500">Recent Tournaments</div>
-              <Link href="/admin/tournaments" className="text-sm text-indigo-600 hover:underline">
+              <Link href="/admin/tournaments" className="text-sm text-indigo-400 hover:underline">
                 See all
               </Link>
             </div>
 
-            <div className="mt-3 rounded-xl overflow-hidden border border-zinc-200/70 dark:border-zinc-800/70">
-              <div className="grid grid-cols-12 bg-zinc-50 dark:bg-zinc-900/60 text-xs text-zinc-500 px-4 py-2">
+            <div className="mt-3 rounded-xl overflow-hidden border border-zinc-800/70">
+              <div className="grid grid-cols-12 bg-zinc-900/60 text-xs text-zinc-500 px-4 py-2">
                 <div className="col-span-5">Name</div>
                 <div className="col-span-2">Game</div>
                 <div className="col-span-2">Status</div>
@@ -183,9 +183,9 @@ export default async function AdminOverviewPage() {
         {/* Right column widgets */}
         <div className="xl:col-span-1">
           {/* Profile widget */}
-          <div className="rounded-2xl border border-zinc-200/70 dark:border-zinc-800/70 bg-white/70 dark:bg-zinc-900/60 p-5">
+          <div className="rounded-2xl border border-zinc-800/70 bg-zinc-900/60 p-5">
             <div className="text-sm text-zinc-500">Welcome</div>
-            <div className="mt-1 font-semibold text-lg">{firstName} 👋</div>
+            <div className="mt-1 font-semibold text-lg text-white">{firstName} 👋</div>
             <div className="mt-2 text-xs text-zinc-500">
               Continue building great events today.
             </div>
@@ -197,7 +197,7 @@ export default async function AdminOverviewPage() {
                   <span>Setup completion</span>
                   <span>0%</span>
                 </div>
-                <div className="h-2 rounded-full bg-zinc-200 dark:bg-zinc-800">
+                <div className="h-2 rounded-full bg-zinc-800">
                   <div className="h-2 rounded-full bg-indigo-600" style={{ width: "0%" }} />
                 </div>
               </div>
@@ -206,7 +206,7 @@ export default async function AdminOverviewPage() {
                   <span>Active events</span>
                   <span>0</span>
                 </div>
-                <div className="h-2 rounded-full bg-zinc-200 dark:bg-zinc-800">
+                <div className="h-2 rounded-full bg-zinc-800">
                   <div className="h-2 rounded-full bg-emerald-500" style={{ width: "0%" }} />
                 </div>
               </div>
@@ -214,28 +214,28 @@ export default async function AdminOverviewPage() {
           </div>
 
           {/* Quick actions */}
-          <div className="mt-6 rounded-2xl border border-zinc-200/70 dark:border-zinc-800/70 bg-white/70 dark:bg-zinc-900/60 p-5">
+          <div className="mt-6 rounded-2xl border border-zinc-800/70 bg-zinc-900/60 p-5">
             <div className="text-sm font-medium text-zinc-500 mb-3">Quick Actions</div>
             <div className="grid grid-cols-2 gap-2">
-              <Link href="/admin/tournaments/create" className="rounded-lg border border-zinc-200 dark:border-zinc-800 px-3 py-2 text-sm hover:bg-zinc-50 dark:hover:bg-zinc-800 transition">
+              <Link href="/admin/tournaments/create" className="rounded-lg border border-zinc-800 px-3 py-2 text-sm hover:bg-zinc-800 transition text-white">
                 New
               </Link>
-              <Link href="/admin/tournaments" className="rounded-lg border border-zinc-200 dark:border-zinc-800 px-3 py-2 text-sm hover:bg-zinc-50 dark:hover:bg-zinc-800 transition">
+              <Link href="/admin/tournaments" className="rounded-lg border border-zinc-800 px-3 py-2 text-sm hover:bg-zinc-800 transition text-white">
                 Manage
               </Link>
-              <Link href="/admin/tournaments/archived" className="rounded-lg border border-zinc-200 dark:border-zinc-800 px-3 py-2 text-sm hover:bg-zinc-50 dark:hover:bg-zinc-800 transition">
+              <Link href="/admin/tournaments/archived" className="rounded-lg border border-zinc-800 px-3 py-2 text-sm hover:bg-zinc-800 transition text-white">
                 Archived
               </Link>
-              <Link href="/admin/users" className="rounded-lg border border-zinc-200 dark:border-zinc-800 px-3 py-2 text-sm hover:bg-zinc-50 dark:hover:bg-zinc-800 transition">
+              <Link href="/admin/users" className="rounded-lg border border-zinc-800 px-3 py-2 text-sm hover:bg-zinc-800 transition text-white">
                 Users
               </Link>
             </div>
           </div>
 
           {/* Tips widget */}
-          <div className="mt-6 rounded-2xl border border-zinc-200/70 dark:border-zinc-800/70 bg-white/70 dark:bg-zinc-900/60 p-5">
+          <div className="mt-6 rounded-2xl border border-zinc-800/70 bg-zinc-900/60 p-5">
             <div className="text-sm font-medium text-zinc-500 mb-2">Tips</div>
-            <ul className="list-disc list-inside text-sm text-zinc-600 dark:text-zinc-300 space-y-1">
+            <ul className="list-disc list-inside text-sm text-zinc-300 space-y-1">
               <li>Draft tournaments early and open registrations later.</li>
               <li>Duplicate past events to reuse formats quickly.</li>
               <li>Archive completed events to keep lists tidy.</li>

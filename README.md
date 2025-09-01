@@ -1,6 +1,6 @@
 DRAW V — Esports Management Platform
 
-Proprietary — Confidential. This repository contains confidential code for [Club Name]. Access is restricted to authorized members. Do not copy, distribute, or disclose without written permission.
+Proprietary — Confidential. This repository contains confidential code for Draw Five. Access is restricted to authorized members. Do not copy, distribute, or disclose without written permission.
 
 Overview
 
@@ -20,12 +20,12 @@ Responsive UI with accessible components and subtle animations.
 
 Tech Stack
 
-Frontend: Next.js (React), TypeScript (if applicable), CSS Modules/Tailwind.
+Frontend: Next.js (React), TypeScript, Tailwind CSS.
 
-Backend: Next.js API routes or dedicated server (confirm).
+Backend: Next.js API routes.
 
 Database: MongoDB Atlas via Mongoose/official driver.
 
-Auth: NextAuth/Auth.js or custom JWT provider (confirm).
+Auth: NextAuth and custom JWT provider .
 
 Deployment: Vercel with environment-scoped configs.
