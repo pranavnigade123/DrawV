@@ -22,12 +22,10 @@ export default function PublicToolsPage() {
   return (
     // The main page background class has been removed
     <main className="max-w-2xl mt-20 mx-auto py-16 px-4 flex flex-col items-center">
-      <h1 className="text-3xl font-bold mb-4 text-center" style={headingGradientStyle}>
-        Public Esports Tools
+      <h1 className="text-6xl font-bold mb-10 text-center " style={headingGradientStyle}>
+        Esports Tools
       </h1>
-      <p className="mb-8 text-zinc-300 text-center">
-        Open tournament tools for guests, players, and admins—useful for any event!
-      </p>
+      
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
         {/* Bracket Generator */}
