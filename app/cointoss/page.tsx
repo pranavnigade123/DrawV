@@ -1,18 +1,21 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import CoinToss from '../../components/CoinToss';
-import Head from 'next/head';
 
-export default function Home() {
+export default function Page() {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  // Render nothing (or a stable placeholder) on the server and initial client render
+  if (!isClient) return null;
+
   return (
-    <div>
-      <Head>
-        <title>Coin Toss</title>
-        <meta name="description" content="Draw V - Coin Toss" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <main>
-        <CoinToss />
-      </main>
-    </div>
+    <main className="max-w-2xl mx-auto p-6">
+      <CoinToss />
+    </main>
   );
 }

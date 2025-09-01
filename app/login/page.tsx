@@ -33,8 +33,8 @@ export default function LoginPage() {
 }
 
   return (
-    <main className="min-h-[85vh] flex flex-col items-center justify-center bg-[var(--background)] text-[var(--foreground)] px-4">
-      <div className="w-full max-w-[350px] rounded-2xl shadow bg-white/90 dark:bg-black/80 border border-zinc-200 dark:border-zinc-800 p-8 space-y-4">
+    <main className="min-h-[85vh] flex flex-col items-center justify-center bg-[var(--background)] text-[var(--foreground)] px-4 mt-20">
+      <div className="w-full max-w-[350px] rounded-2xl shadow bg-black/80 border border-zinc-800 p-8 space-y-4">
         <h1 className="text-2xl font-bold mb-2 text-center">Sign in to DRAW V</h1>
 
         <form className="space-y-4 mb-3" onSubmit={handleSubmit} autoComplete="off">
@@ -44,7 +44,7 @@ export default function LoginPage() {
             <input
               id="email"
               type="email"
-              className="w-full px-3 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-transparent outline-none focus:ring-2 focus:ring-indigo-500 transition"
+              className="w-full px-3 py-2 rounded-lg border border-zinc-700 bg-transparent outline-none focus:ring-2 focus:ring-indigo-500 transition"
               value={email}
               onChange={e => setEmail(e.target.value)}
               required
@@ -58,7 +58,7 @@ export default function LoginPage() {
               <input
                 id="password"
                 type={showPassword ? "text" : "password"}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-transparent outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                className="w-full px-3 py-2 rounded-lg border border-zinc-700 bg-transparent outline-none focus:ring-2 focus:ring-indigo-500 transition"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 required
@@ -87,9 +87,9 @@ export default function LoginPage() {
 
         {/* Separator */}
         <div className="flex items-center my-3">
-          <div className="flex-grow border-t border-zinc-300 dark:border-zinc-700" />
+          <div className="flex-grow border-t border-zinc-700" />
           <span className="text-xs px-3 text-zinc-400">OR</span>
-          <div className="flex-grow border-t border-zinc-300 dark:border-zinc-700" />
+          <div className="flex-grow border-t border-zinc-700" />
         </div>
 
         {/* Social login */}
@@ -97,7 +97,7 @@ export default function LoginPage() {
           <button
             type="button"
             onClick={() => handleSocialSignIn("google")}
-            className="w-full flex items-center justify-center gap-2 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white hover:bg-indigo-50 dark:bg-zinc-950 dark:hover:bg-indigo-950 font-semibold shadow text-zinc-800 dark:text-zinc-100 transition"
+            className="w-full flex items-center justify-center gap-2 py-2 rounded-lg border border-zinc-700 bg-zinc-950 hover:bg-indigo-950 font-semibold shadow text-zinc-100 transition"
           >
             <svg className="h-5 w-5" viewBox="0 0 533.5 544.3" xmlns="http://www.w3.org/2000/svg">
               <path fill="#4285F4" d="M533.5 278.4c0-17.4-1.4-34.1-4.1-50.4H272.1v95.3h146.9c-6.4 34.6-25.2 63.9-53.8 83.5v69.3h86.8c50.9-46.9 81.5-116 81.5-197.7z"/>
@@ -111,7 +111,7 @@ export default function LoginPage() {
           <button
             type="button"
             onClick={() => handleSocialSignIn("github")}
-            className="w-full flex items-center justify-center gap-2 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white hover:bg-zinc-200 dark:bg-zinc-900 dark:hover:bg-zinc-800 font-semibold shadow text-zinc-800 dark:text-zinc-100 transition"
+            className="w-full flex items-center justify-center gap-2 py-2 rounded-lg border border-zinc-700 bg-zinc-900 hover:bg-zinc-800 font-semibold shadow text-zinc-100 transition"
           >
             <FaGithub className="h-5 w-5" />
             Continue with GitHub

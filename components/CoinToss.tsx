@@ -95,29 +95,29 @@ const CoinToss = () => {
       <style>{coinFlipStyles}</style>
       <main className="max-w-2xl mx-auto py-16 px-4 flex flex-col items-center text-center mt-20">
         <h1 className="text-3xl font-bold mb-4 text-indigo-700">Fair Coin Toss</h1>
-        <p className="mb-8 text-zinc-600 dark:text-zinc-300">
+        <p className="mb-8 text-zinc-300">
           Enter team names and click the button for a random toss.
         </p>
 
         {/* --- TEAM INPUTS --- */}
         <div className="flex justify-center gap-10 mb-8 flex-wrap w-full">
-          <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-5 rounded-lg w-full max-w-[300px]">
+          <div className="bg-zinc-900 border border-zinc-800 p-5 rounded-lg w-full max-w-[300px]">
             <label htmlFor="teamA" className="text-indigo-600 font-semibold text-lg">Heads</label>
             <input
               type="text"
               id="teamA"
-              className="mt-2 w-full p-2 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white border border-zinc-300 dark:border-zinc-700"
+              className="mt-2 w-full p-2 rounded bg-zinc-800 text-white border border-zinc-700"
               value={teamA}
               onChange={(e) => setTeamA(e.target.value)}
               placeholder="Enter Team A Name"
             />
           </div>
-          <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-5 rounded-lg w-full max-w-[300px]">
+          <div className="bg-zinc-900 border border-zinc-800 p-5 rounded-lg w-full max-w-[300px]">
             <label htmlFor="teamB" className="text-indigo-600 font-semibold text-lg">Tails</label>
             <input
               type="text"
               id="teamB"
-              className="mt-2 w-full p-2 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white border border-zinc-300 dark:border-zinc-700"
+              className="mt-2 w-full p-2 rounded bg-zinc-800 text-white border border-zinc-700"
               value={teamB}
               onChange={(e) => setTeamB(e.target.value)}
               placeholder="Enter Team B Name"
@@ -149,11 +149,11 @@ const CoinToss = () => {
         </button>
 
         {!isFlipping && result && (
-          <div className="mt-8 p-6 bg-indigo-50 dark:bg-indigo-950 border-2 border-indigo-500 rounded-lg">
-            <h2 className="text-2xl font-bold text-indigo-700 dark:text-indigo-300">
+          <div className="mt-8 p-6 bg-zinc-800 border-2 border-zinc-700 rounded-lg">
+            <h2 className="text-2xl font-bold text-indigo-300">
               The result is {result}!
             </h2>
-            <p className="text-xl mt-2 text-zinc-800 dark:text-zinc-200">
+            <p className="text-xl mt-2 text-zinc-200">
               <span className="font-bold">{getWinner()}</span> wins the toss.
             </p>
           </div>

@@ -34,7 +34,7 @@ export default function RegisterPage() {
 
   return (
     <main className="min-h-[85vh] flex flex-col items-center justify-center bg-[var(--background)] text-[var(--foreground)] px-4">
-      <div className="w-full max-w-[350px] rounded-2xl shadow bg-white/90 dark:bg-black/80 border border-zinc-200 dark:border-zinc-800 p-8 space-y-4">
+      <div className="w-full max-w-[350px] rounded-2xl shadow bg-black/80 border border-zinc-800 p-8 space-y-4">
         <h1 className="text-2xl font-bold mb-2 text-center">Create your account</h1>
         <form className="space-y-4" onSubmit={handleSubmit} autoComplete="off">
           <div>
@@ -42,7 +42,7 @@ export default function RegisterPage() {
             <input
               id="name"
               type="text"
-              className="w-full px-3 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-transparent outline-none focus:ring-2 focus:ring-indigo-500 transition"
+              className="w-full px-3 py-2 rounded-lg border border-zinc-700 bg-transparent outline-none focus:ring-2 focus:ring-indigo-500 transition"
               value={form.name}
               autoFocus
               autoComplete="off"
@@ -56,7 +56,7 @@ export default function RegisterPage() {
             <input
               id="email"
               type="email"
-              className="w-full px-3 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-transparent outline-none focus:ring-2 focus:ring-indigo-500 transition"
+              className="w-full px-3 py-2 rounded-lg border border-zinc-700 bg-transparent outline-none focus:ring-2 focus:ring-indigo-500 transition"
               value={form.email}
               autoComplete="off"
               onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
@@ -69,7 +69,7 @@ export default function RegisterPage() {
               <input
                 id="password"
                 type={showPassword ? "text" : "password"}
-                className="w-full px-3 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-transparent outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                className="w-full px-3 py-2 rounded-lg border border-zinc-700 bg-transparent outline-none focus:ring-2 focus:ring-indigo-500 transition"
                 value={form.password}
                 onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
                 required

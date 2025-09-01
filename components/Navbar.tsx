@@ -3,13 +3,11 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useSession, signOut } from 'next-auth/react'
-import { useTheme } from 'next-themes'
 import { useEffect, useState, useRef } from 'react'
 import { Menu, X, ChevronDown } from 'lucide-react'
 
 export default function Navbar() {
   const { data: session, status } = useSession()
-  const { resolvedTheme } = useTheme()
 
   const [mounted, setMounted] = useState<boolean>(false)
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false)
@@ -44,7 +42,7 @@ export default function Navbar() {
         px-6 py-3
         backdrop-blur-2xl
         shadow-xl
-        border border-white/15 dark:border-white/10
+        border border-white/10
         rounded-2xl
         font-sans
         z-50
@@ -60,7 +58,7 @@ export default function Navbar() {
         <Link href="/" className="select-none flex items-center" onClick={closeMenu}>
           {mounted && (
             <Image
-              src={resolvedTheme === 'dark' ? '/DVDark_bg.png' : '/logo-light.png'}
+              src="/DVDark_bg.png"
               alt="Draw V Logo"
               width={96}
               height={96}
@@ -86,8 +84,8 @@ export default function Navbar() {
             <div
               className="
                 absolute top-full mt-2 w-48
-                bg-white dark:bg-neutral-900
-                border border-gray-200 dark:border-white/20
+                bg-neutral-900
+                border border-white/20
                 shadow-lg rounded-lg
                 flex flex-col
                 animate-slide-down
@@ -95,21 +93,21 @@ export default function Navbar() {
             >
               <Link
                 href="/tournaments"
-                className="px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-neutral-800 rounded-t-lg"
+                className="px-4 py-2 text-left hover:bg-neutral-800 rounded-t-lg"
                 onClick={() => setIsExploreOpen(false)}
               >
                 Tournaments
               </Link>
               <Link
                 href="/gamedev"
-                className="px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-neutral-800"
+                className="px-4 py-2 text-left hover:bg-neutral-800"
                 onClick={() => setIsExploreOpen(false)}
               >
                 Game Dev
               </Link>
               <Link
                 href="/events"
-                className="px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-neutral-800 rounded-b-lg"
+                className="px-4 py-2 text-left hover:bg-neutral-800 rounded-b-lg"
                 onClick={() => setIsExploreOpen(false)}
               >
                 Events
@@ -173,15 +171,13 @@ export default function Navbar() {
             onClick={() => signOut({ callbackUrl: '/' })}
             className="
               px-4 py-1 rounded-lg
-              border border-[color:var(--primary)]
+              border border-white/30
               bg-transparent
-              text-black
+              text-white
               font-semibold
               transition
-              hover:bg-[color:var(--primary)]/10
-              hover:text-[color:var(--primary-hover)]
-              dark:text-white dark:border-white/30
-              dark:hover:bg-white/10 dark:hover:text-white
+              hover:bg-white/10
+              hover:text-white
               shadow-sm
             "
             style={{ minWidth: 90 }}
@@ -207,7 +203,7 @@ export default function Navbar() {
 
       {/* Hamburger - Mobile only */}
       <button
-        className="sm:hidden flex items-center justify-center p-2 rounded-lg border border-gray-300 dark:border-white/30"
+        className="sm:hidden flex items-center justify-center p-2 rounded-lg border border-white/30"
         onClick={handleMenuToggle}
         aria-label="Toggle menu"
       >
@@ -219,7 +215,7 @@ export default function Navbar() {
         <div
           className="
             absolute top-full left-0 w-full mt-3
-            bg-white dark:bg-neutral-900 border border-gray-200 dark:border-white/20
+            bg-neutral-900 border border-white/20
             shadow-lg rounded-lg
             flex flex-col gap-3 px-6 py-4
             sm:hidden
@@ -269,7 +265,7 @@ export default function Navbar() {
                 signOut({ callbackUrl: '/' })
                 closeMenu()
               }}
-              className="px-4 py-2 rounded-lg border border-gray-300 dark:border-white/30 text-left"
+              className="px-4 py-2 rounded-lg border border-white/30 text-left"
             >
               Sign Out
             </button>

@@ -10,7 +10,7 @@ export default async function UsersPage() {
   return (
     <>
       <AdminToolbar title="Users" />
-      <div className="rounded-2xl border border-zinc-200/70 dark:border-zinc-800/70 bg-white/70 dark:bg-zinc-900/60 p-6">
+      <div className="rounded-2xl border border-zinc-800/70 bg-zinc-900/60 p-6">
         <p className="text-sm text-zinc-500">Users list will appear here.</p>
       </div>
     </>

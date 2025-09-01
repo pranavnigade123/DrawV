@@ -27,10 +27,10 @@ function formatRange(start?: Date | null, end?: Date | null) {
 function StatusBadge({ status }: { status: string }) {
   const cls =
     status === "open"
-      ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300"
+      ? "bg-emerald-900/30 text-emerald-300"
       : status === "ongoing"
-      ? "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300"
-      : "bg-zinc-200 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300";
+      ? "bg-indigo-900/30 text-indigo-300"
+      : "bg-zinc-800 text-zinc-300";
   return (
     <span className={`inline-flex items-center rounded px-2 py-0.5 text-xs font-medium ${cls}`}>
       {status}
@@ -48,8 +48,6 @@ export default async function TournamentsPage(props: {
 
   await connectDB();
 
-  // Order: open (soonest reg close first), ongoing (soonest event end first), completed (recent first)
-  // We’ll do it with a single query + sort keys for simplicity.
   const items = await Tournament.find({
     archivedAt: null,
     status: { $in: ["open", "ongoing", "completed"] },
@@ -59,7 +57,6 @@ export default async function TournamentsPage(props: {
     )
     .lean();
 
-  // Create a sort key per item
   const enriched = items.map((t: any) => {
     let bucket = 3;
     let key = 0;
@@ -71,7 +68,7 @@ export default async function TournamentsPage(props: {
       key = new Date(t.endDate || t.startDate || t.createdAt).getTime();
     } else {
       bucket = 3;
-      key = -new Date(t.endDate || t.createdAt).getTime(); // negative for recent-first
+      key = -new Date(t.endDate || t.createdAt).getTime();
     }
     return { ...t, __bucket: bucket, __key: key };
   });
@@ -88,16 +85,16 @@ export default async function TournamentsPage(props: {
   return (
     <div className="mx-auto max-w-6xl px-3 md:px-0 py-6 md:py-8 mt-30">
       <div className="mb-5">
-        <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
+        <h1 className="text-2xl font-semibold tracking-tight text-zinc-50">
           Tournaments
         </h1>
-        <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-8">
+        <p className="text-sm text-zinc-400 mb-8">
           Browse open, ongoing, and recently completed tournaments.
         </p>
       </div>
 
       {paged.length === 0 ? (
-        <div className="rounded-xl border border-zinc-200/70 dark:border-zinc-800/70 p-8 text-center text-sm text-zinc-500 dark:text-zinc-400">
+        <div className="rounded-xl border border-zinc-800/70 p-8 text-center text-sm text-zinc-400">
           No tournaments available right now.
         </div>
       ) : (
@@ -105,10 +102,10 @@ export default async function TournamentsPage(props: {
           {paged.map((t: any) => (
             <li
               key={t.slug}
-              className="rounded-xl border border-zinc-200/70 dark:border-zinc-800/70 bg-white/70 dark:bg-zinc-900/60 overflow-hidden"
+              className="rounded-xl border border-zinc-800/70 bg-zinc-900/60 overflow-hidden"
             >
               {t.coverImage ? (
-                // eslint-disable-next-line @next/next/no-img-element
+                
                 <img
                   src={t.coverImage}
                   alt={t.name}
@@ -116,25 +113,25 @@ export default async function TournamentsPage(props: {
                   loading="lazy"
                 />
               ) : (
-                <div className="h-2 w-full bg-gradient-to-r from-zinc-100 to-zinc-50 dark:from-zinc-900 dark:to-zinc-950" />
+                <div className="h-2 w-full bg-gradient-to-r from-zinc-900 to-zinc-950" />
               )}
 
               <div className="p-4 space-y-2">
                 <div className="flex items-center justify-between gap-3">
-                  <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 line-clamp-1">
+                  <h2 className="text-sm font-semibold text-zinc-100 line-clamp-1">
                     {t.name}
                   </h2>
                   <StatusBadge status={t.status} />
                 </div>
 
-                <div className="text-xs text-zinc-500 dark:text-zinc-400">
+                <div className="text-xs text-zinc-400">
                   {t.game || "—"}
                 </div>
 
-                <div className="text-xs text-zinc-500 dark:text-zinc-400">
+                <div className="text-xs text-zinc-400">
                   Reg: {formatRange(t.registrationOpenAt, t.registrationCloseAt)}
                 </div>
-                <div className="text-xs text-zinc-500 dark:text-zinc-400">
+                <div className="text-xs text-zinc-400">
                   Event: {formatRange(t.startDate, t.endDate)}
                 </div>
 
@@ -154,7 +151,7 @@ export default async function TournamentsPage(props: {
 
       {totalPages > 1 && (
         <div className="mt-6 flex items-center justify-between text-sm">
-          <div className="text-zinc-500">
+          <div className="text-zinc-400">
             Page {page} of {totalPages} • {total} total
           </div>
           <div className="flex gap-2">
@@ -164,8 +161,8 @@ export default async function TournamentsPage(props: {
               className={[
                 "px-3 py-1.5 rounded-lg border",
                 page === 1
-                  ? "pointer-events-none opacity-40 border-zinc-300 dark:border-zinc-700"
-                  : "hover:bg-zinc-50 dark:hover:bg-zinc-800 border-zinc-300 dark:border-zinc-700",
+                  ? "pointer-events-none opacity-40 border-zinc-700"
+                  : "hover:bg-zinc-800 border-zinc-700",
               ].join(" ")}
             >
               Prev
@@ -176,8 +173,8 @@ export default async function TournamentsPage(props: {
               className={[
                 "px-3 py-1.5 rounded-lg border",
                 page === totalPages
-                  ? "pointer-events-none opacity-40 border-zinc-300 dark:border-zinc-700"
-                  : "hover:bg-zinc-50 dark:hover:bg-zinc-800 border-zinc-300 dark:border-zinc-700",
+                  ? "pointer-events-none opacity-40 border-zinc-700"
+                  : "hover:bg-zinc-800 border-zinc-700",
               ].join(" ")}
             >
               Next
@@ -188,3 +185,4 @@ export default async function TournamentsPage(props: {
     </div>
   );
 }
+

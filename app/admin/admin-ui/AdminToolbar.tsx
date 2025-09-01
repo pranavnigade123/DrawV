@@ -1,4 +1,3 @@
-// app/admin/admin-ui/AdminToolbar.tsx
 'use client'
 
 import Link from 'next/link'
@@ -41,7 +40,7 @@ export default function AdminToolbar({
   }, [pathname])
 
   return (
-    <div className="mb-5 rounded-2xl border border-zinc-200/70 dark:border-zinc-800/70 bg-white/70 dark:bg-zinc-900/60 backdrop-blur supports-[backdrop-filter]:bg-white/60 supports-[backdrop-filter]:dark:bg-zinc-900/40">
+    <div className="mb-5 rounded-2xl border border-zinc-800/70 bg-zinc-900/60 backdrop-blur supports-[backdrop-filter]:bg-zinc-900/40">
       <div className="px-4 sm:px-5 py-3 flex items-center justify-between gap-3">
         {/* Left: Logo + breadcrumb + title */}
         <div className="min-w-0 flex items-center gap-3">
@@ -53,13 +52,17 @@ export default function AdminToolbar({
           </Link>
 
           <div className="min-w-0">
-            <div className="text-[11px] uppercase tracking-wide text-zinc-500 dark:text-zinc-400 truncate">
+            <div className="text-[11px] uppercase tracking-wide text-zinc-400 truncate">
               {crumbs.map((c, i) => (
                 <span key={c.href}>
                   {i > 0 && <span className="mx-1.5 text-zinc-400">›</span>}
                   <Link
                     href={c.href}
-                    className={i === crumbs.length - 1 ? 'text-zinc-300 cursor-default pointer-events-none' : 'hover:underline'}
+                    className={
+                      i === crumbs.length - 1
+                        ? 'text-zinc-300 cursor-default pointer-events-none'
+                        : 'hover:underline'
+                    }
                   >
                     {c.label}
                   </Link>
@@ -79,7 +82,7 @@ export default function AdminToolbar({
           {/* Back to public site button */}
           <Link
             href="/"
-            className="px-3 py-1.5 rounded-lg border border-zinc-300 dark:border-zinc-700 text-sm hover:bg-zinc-50 dark:hover:bg-zinc-800 transition"
+            className="px-3 py-1.5 rounded-lg border border-zinc-700 text-sm hover:bg-zinc-800 transition"
             title="Go to site"
           >
             Site
@@ -88,7 +91,7 @@ export default function AdminToolbar({
           {/* Back to Admin Dashboard button */}
           <Link
             href="/admin/dashboard"
-            className="px-3 py-1.5 rounded-lg border border-zinc-300 dark:border-zinc-700 text-sm hover:bg-zinc-50 dark:hover:bg-zinc-800 transition"
+            className="px-3 py-1.5 rounded-lg border border-zinc-700 text-sm hover:bg-zinc-800 transition"
             title="Admin dashboard"
           >
             Dashboard
@@ -104,7 +107,7 @@ export default function AdminToolbar({
                   'px-3 py-1.5 rounded-lg border text-sm transition',
                   pathname === l.href
                     ? 'border-indigo-600 bg-indigo-600 text-white'
-                    : 'border-zinc-300 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800',
+                    : 'border-zinc-700 hover:bg-zinc-800',
                 ].join(' ')}
               >
                 {l.label}
