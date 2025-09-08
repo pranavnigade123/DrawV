@@ -5,10 +5,12 @@ import Tournament from "@/lib/models/Tournament";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const slug = params.slug?.toLowerCase();
+    const { slug: raw } = await params; // Next 15: params is a Promise and must be awaited
+    const slug = raw?.toLowerCase();
+
     if (!slug) {
       return NextResponse.json({ error: "Invalid slug" }, { status: 400 });
     }
