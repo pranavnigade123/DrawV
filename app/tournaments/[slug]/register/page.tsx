@@ -241,7 +241,7 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <Label>Contact phone (optional)</Label>
+              <Label>Contact phone </Label>
               <Input value={contactPhone} onChange={(e) => setContactPhone(e.target.value)} placeholder="+91..." />
             </div>
 
