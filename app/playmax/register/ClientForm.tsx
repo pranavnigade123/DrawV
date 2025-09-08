@@ -220,7 +220,7 @@ export default function ClientForm() {
 
       {/* Integrated Card */}
       <section className="max-w-5xl mx-auto px-4 pb-20">
-        <div className="rounded-2xl overflow-hidden bg-white shadow-xl">
+        <div className="rounded-2xl overflow-hidden bg-indigo-100 shadow-xl">
           <div className="grid grid-cols-1 lg:grid-cols-2">
             {/* Dynamic Image Section */}
             <div className="relative h-64 lg:h-auto">
@@ -233,7 +233,7 @@ export default function ClientForm() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 0.8 }}
+                  transition={{ duration: 0.6 }}
                   onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
                     const t = e.target as HTMLImageElement;
                     t.onerror = null;
@@ -383,7 +383,7 @@ export default function ClientForm() {
                         onClick={() => setField("game", g.key)}
                         className={[
                           "relative overflow-hidden rounded-lg border transition-all duration-200",
-                          active ? "border-blue-500 shadow-md" : "border-gray-300 hover:border-blue-300",
+                          active ? "border-blue-500 shadow-md" : "border-gray-300 hover:border-zinc-500",
                         ].join(" ")}
                         aria-pressed={active}
                         aria-label={`Choose ${g.label}`}
