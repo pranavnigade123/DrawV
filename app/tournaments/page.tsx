@@ -185,4 +185,3 @@ export default async function TournamentsPage(props: {
     </div>
   );
 }
-

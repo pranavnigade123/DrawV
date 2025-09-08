@@ -162,6 +162,17 @@ export default async function EditTournamentPage(props: { params: Promise<{ id: 
               </select>
             </Field>
           </Card>
+          <Field label="Team size" htmlFor="teamSize" help="Total players per team, including leader.">
+  <input
+    id="teamSize"
+    type="number"
+    name="teamSize"
+    min={1}
+    defaultValue={(t as any).teamSize ?? ""}
+    placeholder="e.g., 5"
+    className="w-full rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500/40"
+  />
+</Field>
 
           {/* Timeline */}
           <Card

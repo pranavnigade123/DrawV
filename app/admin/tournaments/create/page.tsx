@@ -134,6 +134,16 @@ export default async function CreateTournamentPage() {
               </select>
             </Field>
           </Card>
+          <Field label="Team size" htmlFor="teamSize" help="Total players per team, including leader. Leave empty for solo tournaments.">
+  <input
+    id="teamSize"
+    type="number"
+    name="teamSize"
+    min={1}
+    placeholder="e.g., 5"
+    className="w-full rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500/40"
+  />
+</Field>
 
           <Card
             title="Timeline"

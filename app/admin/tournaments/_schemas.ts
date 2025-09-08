@@ -24,6 +24,16 @@ export const createTournamentSchema = z
     game: z.string().optional().nullable(),
     format: formatEnum,
     entryType: entryTypeEnum,
+
+    // NEW: teamSize, numeric or null
+    teamSize: z
+      .string()
+      .optional()
+      .transform((v) => (v ? Number(v) : null))
+      .refine((n) => n === null || (Number.isInteger(n) && n >= 1), {
+        message: "Team size must be a positive integer",
+      }),
+
     registrationOpenAt: isoDateOrEmpty,
     registrationCloseAt: isoDateOrEmpty,
     startDate: isoDateOrEmpty,
@@ -63,9 +73,17 @@ export const createTournamentSchema = z
         message: "Registration close should be on or before event start.",
       });
     }
+
+    // NEW: entryType-dependent teamSize rule
+    if (val.entryType === "team" && (!val.teamSize || val.teamSize < 2)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["teamSize"],
+        message: "Team size must be at least 2 for team entry type.",
+      });
+    }
   });
 
 export const updateTournamentSchema = createTournamentSchema.partial().extend({
-  // allow name/format changes etc., but you can require at least one field:
-  _atLeastOne: z.string().optional(), // Placeholder to allow empty extension
+  _atLeastOne: z.string().optional(),
 });

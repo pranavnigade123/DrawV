@@ -1,3 +1,4 @@
+// app/admin/tournaments/_actions.ts
 "use server";
 
 import { revalidatePath } from "next/cache";
@@ -25,6 +26,10 @@ export async function createTournament(formData: FormData): Promise<void> {
     game: (formData.get("game")?.toString() || null) as string | null,
     format: (formData.get("format")?.toString() || "single_elim") as any,
     entryType: (formData.get("entryType")?.toString() || "team") as any,
+
+    // NEW
+    teamSize: formData.get("teamSize")?.toString(),
+
     registrationOpenAt: formData.get("registrationOpenAt")?.toString(),
     registrationCloseAt: formData.get("registrationCloseAt")?.toString(),
     startDate: formData.get("startDate")?.toString(),
@@ -37,7 +42,8 @@ export async function createTournament(formData: FormData): Promise<void> {
 
   const parsed = createTournamentSchema.safeParse(raw);
   if (!parsed.success) {
-    throw new Error(parsed.error.issues[0]?.message || "Invalid input");
+    const messages = parsed.error.issues.map(issue => issue.message).join("; ");
+    throw new Error(messages || "Invalid input");
   }
 
   const {
@@ -45,6 +51,7 @@ export async function createTournament(formData: FormData): Promise<void> {
     game,
     format,
     entryType,
+    teamSize, // NEW: parsed numeric or null
     registrationOpenAt,
     registrationCloseAt,
     startDate,
@@ -73,7 +80,6 @@ export async function createTournament(formData: FormData): Promise<void> {
     slug = `${slug}-${i}`;
   }
 
-  // Manual status only: default to draft
   const status = "draft" as const;
 
   await Tournament.create({
@@ -82,6 +88,8 @@ export async function createTournament(formData: FormData): Promise<void> {
     game: game || null,
     format,
     entryType,
+    teamSize: teamSize ?? null, // NEW
+
     registrationOpenAt: normRegistrationOpenAt,
     registrationCloseAt: normRegistrationCloseAt,
     startDate: normStartDate,
@@ -109,6 +117,10 @@ export async function updateTournament(id: string, formData: FormData): Promise<
     game: (formData.get("game")?.toString() || null) as string | null,
     format: (formData.get("format")?.toString() || "single_elim") as any,
     entryType: (formData.get("entryType")?.toString() || "team") as any,
+
+    // NEW
+    teamSize: formData.get("teamSize")?.toString(),
+
     registrationOpenAt: formData.get("registrationOpenAt")?.toString(),
     registrationCloseAt: formData.get("registrationCloseAt")?.toString(),
     startDate: formData.get("startDate")?.toString(),
@@ -127,7 +139,8 @@ export async function updateTournament(id: string, formData: FormData): Promise<
 
   const parsed = createTournamentSchema.safeParse(raw);
   if (!parsed.success) {
-    throw new Error(parsed.error.issues[0]?.message || "Invalid input");
+    const messages = parsed.error.issues.map(issue => issue.message).join("; ");
+    throw new Error(messages || "Invalid input");
   }
 
   const {
@@ -135,6 +148,7 @@ export async function updateTournament(id: string, formData: FormData): Promise<
     game,
     format,
     entryType,
+    teamSize, // NEW
     registrationOpenAt,
     registrationCloseAt,
     startDate,
@@ -159,6 +173,7 @@ export async function updateTournament(id: string, formData: FormData): Promise<
       game: game || null,
       format,
       entryType,
+      teamSize: teamSize ?? null, // NEW
       registrationOpenAt: normRegistrationOpenAt,
       registrationCloseAt: normRegistrationCloseAt,
       startDate: normStartDate,
@@ -167,7 +182,7 @@ export async function updateTournament(id: string, formData: FormData): Promise<
       coverImage: coverImage || null,
       rules: rules || null,
       description: description || null,
-      status: raw.status, // manual-only
+      status: raw.status,
     },
     { new: false }
   );
@@ -176,49 +191,29 @@ export async function updateTournament(id: string, formData: FormData): Promise<
   revalidatePath(`/admin/tournaments/${id}/edit`);
   redirect("/admin/tournaments?updated=1");
 }
-
-// ARCHIVE: soft-hide (reversible)
+// ARCHIVE
 export async function archiveTournament(id: string): Promise<void> {
-  const session = await ensureAdmin();
+  await ensureAdmin();
   await connectDB();
-
-  await Tournament.findByIdAndUpdate(
-    id,
-    { archivedAt: new Date() },
-    { new: false }
-  );
-
+  await Tournament.findByIdAndUpdate(id, { archivedAt: new Date() });
   revalidatePath("/admin/tournaments");
-  revalidatePath("/admin/tournaments/archived");
-  redirect("/admin/tournaments?archived=1");
+  revalidatePath("/tournaments");
 }
 
-// RESTORE: bring back to active list
-export async function restoreTournament(id: string): Promise<void> {
-  const session = await ensureAdmin();
+// UNARCHIVE (optional)
+export async function unarchiveTournament(id: string): Promise<void> {
+  await ensureAdmin();
   await connectDB();
-
-  await Tournament.findByIdAndUpdate(
-    id,
-    { archivedAt: null },
-    { new: false }
-  );
-
+  await Tournament.findByIdAndUpdate(id, { archivedAt: null });
   revalidatePath("/admin/tournaments");
-  revalidatePath("/admin/tournaments/archived");
-  redirect("/admin/tournaments/archived?restored=1");
+  revalidatePath("/tournaments");
 }
 
-// DELETE: permanent removal
+// DELETE (optional hard delete; use cautiously)
 export async function deleteTournament(id: string): Promise<void> {
-  const session = await ensureAdmin();
+  await ensureAdmin();
   await connectDB();
-
-
-
   await Tournament.findByIdAndDelete(id);
-
   revalidatePath("/admin/tournaments");
-  revalidatePath("/admin/tournaments/archived");
-  redirect("/admin/tournaments/archived?deleted=1");
+  revalidatePath("/tournaments");
 }

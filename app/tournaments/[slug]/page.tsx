@@ -53,7 +53,8 @@ export default async function TournamentDetailPage(props: {
     archivedAt: null,
   })
     .select(
-      "name slug game status coverImage description rules format entryType registrationOpenAt registrationCloseAt startDate endDate"
+      // ADDED: teamSize in projection
+      "name slug game status coverImage description rules format entryType teamSize registrationOpenAt registrationCloseAt startDate endDate"
     )
     .lean();
 
@@ -120,6 +121,10 @@ export default async function TournamentDetailPage(props: {
               <div className="text-xs text-zinc-400">Format / Entry</div>
               <div className="text-sm mt-1 capitalize">
                 {String(t.format || "—").replaceAll("_", " ")} • {t.entryType}
+                {/* ADDED: show team size for team tournaments */}
+                {t.entryType === "team" && (t as any).teamSize
+                  ? ` • ${(t as any).teamSize} players`
+                  : ""}
               </div>
             </div>
           </div>

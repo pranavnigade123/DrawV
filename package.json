@@ -12,6 +12,7 @@
     "@heroicons/react": "^2.2.0",
     "@tabler/icons-react": "^3.34.1",
     "@vercel/analytics": "^1.5.0",
+    "@vercel/speed-insights": "^1.2.0",
     "bcryptjs": "^3.0.2",
     "clsx": "^2.1.1",
     "cobe": "^0.6.4",

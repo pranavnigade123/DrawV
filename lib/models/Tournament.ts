@@ -11,6 +11,7 @@ export interface ITournament extends Document {
   game?: string | null;
   format: "single_elim" | "double_elim" | "round_robin" | "groups_playoffs";
   entryType: "solo" | "team";
+  teamSize?: number | null; // NEW
   registrationOpenAt?: Date | null;
   registrationCloseAt?: Date | null;
   startDate?: Date | null;
@@ -48,6 +49,9 @@ const TournamentSchema = new Schema<ITournament>(
       default: "team",
     },
 
+    // NEW: team size
+    teamSize: { type: Number, default: null, min: 1 }, // validated in zod by entryType
+
     // Dates
     registrationOpenAt: { type: Date, default: null },
     registrationCloseAt: { type: Date, default: null },
@@ -84,8 +88,6 @@ TournamentSchema.pre("validate", function (next) {
   }
   next();
 });
-
-// No pre-save hooks: status is fully manual.
 
 TournamentSchema.index({ archivedAt: 1, status: 1, createdAt: -1 });
 
