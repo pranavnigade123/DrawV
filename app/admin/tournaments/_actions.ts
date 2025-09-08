@@ -217,3 +217,12 @@ export async function deleteTournament(id: string): Promise<void> {
   revalidatePath("/admin/tournaments");
   revalidatePath("/tournaments");
 }
+
+export async function restoreTournament(id: string): Promise<void> {
+  await ensureAdmin();
+  await connectDB();
+  await Tournament.findByIdAndUpdate(id, { archivedAt: null });
+  revalidatePath("/admin/tournaments/archived");
+  revalidatePath("/admin/tournaments");
+  revalidatePath("/tournaments");
+}
