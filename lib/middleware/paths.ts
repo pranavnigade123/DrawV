@@ -14,6 +14,7 @@ export const PUBLIC_PATHS = [
   "/theme-preview",
   "/contact",
   "/unauthorized",
+  "/playmax/register",
 ];
 
 export function isPublicPath(pathname: string) {

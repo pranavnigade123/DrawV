@@ -64,20 +64,19 @@ export default function LandingPage() {
         <div className="flex justify-center w-full mt-28">
   <div className=" border-1 border-white rounded-2xl px-8 py-10 max-w-md w-full shadow-xl flex flex-col items-center">
     <h2 className="text-2xl sm:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600 text-center mb-8 tracking-tight">
-  Recruitments are Live&nbsp;!
+  Register for PlayMax Event&nbsp;!
 </h2>
 
-    <div className="flex gap-6">
-      <BorderStaticButton onClick={() => window.location.href = "/about"}>
-        About Us
-      </BorderStaticButton>
+    
+      
       <BorderMagicButton
-  onClick={() => window.open("https://docs.google.com/forms/d/e/1FAIpQLScR0fjDlbXETAqZdPx3Eab3spt4EaeZzqPCDJ9sGh6neHML9w/viewform?usp=dialoginstaed", "_blank")}
+  onClick={() => { window.location.href = "/playmax/register"; }}
 >
   Register
 </BorderMagicButton>
 
-    </div>
+
+    
   </div>
 </div>
 
