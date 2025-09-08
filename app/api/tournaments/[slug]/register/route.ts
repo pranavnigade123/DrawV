@@ -7,14 +7,18 @@ import Tournament from "@/lib/models/Tournament";
 import Registration from "@/lib/models/Registration";
 import { teamRegistrationSchema, validateTeamSizeStrict, soloRegistrationSchema } from "@/lib/validation/registration";
 
-export async function POST(req: NextRequest, { params }: { params: { slug: string } }) {
+export async function POST(
+  req: NextRequest,
+  { params }: { params: Promise<{ slug: string }> }
+) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id || !session.user.email) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const slug = params.slug?.toLowerCase();
+    const { slug: raw } = await params;
+    const slug = raw?.toLowerCase();
     if (!slug) return NextResponse.json({ error: "Invalid tournament slug" }, { status: 400 });
 
     await connectDB();
@@ -25,7 +29,6 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
 
     const body = await req.json();
 
-    // TEAM
     if (t.entryType === "team") {
       const teamSize = Number((t as any).teamSize || 0);
       if (!Number.isInteger(teamSize) || teamSize < 2) {
@@ -76,11 +79,10 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
       return NextResponse.json({ success: true, id: doc._id.toString() }, { status: 201 });
     }
 
-    // SOLO
     if (t.entryType === "solo") {
       const parsed = soloRegistrationSchema.safeParse(body);
       if (!parsed.success) {
-        const msg = parsed.error.issues[0]?.message || "Invalid input";
+        const msg = parsed.error.issues?.[0]?.message || "Invalid input";
         return NextResponse.json({ error: msg }, { status: 400 });
       }
       const { ign, contactPhone } = parsed.data;
