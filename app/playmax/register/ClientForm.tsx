@@ -3,6 +3,7 @@ import { useMemo, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mail, Phone, Calendar, ChevronRight } from "lucide-react";
 import toast, { Toaster } from 'react-hot-toast';
+import { CheckCircle } from 'lucide-react';
 
 // Mini atoms – simplified for fun and clean look
 interface FieldLabelProps {
@@ -89,6 +90,28 @@ interface FormState {
   acceptTc: boolean;
 }
 
+// Custom success toast component with Framer Motion
+const SuccessToast = ({ message }: { message: string }) => {
+  return (
+    <motion.div
+      initial={{ y: -50, opacity: 0, scale: 0.8 }}
+      animate={{ y: 0, opacity: 1, scale: 1 }}
+      exit={{ y: -50, opacity: 0, scale: 0.8 }}
+      transition={{ type: "spring", stiffness: 500, damping: 30 }}
+      className="bg-green-600 text-white rounded-xl shadow-lg p-4 flex items-center gap-3 border-2 border-green-400"
+    >
+      <motion.div
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={{ delay: 0.2, type: "spring", stiffness: 500, damping: 30 }}
+      >
+        <CheckCircle className="w-6 h-6" />
+      </motion.div>
+      <span className="font-semibold">{message}</span>
+    </motion.div>
+  );
+};
+
 export default function ClientForm() {
   const [form, setForm] = useState<FormState>({
     name: "",
@@ -155,22 +178,14 @@ export default function ClientForm() {
         setError(typeof data?.error === "string" ? data.error : "Submission failed");
       } else {
         setSuccessId(data.id || null);
-        toast.success(
-          <div className="flex items-center gap-2">
-            <span>Registration Successful! 🎉</span>
-            {data.id && <span className="font-mono text-sm">Reference ID: {data.id}</span>}
-          </div>,
-          {
-            style: {
-              background: '#22c55e',
-              color: '#ffffff',
-              borderRadius: '8px',
-              padding: '12px',
-            },
-            duration: 5000, // Toast disappears after 5 seconds
-            position: 'top-center',
-          }
-        );
+        // Using the custom component for the toast
+        toast.custom((t) => (
+          <SuccessToast message="Registration Successful! 🎉" />
+        ), {
+          duration: 5000,
+          position: 'top-center',
+        });
+
         // Reset form after successful submission
         setForm({
           name: "",
