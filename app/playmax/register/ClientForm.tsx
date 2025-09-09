@@ -1,7 +1,8 @@
 "use client";
 import { useMemo, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mail, Phone, Calendar, ChevronRight, CheckCircle2 } from "lucide-react";
+import { Mail, Phone, Calendar, ChevronRight } from "lucide-react";
+import toast, { Toaster } from 'react-hot-toast';
 
 // Mini atoms – simplified for fun and clean look
 interface FieldLabelProps {
@@ -105,19 +106,27 @@ export default function ClientForm() {
   const [successId, setSuccessId] = useState<string | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
 
+  // Helper to update form fields
+  function setField<K extends keyof FormState>(key: K, value: FormState[K]) {
+    setForm((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  }
+
   const canSubmit = useMemo(() => {
-  return (
-    form.name.trim().length >= 2 &&
-    /^\S+@\S+\.\S+$/.test(form.email.trim()) &&
-    /^\d{10}$/.test(form.phone.trim()) && // Ensures exactly 10 digits
-    form.dob.trim().length > 0 &&
-    form.course.trim().length > 0 &&
-    form.gender.trim().length > 0 &&
-    form.year.trim().length > 0 &&
-    form.game.trim().length > 0 &&
-    form.acceptTc
-  );
-}, [form]);
+    return (
+      form.name.trim().length >= 2 &&
+      /^\S+@\S+\.\S+$/.test(form.email.trim()) &&
+      /^\d{10}$/.test(form.phone.trim()) &&
+      form.dob.trim().length > 0 &&
+      form.course.trim().length > 0 &&
+      form.gender.trim().length > 0 &&
+      form.year.trim().length > 0 &&
+      form.game.trim().length > 0 &&
+      form.acceptTc
+    );
+  }, [form]);
 
   // Handle slideshow
   useEffect(() => {
@@ -127,17 +136,13 @@ export default function ClientForm() {
     return () => clearInterval(interval);
   }, []);
 
-  function setField<K extends keyof FormState>(key: K, value: FormState[K]) {
-    setForm((prev) => ({ ...prev, [key]: value }));
-  }
-
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-  e.preventDefault();
-  setError("");
-  if (!canSubmit) {
-    setError("Please complete all required fields with valid data and accept T&C.");
-    return;
-  }
+    e.preventDefault();
+    setError("");
+    if (!canSubmit) {
+      setError("Please complete all required fields with valid data and accept T&C.");
+      return;
+    }
     setSubmitting(true);
     try {
       const res = await fetch("/api/playmax/register", {
@@ -150,6 +155,34 @@ export default function ClientForm() {
         setError(typeof data?.error === "string" ? data.error : "Submission failed");
       } else {
         setSuccessId(data.id || null);
+        toast.success(
+          <div className="flex items-center gap-2">
+            <span>Registration Successful! 🎉</span>
+            {data.id && <span className="font-mono text-sm">Reference ID: {data.id}</span>}
+          </div>,
+          {
+            style: {
+              background: '#22c55e',
+              color: '#ffffff',
+              borderRadius: '8px',
+              padding: '12px',
+            },
+            duration: 5000, // Toast disappears after 5 seconds
+            position: 'top-center',
+          }
+        );
+        // Reset form after successful submission
+        setForm({
+          name: "",
+          email: "",
+          phone: "",
+          dob: "",
+          course: "",
+          gender: "",
+          year: "",
+          game: "",
+          acceptTc: false,
+        });
       }
     } catch {
       setError("Network error");
@@ -158,38 +191,11 @@ export default function ClientForm() {
     }
   }
 
-  if (successId) {
-    return (
-      <main className="min-h-screen flex items-center justify-center p-4">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="rounded-2xl border border-green-200 bg-white p-8 shadow-lg max-w-md w-full"
-        >
-          <div className="flex items-center gap-4">
-            <CheckCircle2 className="h-8 w-8 text-green-500" />
-            <div>
-              <h1 className="text-2xl font-bold text-green-600">You're in! 🎉</h1>
-              <p className="text-sm text-gray-600 mt-1">
-                Reference ID: <span className="font-mono text-green-500">{successId}</span>
-              </p>
-            </div>
-          </div>
-          <div className="mt-6">
-            <a
-              href="/"
-              className="inline-flex items-center gap-2 rounded-lg bg-blue-500 px-4 py-2 text-white text-sm font-medium hover:bg-blue-600 transition"
-            >
-              Back to Home <ChevronRight className="h-4 w-4" />
-            </a>
-          </div>
-        </motion.div>
-      </main>
-    );
-  }
-
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen relative">
+      {/* Toaster component for react-hot-toast */}
+      <Toaster />
+
       {/* Hero */}
       <section className="pt-28 pb-10 text-center">
         <motion.h1
@@ -284,23 +290,23 @@ export default function ClientForm() {
                 </div>
                 {/* Phone */}
                 <div>
-  <FieldLabel>Phone number *</FieldLabel>
-  <div className="relative">
-    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-    <TextInput
-      placeholder="XXXXXXXXXX"
-      value={form.phone}
-      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setField("phone", e.target.value)}
-      aria-label="Phone number"
-      inputMode="tel"
-      className="pl-10"
-      pattern="[0-9]{10}" // Enforces exactly 10 digits
-      maxLength={10} // Limits input to 10 characters
-      required
-    />
-  </div>
-  <Help>Enter a 10-digit phone number.</Help>
-</div>
+                  <FieldLabel>Phone number *</FieldLabel>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <TextInput
+                      placeholder="XXXXXXXXXX"
+                      value={form.phone}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setField("phone", e.target.value)}
+                      aria-label="Phone number"
+                      inputMode="tel"
+                      className="pl-10"
+                      pattern="[0-9]{10}"
+                      maxLength={10}
+                      required
+                    />
+                  </div>
+                  <Help>Enter a 10-digit phone number.</Help>
+                </div>
                 {/* DOB */}
                 <div>
                   <FieldLabel>Date of birth *</FieldLabel>
