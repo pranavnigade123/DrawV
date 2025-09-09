@@ -100,52 +100,44 @@ export default function ClientForm() {
     game: "",
     acceptTc: false,
   });
-  const [sendingOtp, setSendingOtp] = useState<boolean>(false);
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const [successId, setSuccessId] = useState<string | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
 
   const canSubmit = useMemo(() => {
-    return (
-      form.name.trim().length >= 2 &&
-      /^\S+@\S+\.\S+$/.test(form.email.trim()) &&
-      form.phone.trim().length >= 7 &&
-      form.acceptTc
-    );
-  }, [form]);
+  return (
+    form.name.trim().length >= 2 &&
+    /^\S+@\S+\.\S+$/.test(form.email.trim()) &&
+    /^\d{10}$/.test(form.phone.trim()) && // Ensures exactly 10 digits
+    form.dob.trim().length > 0 &&
+    form.course.trim().length > 0 &&
+    form.gender.trim().length > 0 &&
+    form.year.trim().length > 0 &&
+    form.game.trim().length > 0 &&
+    form.acceptTc
+  );
+}, [form]);
 
-  // Handle slideshow when no game is selected
+  // Handle slideshow
   useEffect(() => {
-    if (form.game) {
-      const selectedGame = GAMES.find((g) => g.key === form.game);
-      if (selectedGame) {
-        setCurrentImageIndex(SLIDESHOW_IMAGES.indexOf(selectedGame.image));
-      }
-    } else {
-      const interval = setInterval(() => {
-        setCurrentImageIndex((prev) => (prev + 1) % SLIDESHOW_IMAGES.length);
-      }, 3000);
-      return () => clearInterval(interval);
-    }
-  }, [form.game]);
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % SLIDESHOW_IMAGES.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
 
   function setField<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 
-  function fakeSendOtp() {
-    setSendingOtp(true);
-    setTimeout(() => setSendingOtp(false), 800);
-  }
-
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setError("");
-    if (!canSubmit) {
-      setError("Please complete the required fields and accept T&C.");
-      return;
-    }
+  e.preventDefault();
+  setError("");
+  if (!canSubmit) {
+    setError("Please complete all required fields with valid data and accept T&C.");
+    return;
+  }
     setSubmitting(true);
     try {
       const res = await fetch("/api/playmax/register", {
@@ -168,7 +160,7 @@ export default function ClientForm() {
 
   if (successId) {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 p-4">
+      <main className="min-h-screen flex items-center justify-center p-4">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -197,14 +189,14 @@ export default function ClientForm() {
   }
 
   return (
-    <main className="min-h-screen ">
+    <main className="min-h-screen">
       {/* Hero */}
       <section className="pt-28 pb-10 text-center">
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600"
+          className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-tr from-indigo-500 via-blue-700 via-sky-500 to-cyan-400"
         >
           Register for PlayMax Campus League
         </motion.h1>
@@ -265,6 +257,7 @@ export default function ClientForm() {
                     value={form.name}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setField("name", e.target.value)}
                     aria-label="Full name"
+                    required
                   />
                 </div>
                 {/* Email */}
@@ -284,35 +277,30 @@ export default function ClientForm() {
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setField("email", e.target.value)}
                       aria-label="Email"
                       className="pl-10"
+                      required
                     />
                   </div>
                   <Help>Use an active email to receive updates.</Help>
                 </div>
-                {/* Phone + OTP */}
+                {/* Phone */}
                 <div>
-                  <FieldLabel>Phone number *</FieldLabel>
-                  <div className="flex gap-2">
-                    <div className="relative flex-1">
-                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                      <TextInput
-                        placeholder="+91 XXXXXXXXXX"
-                        value={form.phone}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setField("phone", e.target.value)}
-                        aria-label="Phone number"
-                        inputMode="tel"
-                        className="pl-10"
-                      />
-                    </div>
-                    <button
-                      type="button"
-                      onClick={fakeSendOtp}
-                      className="px-4 py-3 rounded-lg bg-blue-500 text-white text-xs font-medium hover:bg-blue-600 transition disabled:opacity-50"
-                      disabled={sendingOtp}
-                    >
-                      {sendingOtp ? "Sending…" : "Send OTP"}
-                    </button>
-                  </div>
-                </div>
+  <FieldLabel>Phone number *</FieldLabel>
+  <div className="relative">
+    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+    <TextInput
+      placeholder="XXXXXXXXXX"
+      value={form.phone}
+      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setField("phone", e.target.value)}
+      aria-label="Phone number"
+      inputMode="tel"
+      className="pl-10"
+      pattern="[0-9]{10}" // Enforces exactly 10 digits
+      maxLength={10} // Limits input to 10 characters
+      required
+    />
+  </div>
+  <Help>Enter a 10-digit phone number.</Help>
+</div>
                 {/* DOB */}
                 <div>
                   <FieldLabel>Date of birth *</FieldLabel>
@@ -324,6 +312,7 @@ export default function ClientForm() {
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setField("dob", e.target.value)}
                       aria-label="Date of birth"
                       className="pl-10"
+                      required
                     />
                   </div>
                 </div>
@@ -331,10 +320,11 @@ export default function ClientForm() {
                 <div className="md:col-span-2">
                   <FieldLabel>Course *</FieldLabel>
                   <TextInput
-                    placeholder=" BBA, B.Tech…"
+                    placeholder="BBA, B.Tech…"
                     value={form.course}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setField("course", e.target.value)}
                     aria-label="Course"
+                    required
                   />
                 </div>
                 {/* Gender */}
@@ -344,6 +334,7 @@ export default function ClientForm() {
                     value={form.gender}
                     onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setField("gender", e.target.value)}
                     aria-label="Gender"
+                    required
                   >
                     <option value="">Select Gender</option>
                     <option>Male</option>
@@ -358,6 +349,7 @@ export default function ClientForm() {
                     value={form.year}
                     onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setField("year", e.target.value)}
                     aria-label="Year"
+                    required
                   >
                     <option value="">Select Year</option>
                     <option>FY</option>
@@ -420,6 +412,7 @@ export default function ClientForm() {
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setField("acceptTc", e.target.checked)}
                     className="h-4 w-4 rounded border-gray-300 text-blue-500 focus:ring-blue-500"
                     aria-label="Accept Terms and Conditions"
+                    required
                   />
                   I accept the Terms & Conditions and Privacy Policy
                 </label>
