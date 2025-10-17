@@ -136,5 +136,3 @@ Ensure ESLint and TypeScript checks pass before submitting.
 ## 📜 License
 
 MIT License © 2025 DrawV Team
-Created at **MIT World Peace University** as part of MCA Mini Project (2024 – 2025).
-
