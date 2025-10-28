@@ -73,7 +73,7 @@ const GAMES: Game[] = [
 
 const SLIDESHOW_IMAGES: string[] = [
   "/games/fc25.jpg",
-  "/games/sf6s.jpg",
+  "/games/sf6.jpg", // Fixed typo from "/games/sf6s.jpg"
   "/games/fc25-2.jpg",
   "/games/sf6-2.jpg",
 ];
@@ -126,7 +126,6 @@ export default function ClientForm() {
   });
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
-  const [successId, setSuccessId] = useState<string | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
 
   // Helper to update form fields
@@ -163,7 +162,7 @@ export default function ClientForm() {
     e.preventDefault();
     setError("");
     if (!canSubmit) {
-      setError("Please complete all required fields with valid data and accept T&C.");
+      setError("Please complete all required fields with valid data and accept the Terms & Conditions.");
       return;
     }
     setSubmitting(true);
@@ -173,14 +172,14 @@ export default function ClientForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
-      const data: { id?: string; error?: string } = await res.json();
+      const data: { message?: string; error?: string } = await res.json(); // Updated to match API response
       if (!res.ok) {
-        setError(typeof data?.error === "string" ? data.error : "Submission failed");
+        setError(data.error || "Registration failed. Please try again.");
+        toast.error(data.error || "Registration failed");
       } else {
-        setSuccessId(data.id || null);
         // Using the custom component for the toast
         toast.custom((t) => (
-          <SuccessToast message="Registration Successful! 🎉" />
+          <SuccessToast message="Registration successful! Check your email for confirmation and your verification QR code." />
         ), {
           duration: 5000,
           position: 'top-center',
@@ -200,7 +199,8 @@ export default function ClientForm() {
         });
       }
     } catch {
-      setError("Network error");
+      setError("Network error. Please check your connection and try again.");
+      toast.error("Network error");
     } finally {
       setSubmitting(false);
     }
@@ -301,7 +301,7 @@ export default function ClientForm() {
                       required
                     />
                   </div>
-                  <Help>Use an active email to receive updates.</Help>
+                  <Help>Use an active email to receive updates and your QR code.</Help> {/* Updated for clarity */}
                 </div>
                 {/* Phone */}
                 <div>

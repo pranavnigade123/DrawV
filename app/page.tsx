@@ -61,7 +61,7 @@ export default function LandingPage() {
           className="text-center text-white text-3xl md:text-5xl lg:text-7xl font-extrabold tracking-tight drop-shadow-2xl"
           cursorClassName="bg-purple-500"
         />
-        <div className="flex justify-center w-full mt-28">
+        {/*<div className="flex justify-center w-full mt-28">
   <div className=" border-1 border-white rounded-2xl px-8 py-10 max-w-md w-full shadow-xl flex flex-col items-center">
     <h2 className="text-2xl sm:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-600 text-center mb-8 tracking-tight">
   Register for PlayMax Event&nbsp;!
@@ -78,7 +78,7 @@ export default function LandingPage() {
 
     
   </div>
-</div>
+</div>*/}
 
 
       </section>
