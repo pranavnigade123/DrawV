@@ -1,0 +1,32 @@
+# dependencies / build caches
+node_modules
+.next
+.next/cache
+dist
+out
+
+# vcs / IDE
+.git
+.gitignore
+.github
+.vscode
+.DS_Store
+npm-debug.log
+yarn.lock
+pnpm-lock.yaml
+
+# envs
+.env
+.env.*
+!.env.example
+
+# misc
+coverage
+*.log
+*.swp
+
+# if you don’t need these inside the image as static:
+# large assets, raw dumps, exports, etc.
+# data/
+# uploads/
+# dumps/
