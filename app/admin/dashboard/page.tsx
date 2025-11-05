@@ -1,39 +1,54 @@
 // app/admin/dashboard/page.tsx
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/authOptions"
-import { redirect } from "next/navigation"
-import Link from "next/link"
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/authOptions";
+import { redirect } from "next/navigation";
+import Link from "next/link";
+import { connectDB } from "@/lib/models/mongodb";
+import Tournament from "@/lib/models/Tournament";
+import AdminToolbar from "@/app/admin/admin-ui/AdminToolbar"; // ✅ this brings back the upper menu
 
 function StatCard({
   title,
   value,
   sub,
 }: {
-  title: string
-  value: string
-  sub?: string
+  title: string;
+  value: number | string;
+  sub?: string;
 }) {
   return (
-    <div className="rounded-xl border border-zinc-800/70 bg-zinc-900/60 p-4">
+    <div className="rounded-xl border border-zinc-800/70 bg-zinc-900/60 p-4 hover:border-indigo-600/40 transition-all duration-200">
       <div className="text-xs font-medium text-zinc-500">{title}</div>
-      <div className="mt-2 text-2xl font-semibold text-white">{value}</div>
+      <div className="mt-2 text-2xl font-semibold text-white">{value ?? "—"}</div>
       {sub ? <div className="mt-1 text-xs text-zinc-500">{sub}</div> : null}
     </div>
-  )
+  );
 }
 
 export default async function AdminOverviewPage() {
-  const session = await getServerSession(authOptions)
+  const session = await getServerSession(authOptions);
   if (!session?.user?.role || session.user.role !== "admin") {
-    redirect("/")
+    redirect("/");
   }
 
-  const firstName = (session.user.name ?? "Admin").split(" ")[0]
+  const firstName = (session.user.name ?? "Admin").split(" ")[0];
+
+  // ✅ Connect to MongoDB and fetch tournament counts
+  await connectDB();
+  const counts = {
+    draft: await Tournament.countDocuments({ status: "draft" }),
+    open: await Tournament.countDocuments({ status: "open" }),
+    ongoing: await Tournament.countDocuments({ status: "ongoing" }),
+    completed: await Tournament.countDocuments({ status: "completed" }),
+  };
 
   return (
-    <div className="px-6 pb-10">
-      {/* Top row */}
-      <div className="grid grid-cols-1 gap-6 items-start">
+    <div className="px-6 pb-10 bg-black min-h-screen text-white">
+      {/* ✅ Upper Toolbar for managing tournaments */}
+      <AdminToolbar title="Admin Dashboard" />
+
+      {/* Top Section */}
+      <div className="grid grid-cols-1 gap-6 items-start mt-6">
         <div className="col-span-1">
           {/* Search bar */}
           <div className="flex flex-col sm:flex-row gap-3 items-stretch">
@@ -51,20 +66,20 @@ export default async function AdminOverviewPage() {
             </div>
           </div>
 
-          {/* Hero banner */}
-          <div className="mt-6 rounded-2xl overflow-hidden bg-gradient-to-br from-indigo-600 to-indigo-500 text-white">
+          {/* Hero Banner */}
+          <div className="mt-6 rounded-2xl overflow-hidden bg-gradient-to-br from-indigo-600 to-purple-600 text-white shadow-lg">
             <div className="p-6 sm:p-8">
               <div className="text-sm opacity-90">Admin Panel</div>
               <h2 className="mt-2 text-2xl sm:text-3xl font-bold">
                 Welcome, {firstName}! Manage tournaments efficiently.
               </h2>
-              <p className="mt-2 text-sm/relaxed text-indigo-100 max-w-2xl">
+              <p className="mt-2 text-sm text-indigo-100 max-w-2xl">
                 Create events, control registrations, and oversee matches—all from one place.
               </p>
             </div>
           </div>
 
-          {/* New dedicated buttons */}
+          {/* Quick Access Buttons */}
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
               href="/admin/users"
@@ -81,62 +96,51 @@ export default async function AdminOverviewPage() {
             </Link>
           </div>
 
-          {/* Stat cards */}
+          {/* Tournament Stats */}
           <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <StatCard title="Drafts" value="—" sub="Tournaments in draft" />
-            <StatCard title="Open" value="—" sub="Open for registration" />
-            <StatCard title="Ongoing" value="—" sub="Currently running" />
-            <StatCard title="Completed" value="—" sub="Finished events" />
+            <StatCard title="Drafts" value={counts.draft} sub="Tournaments in draft" />
+            <StatCard title="Open" value={counts.open} sub="Open for registration" />
+            <StatCard title="Ongoing" value={counts.ongoing} sub="Currently running" />
+            <StatCard title="Completed" value={counts.completed} sub="Finished events" />
           </div>
 
-          {/* Continue Managing */}
-          <div className="mt-8">
-            <div className="text-sm font-medium text-zinc-500 mb-3">Continue Managing</div>
+          {/* Continue Managing Section */}
+          <div className="mt-10">
+            <div className="text-sm font-medium text-zinc-500 mb-3">
+              Continue Managing
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-              <div className="rounded-xl border border-zinc-800/70 bg-zinc-900/60 overflow-hidden">
-                <div className="h-28 bg-zinc-800/60" />
-                <div className="p-4">
-                  <div className="text-sm text-zinc-500">Tournament</div>
-                  <div className="font-semibold mt-1 text-white">Set rules and format</div>
-                  <div className="mt-3">
-                    <Link href="/admin/tournaments/create" className="text-indigo-400 hover:underline text-sm">
-                      Configure →
-                    </Link>
-                  </div>
-                </div>
-              </div>
-              <div className="rounded-xl border border-zinc-800/70 bg-zinc-900/60 overflow-hidden">
-                <div className="h-28 bg-zinc-800/60" />
-                <div className="p-4">
-                  <div className="text-sm text-zinc-500">Registrations</div>
-                  <div className="font-semibold mt-1 text-white">Open/close window</div>
-                  <div className="mt-3">
-                    <Link href="/admin/tournaments" className="text-indigo-400 hover:underline text-sm">
-                      Manage →
-                    </Link>
-                  </div>
-                </div>
-              </div>
-              <div className="rounded-xl border border-zinc-800/70 bg-zinc-900/60 overflow-hidden">
-                <div className="h-28 bg-zinc-800/60" />
-                <div className="p-4">
-                  <div className="text-sm text-zinc-500">Brackets</div>
-                  <div className="font-semibold mt-1 text-white">Seed and schedule</div>
-                  <div className="mt-3">
-                    <Link href="/admin/tournaments" className="text-indigo-400 hover:underline text-sm">
-                      Open →
-                    </Link>
-                  </div>
-                </div>
-              </div>
+              <ManageCard
+                title="Set rules and format"
+                sub="Tournament"
+                href="/admin/tournaments/create"
+                linkText="Configure →"
+              />
+              <ManageCard
+                title="Open/close window"
+                sub="Registrations"
+                href="/admin/tournaments"
+                linkText="Manage →"
+              />
+              <ManageCard
+                title="Seed and schedule"
+                sub="Brackets"
+                href="/admin/tournaments"
+                linkText="Open →"
+              />
             </div>
           </div>
 
           {/* Recent Tournaments Table */}
-          <div className="mt-8">
+          <div className="mt-10">
             <div className="flex items-center justify-between">
-              <div className="text-sm font-medium text-zinc-500">Recent Tournaments</div>
-              <Link href="/admin/tournaments" className="text-sm text-indigo-400 hover:underline">
+              <div className="text-sm font-medium text-zinc-500">
+                Recent Tournaments
+              </div>
+              <Link
+                href="/admin/tournaments"
+                className="text-sm text-indigo-400 hover:underline"
+              >
                 See all
               </Link>
             </div>
@@ -149,7 +153,6 @@ export default async function AdminOverviewPage() {
                 <div className="col-span-2">Dates</div>
                 <div className="col-span-1 text-right">Action</div>
               </div>
-
               <div className="px-4 py-6 text-sm text-zinc-500">
                 No tournaments yet. Create your first one.
               </div>
@@ -158,5 +161,32 @@ export default async function AdminOverviewPage() {
         </div>
       </div>
     </div>
-  )
+  );
+}
+
+function ManageCard({
+  title,
+  sub,
+  href,
+  linkText,
+}: {
+  title: string;
+  sub: string;
+  href: string;
+  linkText: string;
+}) {
+  return (
+    <div className="rounded-xl border border-zinc-800/70 bg-zinc-900/60 overflow-hidden hover:border-indigo-600/40 transition-all duration-200">
+      <div className="h-24 bg-zinc-800/60" />
+      <div className="p-4">
+        <div className="text-sm text-zinc-500">{sub}</div>
+        <div className="font-semibold mt-1 text-white">{title}</div>
+        <div className="mt-3">
+          <Link href={href} className="text-indigo-400 hover:underline text-sm">
+            {linkText}
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
 }
