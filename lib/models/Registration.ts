@@ -1,7 +1,11 @@
 // lib/models/Registration.ts
 import mongoose, { Schema, models, model, Document, Model } from "mongoose";
 
-export type RegistrationStatus = "pending" | "approved" | "rejected" | "cancelled";
+export type RegistrationStatus =
+  | "pending"
+  | "approved"
+  | "rejected"
+  | "cancelled";
 
 export interface ITeamMember {
   name: string;
@@ -39,6 +43,7 @@ export interface IRegistration extends Document {
   updatedAt: Date;
 }
 
+// Team member schema
 const TeamMemberSchema = new Schema<ITeamMember>(
   {
     name: { type: String, required: true, trim: true },
@@ -48,11 +53,27 @@ const TeamMemberSchema = new Schema<ITeamMember>(
   { _id: false }
 );
 
+// Main registration schema
 const RegistrationSchema = new Schema<IRegistration>(
   {
-    tournamentId: { type: Schema.Types.ObjectId, ref: "Tournament", required: true, index: true },
-    tournamentSlug: { type: String, required: true, trim: true, lowercase: true, index: true },
-    entryType: { type: String, enum: ["team", "solo"], required: true },
+    tournamentId: {
+      type: Schema.Types.ObjectId,
+      ref: "Tournament",
+      required: true,
+      index: true,
+    },
+    tournamentSlug: {
+      type: String,
+      required: true,
+      trim: true,
+      lowercase: true,
+      index: true,
+    },
+    entryType: {
+      type: String,
+      enum: ["team", "solo"],
+      required: true,
+    },
 
     team: {
       name: { type: String, trim: true },
@@ -88,7 +109,7 @@ const RegistrationSchema = new Schema<IRegistration>(
   { timestamps: true }
 );
 
-// Shape guardrails
+// ✅ Smart validation (ensures correct structure)
 RegistrationSchema.pre("validate", function (next) {
   if (this.entryType === "team") {
     if (!this.team?.leader?.userId || !this.team?.name || !this.team?.size) {
@@ -104,18 +125,38 @@ RegistrationSchema.pre("validate", function (next) {
   next();
 });
 
-// Prevent duplicates for active statuses
+// ✅ Unique constraints (prevent duplicate active entries)
 RegistrationSchema.index(
   { tournamentId: 1, "team.leader.userId": 1, status: 1 },
-  { name: "uniq_active_team_leader", partialFilterExpression: { status: { $in: ["pending", "approved"] } } }
+  {
+    name: "uniq_active_team_leader",
+    partialFilterExpression: {
+      status: { $in: ["pending", "approved"] },
+    },
+  }
 );
 RegistrationSchema.index(
   { tournamentId: 1, "solo.userId": 1, status: 1 },
-  { name: "uniq_active_solo_user", partialFilterExpression: { status: { $in: ["pending", "approved"] } } }
+  {
+    name: "uniq_active_solo_user",
+    partialFilterExpression: {
+      status: { $in: ["pending", "approved"] },
+    },
+  }
 );
 
 RegistrationSchema.index({ tournamentId: 1, status: 1, createdAt: -1 });
 
+// ✅ Virtual field for unified “display name” (useful in admin table)
+RegistrationSchema.virtual("displayName").get(function (this: IRegistration) {
+  if (this.entryType === "team") {
+    return this.team?.name || this.team?.leader?.name || "Unknown Team";
+  } else {
+    return this.solo?.name || "Unknown Player";
+  }
+});
+
+// ✅ Export model
 const Registration: Model<IRegistration> =
   models.Registration || model<IRegistration>("Registration", RegistrationSchema);
 

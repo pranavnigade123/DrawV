@@ -11,7 +11,7 @@ export interface ITournament extends Document {
   game?: string | null;
   format: "single_elim" | "double_elim" | "round_robin" | "groups_playoffs";
   entryType: "solo" | "team";
-  teamSize?: number | null; // NEW
+  teamSize?: number | null;
   registrationOpenAt?: Date | null;
   registrationCloseAt?: Date | null;
   startDate?: Date | null;
@@ -27,10 +27,18 @@ export interface ITournament extends Document {
   updatedAt: Date;
 }
 
+// Main tournament schema
 const TournamentSchema = new Schema<ITournament>(
   {
     name: { type: String, required: true, trim: true, index: true },
-    slug: { type: String, required: true, unique: true, index: true, lowercase: true, trim: true },
+    slug: {
+      type: String,
+      required: true,
+      unique: true,
+      index: true,
+      lowercase: true,
+      trim: true,
+    },
 
     // Core fields
     game: { type: String, default: null },
@@ -49,8 +57,8 @@ const TournamentSchema = new Schema<ITournament>(
       default: "team",
     },
 
-    // NEW: team size
-    teamSize: { type: Number, default: null, min: 1 }, // validated in zod by entryType
+    // Optional team details
+    teamSize: { type: Number, default: null, min: 1 },
 
     // Dates
     registrationOpenAt: { type: Date, default: null },
@@ -64,7 +72,7 @@ const TournamentSchema = new Schema<ITournament>(
     rules: { type: String, default: null },
     description: { type: String, default: null },
 
-    // Manual-only status
+    // Tournament lifecycle
     status: {
       type: String,
       enum: ["draft", "open", "ongoing", "completed"],
@@ -75,12 +83,13 @@ const TournamentSchema = new Schema<ITournament>(
 
     archivedAt: { type: Date, default: null, index: true },
 
+    // Reference to the creator (admin)
     createdBy: { type: Schema.Types.ObjectId, ref: "User", default: null },
   },
   { timestamps: true }
 );
 
-// Generate slug if missing
+// ✅ Auto-generate slug if not provided
 TournamentSchema.pre("validate", function (next) {
   if (!this.name) return next();
   if (!this.slug || typeof this.slug !== "string" || !this.slug.trim()) {
@@ -89,9 +98,27 @@ TournamentSchema.pre("validate", function (next) {
   next();
 });
 
+// ✅ Useful virtuals for frontend
+TournamentSchema.virtual("displayStatus").get(function (this: ITournament) {
+  const map: Record<TournamentStatus, string> = {
+    draft: "Draft",
+    open: "Open for Registration",
+    ongoing: "Ongoing",
+    completed: "Completed",
+  };
+  return map[this.status] || "Unknown";
+});
+
+TournamentSchema.virtual("displayEntryType").get(function (this: ITournament) {
+  return this.entryType === "team" ? "Team-Based" : "Solo-Based";
+});
+
+// ✅ Performance index for common admin queries
 TournamentSchema.index({ archivedAt: 1, status: 1, createdAt: -1 });
 
+// ✅ Prevent model overwrite errors in Next.js hot reload
 const Tournament: Model<ITournament> =
   models.Tournament || model<ITournament>("Tournament", TournamentSchema);
 
 export default Tournament;
+

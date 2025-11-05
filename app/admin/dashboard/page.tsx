@@ -1,7 +1,4 @@
 // app/admin/dashboard/page.tsx
-// Dashboard inspired by the provided design, adapted to your admin content.
-// Assumes TailwindCSS is available.
-
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/authOptions"
 import { redirect } from "next/navigation"
@@ -25,37 +22,20 @@ function StatCard({
   )
 }
 
-function ActionButton({
-  href,
-  label,
-}: {
-  href: string
-  label: string
-}) {
-  return (
-    <Link
-      href={href}
-      className="inline-flex items-center justify-center px-3 py-2 rounded-lg border border-zinc-700 text-sm hover:bg-zinc-800 transition text-white"
-    >
-      {label}
-    </Link>
-  )
-}
-
 export default async function AdminOverviewPage() {
   const session = await getServerSession(authOptions)
   if (!session?.user?.role || session.user.role !== "admin") {
     redirect("/")
   }
 
-  const firstName = (session.user.name ?? "Admin").split(" ")
+  const firstName = (session.user.name ?? "Admin").split(" ")[0]
 
   return (
     <div className="px-6 pb-10">
-      {/* Top row: search + quick actions */}
-      <div className="grid grid-cols-1 xl:grid-cols-4 gap-6 items-start">
-        <div className="xl:col-span-3">
-          {/* Search + quick links */}
+      {/* Top row */}
+      <div className="grid grid-cols-1 gap-6 items-start">
+        <div className="col-span-1">
+          {/* Search bar */}
           <div className="flex flex-col sm:flex-row gap-3 items-stretch">
             <div className="flex-1">
               <div className="relative">
@@ -69,11 +49,6 @@ export default async function AdminOverviewPage() {
                 </div>
               </div>
             </div>
-            <div className="flex gap-2">
-              <ActionButton href="/admin/tournaments/create" label="Create Tournament" />
-              <ActionButton href="/admin/tournaments" label="Manage" />
-              <ActionButton href="/admin/tournaments/archived" label="Archived" />
-            </div>
           </div>
 
           {/* Hero banner */}
@@ -86,32 +61,35 @@ export default async function AdminOverviewPage() {
               <p className="mt-2 text-sm/relaxed text-indigo-100 max-w-2xl">
                 Create events, control registrations, and oversee matches—all from one place.
               </p>
-              <div className="mt-4 flex gap-2">
-                <Link
-                  href="/admin/tournaments/create"
-                  className="px-4 py-2 rounded-lg bg-white text-indigo-700 font-medium hover:bg-indigo-50 transition"
-                >
-                  New Tournament
-                </Link>
-                <Link
-                  href="/admin/tournaments"
-                  className="px-4 py-2 rounded-lg border border-white/80 text-white hover:bg-white/10 transition"
-                >
-                  View All
-                </Link>
-              </div>
             </div>
           </div>
 
-          {/* Pills (quick status) */}
-          <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {/* New dedicated buttons */}
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link
+              href="/admin/users"
+              className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-500 transition"
+            >
+              View Users
+            </Link>
+
+            <Link
+              href="/admin/applicants"
+              className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-500 transition"
+            >
+              Tournament Applicants
+            </Link>
+          </div>
+
+          {/* Stat cards */}
+          <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-3">
             <StatCard title="Drafts" value="—" sub="Tournaments in draft" />
             <StatCard title="Open" value="—" sub="Open for registration" />
             <StatCard title="Ongoing" value="—" sub="Currently running" />
             <StatCard title="Completed" value="—" sub="Finished events" />
           </div>
 
-          {/* Continue managing (cards) */}
+          {/* Continue Managing */}
           <div className="mt-8">
             <div className="text-sm font-medium text-zinc-500 mb-3">Continue Managing</div>
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -154,7 +132,7 @@ export default async function AdminOverviewPage() {
             </div>
           </div>
 
-          {/* Your lesson-like table (adapted to recent tournaments) */}
+          {/* Recent Tournaments Table */}
           <div className="mt-8">
             <div className="flex items-center justify-between">
               <div className="text-sm font-medium text-zinc-500">Recent Tournaments</div>
@@ -172,74 +150,10 @@ export default async function AdminOverviewPage() {
                 <div className="col-span-1 text-right">Action</div>
               </div>
 
-              {/* Empty state row (replace with real data later) */}
               <div className="px-4 py-6 text-sm text-zinc-500">
                 No tournaments yet. Create your first one.
               </div>
             </div>
-          </div>
-        </div>
-
-        {/* Right column widgets */}
-        <div className="xl:col-span-1">
-          {/* Profile widget */}
-          <div className="rounded-2xl border border-zinc-800/70 bg-zinc-900/60 p-5">
-            <div className="text-sm text-zinc-500">Welcome</div>
-            <div className="mt-1 font-semibold text-lg text-white">{firstName} 👋</div>
-            <div className="mt-2 text-xs text-zinc-500">
-              Continue building great events today.
-            </div>
-
-            {/* Simple progress bars placeholder */}
-            <div className="mt-4 space-y-3">
-              <div>
-                <div className="flex justify-between text-xs text-zinc-500 mb-1">
-                  <span>Setup completion</span>
-                  <span>0%</span>
-                </div>
-                <div className="h-2 rounded-full bg-zinc-800">
-                  <div className="h-2 rounded-full bg-indigo-600" style={{ width: "0%" }} />
-                </div>
-              </div>
-              <div>
-                <div className="flex justify-between text-xs text-zinc-500 mb-1">
-                  <span>Active events</span>
-                  <span>0</span>
-                </div>
-                <div className="h-2 rounded-full bg-zinc-800">
-                  <div className="h-2 rounded-full bg-emerald-500" style={{ width: "0%" }} />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Quick actions */}
-          <div className="mt-6 rounded-2xl border border-zinc-800/70 bg-zinc-900/60 p-5">
-            <div className="text-sm font-medium text-zinc-500 mb-3">Quick Actions</div>
-            <div className="grid grid-cols-2 gap-2">
-              <Link href="/admin/tournaments/create" className="rounded-lg border border-zinc-800 px-3 py-2 text-sm hover:bg-zinc-800 transition text-white">
-                New
-              </Link>
-              <Link href="/admin/tournaments" className="rounded-lg border border-zinc-800 px-3 py-2 text-sm hover:bg-zinc-800 transition text-white">
-                Manage
-              </Link>
-              <Link href="/admin/tournaments/archived" className="rounded-lg border border-zinc-800 px-3 py-2 text-sm hover:bg-zinc-800 transition text-white">
-                Archived
-              </Link>
-              <Link href="/admin/users" className="rounded-lg border border-zinc-800 px-3 py-2 text-sm hover:bg-zinc-800 transition text-white">
-                Users
-              </Link>
-            </div>
-          </div>
-
-          {/* Tips widget */}
-          <div className="mt-6 rounded-2xl border border-zinc-800/70 bg-zinc-900/60 p-5">
-            <div className="text-sm font-medium text-zinc-500 mb-2">Tips</div>
-            <ul className="list-disc list-inside text-sm text-zinc-300 space-y-1">
-              <li>Draft tournaments early and open registrations later.</li>
-              <li>Duplicate past events to reuse formats quickly.</li>
-              <li>Archive completed events to keep lists tidy.</li>
-            </ul>
           </div>
         </div>
       </div>
