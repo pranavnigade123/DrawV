@@ -107,14 +107,13 @@ export default function DashboardPage() {
 
   return (
     <main className="relative min-h-[85vh] max-w-4xl mx-auto py-8 px-3 flex flex-col gap-6">
-      {/* subtle gamer grid background */}
+      {/* subtle gamer radial glow only */}
       <div className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(79,70,229,0.16),_transparent_55%)]" />
-      
       </div>
 
       <div>
-        <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-2 mt-18">
+        <h1 className="text-2xl md:text-3xl font-bold flex items-center gap-2 mt-20">
           <span>Welcome, {displayName}</span>
           <span className="text-xl">👋</span>
         </h1>
@@ -124,109 +123,108 @@ export default function DashboardPage() {
       </div>
 
       {/* profile card */}
-<section className="relative overflow-hidden bg-white/95 dark:bg-zinc-900/90 p-5 sm:p-6 rounded-xl shadow-lg border border-zinc-200/80 dark:border-zinc-700 backdrop-blur">
-  <div className="pointer-events-none absolute inset-0 opacity-60">
-    <div className="absolute -top-16 -right-24 h-40 w-40 rounded-full bg-indigo-500/40 blur-3xl" />
-    <div className="absolute -bottom-20 -left-10 h-40 w-40 rounded-full bg-fuchsia-500/30 blur-3xl" />
-  </div>
-
-  <div className="relative flex flex-col gap-5 sm:gap-6">
-    {/* Avatar + Info + Button Row */}
-    <div className="flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-6">
-      {/* Avatar */}
-      <div className="flex-shrink-0">
-        <div className="h-14 w-14 sm:h-16 sm:w-16 rounded-full bg-gradient-to-br from-indigo-500 via-purple-500 to-fuchsia-500 text-white flex items-center justify-center text-xl sm:text-2xl font-semibold shadow-lg shadow-indigo-500/40 ring-2 ring-indigo-300/60">
-          {firstLetter}
+      <section className="relative overflow-hidden bg-white/95 dark:bg-zinc-900/90 p-5 sm:p-6 rounded-xl shadow-lg border border-zinc-200/80 dark:border-zinc-700 backdrop-blur">
+        <div className="pointer-events-none absolute inset-0 opacity-60">
+          <div className="absolute -top-16 -right-24 h-40 w-40 rounded-full bg-indigo-500/40 blur-3xl" />
+          <div className="absolute -bottom-20 -left-10 h-40 w-40 rounded-full bg-fuchsia-500/30 blur-3xl" />
         </div>
-      </div>
 
-      {/* Text Info */}
-      <div className="flex-1 min-w-0 space-y-3">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div>
-            <div className="font-semibold text-lg sm:text-xl flex flex-wrap items-center gap-2">
-              <span className="truncate max-w-full">{displayName}</span>
-              <span className="text-[10px] uppercase tracking-[0.18em] px-2 py-0.5 rounded-full bg-zinc-900/80 text-zinc-200 border border-zinc-700 whitespace-nowrap">
-                Player dashboard
-              </span>
+        <div className="relative flex flex-col gap-5 sm:gap-6">
+          {/* Avatar + Info + Button Row */}
+          <div className="flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-6">
+            {/* Avatar */}
+            <div className="flex-shrink-0">
+              <div className="h-14 w-14 sm:h-16 sm:w-16 rounded-full bg-gradient-to-br from-indigo-500 via-purple-500 to-fuchsia-500 text-white flex items-center justify-center text-xl sm:text-2xl font-semibold shadow-lg shadow-indigo-500/40 ring-2 ring-indigo-300/60">
+                {firstLetter}
+              </div>
             </div>
-            <div className="text-sm text-zinc-400 truncate">
-              {profile?.email || session.user.email}
+
+            {/* Text Info */}
+            <div className="flex-1 min-w-0 space-y-3">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div>
+                  <div className="font-semibold text-lg sm:text-xl flex flex-wrap items-center gap-2">
+                    <span className="truncate max-w-full">{displayName}</span>
+                    <span className="text-[10px] uppercase tracking-[0.18em] px-2 py-0.5 rounded-full bg-zinc-900/80 text-zinc-200 border border-zinc-700 whitespace-nowrap">
+                      Player dashboard
+                    </span>
+                  </div>
+                  <div className="text-sm text-zinc-400 truncate">
+                    {profile?.email || session.user.email}
+                  </div>
+                </div>
+
+                {/* Edit Button */}
+                <button
+                  onClick={() => setShowEdit(true)}
+                  className="inline-flex items-center justify-center text-sm font-medium rounded-lg px-3 py-2 bg-indigo-600 text-white hover:bg-indigo-700 transition-colors duration-150 disabled:opacity-60 w-full sm:w-auto order-first sm:order-none"
+                  disabled={profileLoading}
+                >
+                  {profileLoading ? "Loading…" : "Edit profile"}
+                </button>
+              </div>
+
+              {/* Role + Joined */}
+              <div className="flex flex-wrap items-center gap-3 text-xs text-zinc-400">
+                <span className="flex items-center gap-1">
+                  Role{" "}
+                  <span className="font-mono bg-zinc-900/60 text-zinc-100 px-2 py-0.5 rounded border border-zinc-700">
+                    {profile?.role || session.user.role}
+                  </span>
+                </span>
+                {profile?.createdAt && (
+                  <span className="inline-flex items-center gap-1">
+                    Joined{" "}
+                    {new Date(profile.createdAt).toLocaleDateString(undefined, {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    })}
+                  </span>
+                )}
+              </div>
+
+              {/* IGN + Phone */}
+              {(profile?.ign || profile?.phone) && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-zinc-400">
+                  {profile?.ign && (
+                    <div>
+                      In game name{" "}
+                      <span className="font-medium text-zinc-100">{profile.ign}</span>
+                    </div>
+                  )}
+                  {profile?.phone && (
+                    <div>
+                      Phone{" "}
+                      <span className="font-medium text-zinc-100">{profile.phone}</span>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Edit Button - Stays top-right on mobile */}
-          <button
-            onClick={() => setShowEdit(true)}
-            className="inline-flex items-center justify-center text-sm font-medium rounded-lg px-3 py-2 bg-indigo-600 text-white hover:bg-indigo-700 transition-colors duration-150 disabled:opacity-60 w-full sm:w-auto order-first sm:order-none"
-            disabled={profileLoading}
-          >
-            {profileLoading ? "Loading…" : "Edit profile"}
-          </button>
-        </div>
-
-        {/* Role + Joined */}
-        <div className="flex flex-wrap items-center gap-3 text-xs text-zinc-400">
-          <span className="flex items-center gap-1">
-            Role{" "}
-            <span className="font-mono bg-zinc-900/60 text-zinc-100 px-2 py-0.5 rounded border border-zinc-700">
-              {profile?.role || session.user.role}
-            </span>
-          </span>
-          {profile?.createdAt && (
-            <span className="inline-flex items-center gap-1">
-              Joined{" "}
-              {new Date(profile.createdAt).toLocaleDateString(undefined, {
-                year: "numeric",
-                month: "short",
-                day: "numeric",
-              })}
-            </span>
-          )}
-        </div>
-
-        {/* IGN + Phone */}
-        {(profile?.ign || profile?.phone) && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-zinc-400">
-            {profile?.ign && (
-              <div>
-                In game name{" "}
-                <span className="font-medium text-zinc-100">{profile.ign}</span>
-              </div>
-            )}
-            {profile?.phone && (
-              <div>
-                Phone{" "}
-                <span className="font-medium text-zinc-100">{profile.phone}</span>
-              </div>
-            )}
+          {/* Static tips strip */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-[11px] text-zinc-400 pt-3 border-t border-zinc-200/60 dark:border-zinc-700/60">
+            <div className="flex items-center gap-2">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+              <span>Keep your IGN updated so teammates can find you easily.</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="h-1.5 w-1.5 rounded-full bg-indigo-400" />
+              <span>Use the same email for game and tournament accounts.</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="h-1.5 w-1.5 rounded-full bg-fuchsia-400" />
+              <span>Complete your profile before registrations open.</span>
+            </div>
           </div>
-        )}
-      </div>
-    </div>
+        </div>
+      </section>
 
-    {/* Static tips strip */}
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-[11px] text-zinc-400 pt-3 border-t border-zinc-200/60 dark:border-zinc-700/60">
-      <div className="flex items-center gap-2">
-        <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-        <span>Keep your IGN updated so teammates can find you easily.</span>
-      </div>
-      <div className="flex items-center gap-2">
-        <span className="h-1.5 w-1.5 rounded-full bg-indigo-400" />
-        <span>Use the same email for game and tournament accounts.</span>
-      </div>
-      <div className="flex items-center gap-2">
-        <span className="h-1.5 w-1.5 rounded-full bg-fuchsia-400" />
-        <span>Complete your profile before registrations open.</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-
-      {/* static tips section – pure UI, no extra data */}
-      <section className="bg-white/95 dark:bg-zinc-900/80 p-5 rounded-xl shadow border border-zinc-200 dark:border-zinc-800">
-        <div className="flex items-center justify-between mb-3">
+      {/* static tips section */}
+      <section className="bg-white/95 dark:bg-zinc-900/80 p-5 sm:p-6 rounded-xl shadow border border-zinc-200 dark:border-zinc-800">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
           <div>
             <h2 className="font-semibold text-sm uppercase tracking-[0.2em] text-zinc-500">
               Lobby brief
@@ -269,12 +267,12 @@ export default function DashboardPage() {
       </section>
 
       {/* registrations */}
-      <section className="bg-white/90 dark:bg-zinc-900/80 p-5 rounded-xl shadow border border-zinc-200 dark:border-zinc-800">
-        <div className="flex items-center justify-between mb-3">
-          <div>
-            <h2 className="font-semibold text-lg flex items-center gap-2">
-              <span>My registrations</span>
-              <span className="text-[10px] uppercase tracking-[0.2em] px-2 py-0.5 rounded-full bg-zinc-900/80 text-zinc-300 border border-zinc-700 ">
+      <section className="bg-white/90 dark:bg-zinc-900/80 p-5 sm:p-6 rounded-xl shadow border border-zinc-200 dark:border-zinc-800">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+          <div className="flex-1 min-w-0">
+            <h2 className="font-semibold text-lg flex flex-wrap items-center gap-2">
+              <span className="truncate">My registrations</span>
+              <span className="text-[10px] uppercase tracking-[0.2em] px-2 py-0.5 rounded-full bg-zinc-900/80 text-zinc-300 border border-zinc-700 whitespace-nowrap">
                 Activity
               </span>
             </h2>
@@ -282,14 +280,26 @@ export default function DashboardPage() {
               Track all tournaments you have joined and their current status.
             </p>
           </div>
+
           <Link
             href="/tournaments"
-            className="text-xs inline-flex items-center gap-1 px-3 py-1.5 rounded-full border border-indigo-500/70 text-indigo-600 dark:text-indigo-300 hover:bg-indigo-500/10"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full border border-indigo-500/70 text-indigo-600 dark:text-indigo-300 hover:bg-indigo-500/10 transition-colors whitespace-nowrap"
           >
             Browse tournaments
           </Link>
         </div>
-        <UserRegistrations />
+
+        <div className="overflow-x-auto -mx-1 px-1">
+          <div className="min-w-[640px] sm:min-w-full">
+            <UserRegistrations />
+          </div>
+          <div className="sm:hidden flex items-center justify-center mt-2 text-[10px] text-zinc-500">
+            <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Swipe to see more
+          </div>
+        </div>
       </section>
 
       {showEdit && profile && (
@@ -391,16 +401,16 @@ function UserRegistrations() {
 
   return (
     <div className="overflow-x-auto rounded-lg border border-zinc-200 dark:border-zinc-800">
-      <table className="min-w-full text-sm">
+      <table className="min-w-full text-sm divide-y divide-zinc-200 dark:divide-zinc-800">
         <thead className="bg-zinc-50 dark:bg-zinc-900/80 text-xs uppercase tracking-wide text-zinc-500">
           <tr>
-            <th className="text-left px-4 py-3">Tournament</th>
-            <th className="text-left px-4 py-3">Entry type</th>
-            <th className="text-left px-4 py-3">Registered on</th>
-            <th className="text-left px-4 py-3">Status</th>
+            <th className="text-left px-3 py-2.5 font-medium">Tournament</th>
+            <th className="text-left px-3 py-2.5 font-medium">Entry</th>
+            <th className="text-left px-3 py-2.5 font-medium hidden sm:table-cell">Registered</th>
+            <th className="text-left px-3 py-2.5 font-medium">Status</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
           {items.map((r) => {
             const isTeam = r.entryType === "team";
             const teamName = r.team?.name;
@@ -411,8 +421,11 @@ function UserRegistrations() {
               : "Solo";
 
             const created = r.createdAt
-              ? new Date(r.createdAt).toLocaleString()
-              : "Not available";
+              ? new Date(r.createdAt).toLocaleDateString(undefined, {
+                  month: "short",
+                  day: "numeric",
+                })
+              : "—";
 
             const statusClass =
               r.status === "approved"
@@ -424,22 +437,19 @@ function UserRegistrations() {
                 : "bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-200";
 
             return (
-              <tr
-                key={r._id}
-                className="border-t border-zinc-200 dark:border-zinc-800"
-              >
-                <td className="px-4 py-3 font-medium text-zinc-900 dark:text-zinc-100">
+              <tr key={r._id} className="text-xs sm:text-sm">
+                <td className="px-3 py-3 font-medium text-zinc-900 dark:text-zinc-100 max-w-[140px] sm:max-w-none truncate">
                   {r.tournamentName}
                 </td>
-                <td className="px-4 py-3 text-zinc-600 dark:text-zinc-300">
+                <td className="px-3 py-3 text-zinc-600 dark:text-zinc-300">
                   {entryLabel}
                 </td>
-                <td className="px-4 py-3 text-zinc-600 dark:text-zinc-300">
+                <td className="px-3 py-3 text-zinc-600 dark:text-zinc-300 hidden sm:table-cell">
                   {created}
                 </td>
-                <td className="px-4 py-3">
+                <td className="px-3 py-3">
                   <span
-                    className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${statusClass}`}
+                    className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-semibold ${statusClass}`}
                   >
                     {r.status}
                   </span>
