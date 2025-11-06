@@ -36,12 +36,10 @@ export const authOptions: AuthOptions = {
         if (!validPassword) return null;
 
         return {
-          id: user._id.toString(),
+          id: String((user as any)._id ?? (user as any).id),
           email: user.email,
           name: user.name,
-          // role is not included here because CredentialsProvider
-          // returns a minimal object for the initial sign-in response.
-          // We'll enrich token with role in the jwt callback below.
+      
         };
       },
     }),
@@ -50,7 +48,7 @@ export const authOptions: AuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
 
   callbacks: {
-    // 1) On sign-in: auto-provision OAuth users with default "player" role (idempotent)
+
     async signIn({ user, account }) {
       try {
         if (account?.provider === "google" || account?.provider === "github") {
@@ -72,14 +70,13 @@ export const authOptions: AuthOptions = {
       }
     },
 
-    // 2) On JWT creation/refresh: ensure token has role/id (fetch once if missing)
+
     async jwt({ token, user }) {
-      // If this is the initial sign-in (user is present), we can try to attach id quickly
+
       if (user?.id && !token.id) {
         token.id = user.id as string;
       }
 
-      // If role already present, avoid DB calls
       if (token.role && token.id) {
         return token;
       }
@@ -91,7 +88,8 @@ export const authOptions: AuthOptions = {
           const dbUser = await User.findOne({ email: token.email });
           if (dbUser) {
             token.role = dbUser.role || "player";
-            token.id = dbUser._id.toString();
+            
+            token.id = (dbUser as any)._id?.toString?.() ?? String((dbUser as any)._id ?? "");
           }
         } catch (e) {
           console.error("NextAuth jwt error:", e);
@@ -101,7 +99,7 @@ export const authOptions: AuthOptions = {
       return token;
     },
 
-    // 3) On session: mirror token info to session for client usage (useSession, etc.)
+   
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string | undefined;
