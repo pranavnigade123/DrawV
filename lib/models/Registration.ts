@@ -100,7 +100,7 @@ const RegistrationSchema = new Schema<IRegistration>(
       type: String,
       enum: ["pending", "approved", "rejected", "cancelled"],
       required: true,
-      default: "pending",
+      default: "approved", // changed from "pending"
       index: true,
     },
 
@@ -109,7 +109,7 @@ const RegistrationSchema = new Schema<IRegistration>(
   { timestamps: true }
 );
 
-// ✅ Smart validation (ensures correct structure)
+// Smart validation
 RegistrationSchema.pre("validate", function (next) {
   if (this.entryType === "team") {
     if (!this.team?.leader?.userId || !this.team?.name || !this.team?.size) {
@@ -125,7 +125,7 @@ RegistrationSchema.pre("validate", function (next) {
   next();
 });
 
-// ✅ Unique constraints (prevent duplicate active entries)
+// Unique constraints
 RegistrationSchema.index(
   { tournamentId: 1, "team.leader.userId": 1, status: 1 },
   {
@@ -147,7 +147,6 @@ RegistrationSchema.index(
 
 RegistrationSchema.index({ tournamentId: 1, status: 1, createdAt: -1 });
 
-// ✅ Virtual field for unified “display name” (useful in admin table)
 RegistrationSchema.virtual("displayName").get(function (this: IRegistration) {
   if (this.entryType === "team") {
     return this.team?.name || this.team?.leader?.name || "Unknown Team";
@@ -156,7 +155,6 @@ RegistrationSchema.virtual("displayName").get(function (this: IRegistration) {
   }
 });
 
-// ✅ Export model
 const Registration: Model<IRegistration> =
   models.Registration || model<IRegistration>("Registration", RegistrationSchema);
 

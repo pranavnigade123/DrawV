@@ -12,20 +12,26 @@ export async function GET(req: NextRequest) {
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
     await connectDB();
+
     const regs = await Registration.find({
       $or: [
         { "team.leader.userId": session.user.id },
         { "solo.userId": session.user.id },
       ],
     })
-      .select("entryType status team solo tournamentId")
+      .select("entryType status team solo tournamentId createdAt")
       .sort({ createdAt: -1 })
       .lean();
 
     const tIds = regs.map((r: any) => r.tournamentId);
     const tMap = new Map(
-      (await Tournament.find({ _id: { $in: tIds } }).select("name").lean()).map((t: any) => [String(t._id), t.name])
+      (
+        await Tournament.find({ _id: { $in: tIds } })
+          .select("name")
+          .lean()
+      ).map((t: any) => [String(t._id), t.name])
     );
 
     const items = regs.map((r: any) => ({
@@ -35,6 +41,7 @@ export async function GET(req: NextRequest) {
       tournamentId: String(r.tournamentId),
       tournamentName: tMap.get(String(r.tournamentId)) || "Tournament",
       team: r.team ? { name: r.team.name } : undefined,
+      createdAt: r.createdAt,
     }));
 
     return NextResponse.json({ items }, { status: 200 });
