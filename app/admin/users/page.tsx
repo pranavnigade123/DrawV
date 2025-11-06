@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/authOptions";
 import { redirect } from "next/navigation";
 import { connectDB } from "@/lib/db";
 import User from "@/lib/models/User";
+import AdminToolbar from "@/app/admin/admin-ui/AdminToolbar";
 
 type ApiUser = {
   name?: string | null;
@@ -70,6 +71,7 @@ export default async function UsersPage({
 
   return (
     <div className="rounded-2xl border border-zinc-800/70 bg-zinc-900/60 p-6">
+      <AdminToolbar title="Tournament Applicants" />
       <form action="/admin/users" className="mb-4 grid grid-cols-1 md:grid-cols-4 gap-3">
         <input
           type="text"
