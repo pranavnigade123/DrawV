@@ -5,7 +5,11 @@ import { authOptions } from "@/lib/authOptions";
 import { connectDB } from "@/lib/db";
 import Tournament from "@/lib/models/Tournament";
 import Registration from "@/lib/models/Registration";
-import { teamRegistrationSchema, validateTeamSizeStrict, soloRegistrationSchema } from "@/lib/validation/registration";
+import {
+  teamRegistrationSchema,
+  validateTeamSizeStrict,
+  soloRegistrationSchema,
+} from "@/lib/validation/registration";
 
 export async function POST(
   req: NextRequest,
@@ -25,14 +29,22 @@ export async function POST(
 
     const t = await Tournament.findOne({ slug, archivedAt: null }).lean();
     if (!t) return NextResponse.json({ error: "Tournament not found" }, { status: 404 });
-    if (t.status !== "open") return NextResponse.json({ error: "Registration is not open for this tournament" }, { status: 400 });
+    if (t.status !== "open") {
+      return NextResponse.json(
+        { error: "Registration is not open for this tournament" },
+        { status: 400 }
+      );
+    }
 
     const body = await req.json();
 
     if (t.entryType === "team") {
       const teamSize = Number((t as any).teamSize || 0);
       if (!Number.isInteger(teamSize) || teamSize < 2) {
-        return NextResponse.json({ error: "Tournament team size is not configured properly" }, { status: 400 });
+        return NextResponse.json(
+          { error: "Tournament team size is not configured properly" },
+          { status: 400 }
+        );
       }
 
       const parsed = teamRegistrationSchema.safeParse(body);
@@ -49,8 +61,15 @@ export async function POST(
         tournamentId: t._id,
         "team.leader.userId": session.user.id,
         status: { $in: ["pending", "approved"] },
-      }).select("_id").lean();
-      if (dup) return NextResponse.json({ error: "An active registration already exists for this tournament." }, { status: 400 });
+      })
+        .select("_id")
+        .lean();
+      if (dup) {
+        return NextResponse.json(
+          { error: "An active registration already exists for this tournament." },
+          { status: 400 }
+        );
+      }
 
       const doc = await Registration.create({
         tournamentId: t._id,
@@ -72,7 +91,7 @@ export async function POST(
           })),
           size: teamSize,
         },
-        status: "pending",
+        status: "approved", // changed
         notes: null,
       });
 
@@ -91,8 +110,15 @@ export async function POST(
         tournamentId: t._id,
         "solo.userId": session.user.id,
         status: { $in: ["pending", "approved"] },
-      }).select("_id").lean();
-      if (dup) return NextResponse.json({ error: "An active registration already exists for this tournament." }, { status: 400 });
+      })
+        .select("_id")
+        .lean();
+      if (dup) {
+        return NextResponse.json(
+          { error: "An active registration already exists for this tournament." },
+          { status: 400 }
+        );
+      }
 
       const doc = await Registration.create({
         tournamentId: t._id,
@@ -105,7 +131,7 @@ export async function POST(
           ign,
           phone: contactPhone ?? null,
         },
-        status: "pending",
+        status: "approved", // changed
         notes: null,
       });
 
