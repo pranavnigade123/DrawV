@@ -5,7 +5,24 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { connectDB } from "@/lib/models/mongodb";
 import Tournament from "@/lib/models/Tournament";
-import AdminToolbar from "@/app/admin/admin-ui/AdminToolbar"; // ✅ this brings back the upper menu
+import AdminToolbar from "@/app/admin/admin-ui/AdminToolbar";
+
+// 🔹 client widgets
+import EventsCalendar from "./EventsCalendar";
+import AnalyticsSnapshot from "./AnalyticsSnapshot";
+
+// Server-side stub for EmailBlast to avoid missing-module compile error.
+// If you later implement a client-side widget, replace this import with the client component file.
+function EmailBlast() {
+  return (
+    <div className="rounded-xl border border-zinc-800/70 bg-zinc-900/60 p-4">
+      <div className="text-sm font-medium text-white">Email Blast</div>
+      <div className="mt-2 text-sm text-zinc-400">
+        Email campaign tool (stub). Implement the client widget in ./EmailBlast when needed.
+      </div>
+    </div>
+  );
+}
 
 function StatCard({
   title,
@@ -104,30 +121,15 @@ export default async function AdminOverviewPage() {
             <StatCard title="Completed" value={counts.completed} sub="Finished events" />
           </div>
 
-          {/* Continue Managing Section */}
+          {/* 🔁 NEW: Working feature grid (replaces 'Continue Managing' cards) */}
           <div className="mt-10">
             <div className="text-sm font-medium text-zinc-500 mb-3">
-              Continue Managing
+              Tools
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-              <ManageCard
-                title="Set rules and format"
-                sub="Tournament"
-                href="/admin/tournaments/create"
-                linkText="Configure →"
-              />
-              <ManageCard
-                title="Open/close window"
-                sub="Registrations"
-                href="/admin/tournaments"
-                linkText="Manage →"
-              />
-              <ManageCard
-                title="Seed and schedule"
-                sub="Brackets"
-                href="/admin/tournaments"
-                linkText="Open →"
-              />
+              <EventsCalendar />
+              <EmailBlast />
+              <AnalyticsSnapshot />
             </div>
           </div>
 
@@ -158,33 +160,6 @@ export default async function AdminOverviewPage() {
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function ManageCard({
-  title,
-  sub,
-  href,
-  linkText,
-}: {
-  title: string;
-  sub: string;
-  href: string;
-  linkText: string;
-}) {
-  return (
-    <div className="rounded-xl border border-zinc-800/70 bg-zinc-900/60 overflow-hidden hover:border-indigo-600/40 transition-all duration-200">
-      <div className="h-24 bg-zinc-800/60" />
-      <div className="p-4">
-        <div className="text-sm text-zinc-500">{sub}</div>
-        <div className="font-semibold mt-1 text-white">{title}</div>
-        <div className="mt-3">
-          <Link href={href} className="text-indigo-400 hover:underline text-sm">
-            {linkText}
-          </Link>
         </div>
       </div>
     </div>
