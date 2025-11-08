@@ -33,12 +33,13 @@ export default function PublicToolsPage() {
               </p>
             </div>
             <div className="mt-6">
-              <button
-                disabled
-                className="inline-flex items-center justify-center text-sm font-medium px-4 py-2 rounded-lg text-white bg-zinc-800 border border-zinc-700 cursor-not-allowed opacity-70"
-              >
-                Coming soon
-              </button>
+              <Link
+  href="/tools/bracket"
+  className="inline-flex items-center justify-center text-sm font-medium px-4 py-2 rounded-lg text-white bg-indigo-600 hover:bg-indigo-500 transition-colors"
+>
+  Open Generator
+</Link>
+
             </div>
           </div>
 

@@ -42,7 +42,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         `}
       </Script>
 
-      <body
+      <body suppressHydrationWarning
         className={`
           ${geistSans.variable} ${geistMono.variable} antialiased
           bg-[color:var(--background)] text-[color:var(--foreground)]

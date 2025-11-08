@@ -8,6 +8,7 @@ export interface ITournament extends Document {
   _id: mongoose.Types.ObjectId;
   name: string;
   slug: string;
+  bracket?: any | null;
   game?: string | null;
   format: "single_elim" | "double_elim" | "round_robin" | "groups_playoffs";
   entryType: "solo" | "team";
@@ -40,6 +41,9 @@ const TournamentSchema = new Schema<ITournament>(
       trim: true,
     },
 
+    // add to TournamentSchema
+bracket: { type: Schema.Types.Mixed, default: null },
+
     // Core fields
     game: { type: String, default: null },
 
@@ -65,6 +69,8 @@ const TournamentSchema = new Schema<ITournament>(
     registrationCloseAt: { type: Date, default: null },
     startDate: { type: Date, default: null },
     endDate: { type: Date, default: null },
+
+// bracket field is already defined above
 
     // Optional details
     maxParticipants: { type: Number, default: null, min: 1 },
