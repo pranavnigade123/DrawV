@@ -8,7 +8,7 @@ import { ThemeProvider } from "next-themes"
 import Footer from "@/components/Footer"
 import { Analytics } from "@vercel/analytics/next"
 import Script from "next/script"
-import ShowNavbar from "./admin/admin-ui/ShowNavbar" // NEW: hide navbar on /admin routes
+import ShowNavbar from "./admin/admin-ui/ShowNavbar"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
