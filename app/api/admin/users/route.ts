@@ -1,8 +1,12 @@
+// app/api/admin/users/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import User from "@/lib/models/User";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
+
+// 1. This forces Vercel to run the API fresh every time (NO CACHING)
+export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -32,7 +36,7 @@ export async function GET(req: NextRequest) {
 
   const [items, total] = await Promise.all([
     User.find(filter)
-      .select("name email role provider createdAt") // never send password
+      .select("name email role provider createdAt")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
@@ -40,11 +44,21 @@ export async function GET(req: NextRequest) {
     User.countDocuments(filter),
   ]);
 
-  return NextResponse.json({
-    items,
-    page,
-    limit,
-    total,
-    totalPages: Math.max(1, Math.ceil(total / limit)),
-  });
+  // 2. Disable all caching (browsers, CDN, Vercel edge)
+  return NextResponse.json(
+    {
+      items,
+      page,
+      limit,
+      total,
+      totalPages: Math.max(1, Math.ceil(total / limit)),
+    },
+    {
+      headers: {
+        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+        Pragma: "no-cache",
+        Expires: "0",
+      },
+    }
+  );
 }
