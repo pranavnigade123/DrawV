@@ -1,10 +1,10 @@
 // lib/middleware/paths.ts
 export const PUBLIC_PATHS = [
-  "/",
+  "/", 
   "/about",
   "/login",
   "/register",
-  "/tournaments",
+  "/tournaments",  // Keep this for browsing
   "/events",
   "/public-tools",
   "/veto",
@@ -15,8 +15,15 @@ export const PUBLIC_PATHS = [
   "/contact",
   "/unauthorized",
   "/playmax/register",
+  // REMOVED: "/tournaments/[slug]/register" - now protected
 ];
 
 export function isPublicPath(pathname: string) {
-  return PUBLIC_PATHS.some((p) => pathname === p || pathname.startsWith(p + "/"));
+  // Check exact matches or prefixes
+  return PUBLIC_PATHS.some((p) => {
+    if (p === "/tournaments") {
+      return pathname === "/tournaments" || pathname.startsWith("/tournaments/") && !pathname.startsWith("/tournaments/") && !pathname.match(/^\/tournaments\/[^/]+\/register(\/.*)?$/);
+    }
+    return pathname === p || pathname.startsWith(p + "/");
+  });
 }

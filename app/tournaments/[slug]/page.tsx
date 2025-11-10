@@ -1,8 +1,11 @@
 // app/tournaments/[slug]/page.tsx
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { connectDB } from "@/lib/db";
 import Tournament from "@/lib/models/Tournament";
+import Registration from "@/lib/models/Registration";
 import Link from "next/link";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/authOptions";
 
 function formatDate(d?: Date | null) {
   if (!d) return "—";
@@ -45,6 +48,8 @@ export default async function TournamentDetailPage(props: {
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await props.params;
+  const session = await getServerSession(authOptions);
+  const userId = session?.user?.id;
 
   await connectDB();
 
@@ -53,7 +58,6 @@ export default async function TournamentDetailPage(props: {
     archivedAt: null,
   })
     .select(
-      // ADDED: teamSize in projection
       "name slug game status coverImage description rules format entryType teamSize registrationOpenAt registrationCloseAt startDate endDate"
     )
     .lean();
@@ -62,13 +66,32 @@ export default async function TournamentDetailPage(props: {
     notFound();
   }
 
-  const canRegister = t.status === "open";
+  const isOpen = t.status === "open";
+
+  // Check if user is already registered
+  let isRegistered = false;
+  if (userId && isOpen) {
+    const reg = await Registration.findOne({
+      tournamentId: t._id,
+      $or: [
+        { "solo.userId": userId },
+        { "team.leader.userId": userId },
+      ],
+      status: { $in: ["approved", "pending"] },
+    }).lean();
+
+    isRegistered = !!reg;
+  }
+
+  // Helper: build login redirect URL
+  const loginRedirectUrl = `/login?callbackUrl=${encodeURIComponent(
+    `/tournaments/${slug}/register`
+  )}`;
 
   return (
     <div className="mx-auto max-w-5xl px-3 md:px-0 py-6 md:py-8 mt-24">
       <div className="rounded-2xl border border-zinc-800/70 overflow-hidden bg-zinc-900/60">
         {t.coverImage ? (
-          // eslint-disable-next-line @next/next/no-img-element
           <img
             src={t.coverImage}
             alt={t.name}
@@ -90,14 +113,36 @@ export default async function TournamentDetailPage(props: {
 
             <div className="flex items-center gap-2">
               <StatusBadge status={t.status} />
-              {canRegister ? (
-                <Link
-                  href={`/tournaments/${t.slug}/register`}
-                  className="inline-flex items-center rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50"
-                >
-                  Register
-                </Link>
-              ) : null}
+
+              {/* Registration Button Logic */}
+              {isOpen && (
+                <>
+                  {userId ? (
+                    isRegistered ? (
+                      // Already Registered
+                      <span className="inline-flex items-center rounded-lg bg-emerald-900/30 px-3 py-1.5 text-xs font-medium text-emerald-300">
+                        Already Registered
+                      </span>
+                    ) : (
+                      // Logged-in & eligible
+                      <Link
+                        href={`/tournaments/${t.slug}/register`}
+                        className="inline-flex items-center rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50"
+                      >
+                        Register
+                      </Link>
+                    )
+                  ) : (
+                    // Guest → Login to Register
+                    <Link
+                      href={loginRedirectUrl}
+                      className="inline-flex items-center rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-zinc-600"
+                    >
+                      Register
+                    </Link>
+                  )}
+                </>
+              )}
             </div>
           </div>
 
@@ -121,7 +166,6 @@ export default async function TournamentDetailPage(props: {
               <div className="text-xs text-zinc-400">Format / Entry</div>
               <div className="text-sm mt-1 capitalize">
                 {String(t.format || "—").replaceAll("_", " ")} • {t.entryType}
-                {/* ADDED: show team size for team tournaments */}
                 {t.entryType === "team" && (t as any).teamSize
                   ? ` • ${(t as any).teamSize} players`
                   : ""}
@@ -149,11 +193,11 @@ export default async function TournamentDetailPage(props: {
         </div>
       </div>
 
-      {t.status !== "open" ? (
+      {!isOpen && (
         <div className="mt-4 text-xs text-zinc-400">
           Registration is currently not open for this tournament.
         </div>
-      ) : null}
+      )}
     </div>
   );
 }
