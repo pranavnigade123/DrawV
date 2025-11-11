@@ -2,7 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { connectDB } from "@/lib/models/mongodb";
+import { connectDB } from "@/lib/db";
 import Tournament from "@/lib/models/Tournament";
 import AdminToolbar from "@/app/admin/admin-ui/AdminToolbar";
 
