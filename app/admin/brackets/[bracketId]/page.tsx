@@ -1,8 +1,8 @@
-// app/brackets/[bracketId]/page.tsx
+// app/admin/brackets/[bracketId]/page.tsx
 import BracketViewer from "@/components/brackets/BracketViewer";
 
-export default function BracketPage({ params }: { params: { bracketId: string } }) {
-  const { bracketId } = params;
+export default async function BracketPage({ params }: { params: Promise<{ bracketId: string }> }) {
+  const { bracketId } = await params;
   return (
     <main className="min-h-screen bg-[color:var(--background)] text-[color:var(--foreground)] pt-20 pb-10">
       <div className="mx-auto max-w-7xl px-4">

@@ -37,7 +37,7 @@ export default async function AdminBracketsPage() {
                     </div>
                     <div className="flex items-center gap-2">
                       {b.tournamentId ? <div className="text-xs text-zinc-400">Tournament</div> : null}
-                      <Link href={`/brackets/${b.bracketId}`} className="px-3 py-1 rounded bg-indigo-600 text-white text-sm">View</Link>
+                      <Link href={`/admin/brackets/${b.bracketId}`} className="px-3 py-1 rounded bg-indigo-600 text-white text-sm">View</Link>
                       <form action={async () => { /* implement admin delete server action if desired */ }}>
                         <button type="button" className="px-3 py-1 border rounded text-sm border-zinc-700 text-zinc-200">Delete</button>
                       </form>

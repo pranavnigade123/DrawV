@@ -27,7 +27,7 @@ export default async function PlayerBracketsPage() {
                   <div className="text-xs text-zinc-400">Created {new Date(b.createdAt).toLocaleDateString()}</div>
                 </div>
                 <div className="flex gap-2">
-                  <Link href={`/brackets/${b.bracketId}`} className="px-3 py-1 bg-indigo-600 text-white rounded text-sm">
+                  <Link href={`/dashboard/brackets/${b.bracketId}`} className="px-3 py-1 bg-indigo-600 text-white rounded text-sm">
                     View
                   </Link>
                 </div>
