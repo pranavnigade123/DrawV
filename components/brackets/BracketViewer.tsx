@@ -30,14 +30,6 @@ interface Match {
   finished: boolean;
 }
 
-interface Bracket {
-  bracketId: string;
-  format: "single_elim" | "double_elim";
-  participantsCount: number;
-  matches: Match[];
-  params?: any; // ✅ optional and flexible
-}
-
 interface BracketViewerProps {
   bracketId: string;
   matches?: Match[];
@@ -53,12 +45,11 @@ export default function BracketViewer({
   matches: initialMatches,
   isEditable = true,
 }: BracketViewerProps) {
-  const [bracket, setBracket] = useState<Bracket | null>(null);
   const [matches, setMatches] = useState<Match[]>(initialMatches || []);
   const [updating, setUpdating] = useState<string | null>(null);
 
   /** 🔹 Fetch bracket only if matches aren't provided */
-  async function fetchBracket() {
+  const fetchBracket = React.useCallback(async () => {
     try {
       const res = await fetch(`/api/brackets/${bracketId}`);
       const data = await res.json();
@@ -69,22 +60,19 @@ export default function BracketViewer({
         return;
       }
 
-      setBracket(data);
       setMatches(data.matches || []);
     } catch (err) {
       toast.error("Failed to load bracket");
       console.error(err);
     }
-  }
+  }, [bracketId]);
 
   /** 🔹 Initial data load */
   useEffect(() => {
     if (!initialMatches) {
       fetchBracket();
-    } else {
-      setBracket({ bracketId, format: "single_elim", participantsCount: 0, matches: initialMatches });
     }
-  }, [bracketId, initialMatches]);
+  }, [initialMatches, fetchBracket]);
 
   /** 🔹 Update match result & refresh */
 async function handleUpdateScore(matchId: string, scoreA: number, scoreB: number) {
@@ -98,7 +86,7 @@ async function handleUpdateScore(matchId: string, scoreA: number, scoreB: number
     });
 
     const text = await res.text();
-    let data: any = {};
+    let data: { error?: string } = {};
     try {
       data = text ? JSON.parse(text) : {};
     } catch {
@@ -113,9 +101,10 @@ async function handleUpdateScore(matchId: string, scoreA: number, scoreB: number
 
     toast.success("Result updated!");
     fetchBracket();
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("⚠️ Score update error:", err);
-    toast.error(err.message || "Error updating score");
+    const errorMessage = err instanceof Error ? err.message : "Error updating score";
+    toast.error(errorMessage);
   } finally {
     setUpdating(null);
   }
@@ -315,8 +304,8 @@ async function handleUpdateScore(matchId: string, scoreA: number, scoreB: number
         {/* Winner Bracket */}
         <div className="flex gap-16">
           {winners.map((r, roundIdx) => {
-            const matchHeight = 100; // approximate height of match card
-            const spacing = Math.pow(2, roundIdx) * 40; // exponential spacing
+            const matchHeight = 100;
+            const spacing = Math.pow(2, roundIdx) * 40;
             
             return (
               <div key={`W${r.round}`} className={`bracket-round round-${r.round}`}>
@@ -339,7 +328,7 @@ async function handleUpdateScore(matchId: string, scoreA: number, scoreB: number
                       {/* Vertical connector between pairs */}
                       {matchIdx % 2 === 0 && matchIdx + 1 < r.matches.length && (
                         <div
-                          className={`connector-line connector-vertical`}
+                          className="connector-line connector-vertical"
                           style={{
                             top: '50%',
                             height: `${spacing + matchHeight}px`,
@@ -361,7 +350,7 @@ async function handleUpdateScore(matchId: string, scoreA: number, scoreB: number
         {losers.length > 0 && (
           <div className="flex gap-16 border-l-2 border-zinc-800 pl-16">
             <div className="text-xs font-semibold text-orange-400 mb-4">
-              Loser's Bracket
+              Loser&apos;s Bracket
             </div>
             <div className="flex gap-16">
               {losers.map((r, roundIdx) => {
