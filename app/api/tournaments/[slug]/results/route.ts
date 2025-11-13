@@ -4,6 +4,9 @@ import { connectDB } from "@/lib/db";
 import Tournament from "@/lib/models/Tournament";
 import { generateFinalStandings, getMatchHistory } from "@/lib/services/resultsService";
 
+// Cache results for 30 seconds to improve performance
+export const revalidate = 30;
+
 /**
  * GET /api/tournaments/[slug]/results
  * Public endpoint to view tournament results

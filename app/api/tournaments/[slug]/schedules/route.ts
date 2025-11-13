@@ -3,6 +3,9 @@ import { connectDB } from "@/lib/db";
 import Tournament from "@/lib/models/Tournament";
 import Schedule from "@/lib/models/Schedule";
 
+// Cache schedules for 60 seconds to improve performance
+export const revalidate = 60;
+
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ slug: string }> }

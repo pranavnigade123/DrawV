@@ -5,6 +5,7 @@ import { connectDB } from "@/lib/db";
 import Tournament from "@/lib/models/Tournament";
 import Registration from "@/lib/models/Registration";
 import TournamentManagementTabs from "./TournamentManagementTabs";
+import { serializeTournament } from "@/lib/utils/serialize";
 
 export default async function TournamentManagePage({
   params,
@@ -26,17 +27,7 @@ export default async function TournamentManagePage({
   }
 
   // Convert to plain object for client component
-  const tournament = {
-    ...tournamentDoc,
-    _id: tournamentDoc._id.toString(),
-    createdAt: tournamentDoc.createdAt?.toISOString(),
-    updatedAt: tournamentDoc.updatedAt?.toISOString(),
-    registrationOpenAt: tournamentDoc.registrationOpenAt?.toISOString() || null,
-    registrationCloseAt: tournamentDoc.registrationCloseAt?.toISOString() || null,
-    startDate: tournamentDoc.startDate?.toISOString() || null,
-    endDate: tournamentDoc.endDate?.toISOString() || null,
-    archivedAt: tournamentDoc.archivedAt?.toISOString() || null,
-  };
+  const tournament = serializeTournament(tournamentDoc);
 
   // Fetch registration counts
   const registrationCounts = {

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import toast from "react-hot-toast";
 
 interface Opponent {
@@ -34,13 +34,18 @@ export default function BracketViewer({
 }: BracketViewerProps) {
   const [matches, setMatches] = useState<Match[]>(initialMatches || []);
   const [updating, setUpdating] = useState<string | null>(null);
+  const [isDrawing, setIsDrawing] = useState(false);
   const matchRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const drawTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const resizeObserverRef = useRef<ResizeObserver | null>(null);
 
-  const fetchBracket = React.useCallback(async () => {
+  const fetchBracket = useCallback(async () => {
     try {
-      const res = await fetch(`/api/brackets/${bracketId}`);
+      const res = await fetch(`/api/brackets/${bracketId}`, {
+        next: { revalidate: 30 } // Cache for 30 seconds
+      });
       const data = await res.json();
       if (!res.ok || !data?.matches) {
         toast.error(data?.error || "Failed to load bracket");
@@ -74,7 +79,8 @@ export default function BracketViewer({
     }
   }
 
-  function groupByRound(matches: Match[], type: "W" | "L" | "F") {
+  // Memoize grouping function to avoid recalculation
+  const groupByRound = useCallback((matches: Match[], type: "W" | "L" | "F") => {
     const filtered = matches.filter((m) => m.bracket === type);
     const byRound: Record<number, Match[]> = {};
     filtered.forEach((m) => {
@@ -84,16 +90,24 @@ export default function BracketViewer({
     return Object.entries(byRound)
       .map(([r, ms]) => ({ round: Number(r), matches: ms.sort((a, b) => a.matchNumber - b.matchNumber) }))
       .sort((a, b) => a.round - b.round);
-  }
+  }, []);
 
-  const winners = groupByRound(matches, "W");
-  const losers = groupByRound(matches, "L");
-  const finals = matches.filter((m) => m.bracket === "F");
+  // Memoize grouped matches to prevent recalculation on every render
+  const winners = useMemo(() => groupByRound(matches, "W"), [matches, groupByRound]);
+  const losers = useMemo(() => groupByRound(matches, "L"), [matches, groupByRound]);
+  const finals = useMemo(() => matches.filter((m) => m.bracket === "F"), [matches]);
 
-  function MatchCard({ m }: { m: Match }) {
+  // Memoized MatchCard component to prevent unnecessary re-renders
+  const MatchCard = React.memo(({ m }: { m: Match }) => {
     const [scoreA, setScoreA] = useState<number | string>(m.scoreA ?? "");
     const [scoreB, setScoreB] = useState<number | string>(m.scoreB ?? "");
     const winner = m.finished && m.winner === "A" ? "A" : m.finished && m.winner === "B" ? "B" : null;
+
+    // Sync local state with prop changes
+    useEffect(() => {
+      setScoreA(m.scoreA ?? "");
+      setScoreB(m.scoreB ?? "");
+    }, [m.scoreA, m.scoreB]);
 
     return (
       <div 
@@ -137,7 +151,7 @@ export default function BracketViewer({
         </div>
         {isEditable && (
           <button onClick={() => handleUpdateScore(m.id, Number(scoreA), Number(scoreB))} disabled={updating === m.id}
-            className={`mt-3 w-full text-xs py-2 rounded font-semibold ${
+            className={`mt-3 w-full text-xs py-2 rounded font-semibold transition-colors ${
               updating === m.id ? "bg-zinc-700 text-zinc-400 cursor-not-allowed" : "bg-indigo-600 text-white hover:bg-indigo-500"
             }`}>
             {updating === m.id ? "Saving..." : "Save Result"}
@@ -145,124 +159,168 @@ export default function BracketViewer({
         )}
       </div>
     );
-  }
+  });
 
   const MATCH_HEIGHT = 140;
   const ROUND_GAP = 100;
   const CONNECTOR_WIDTH = 50;
 
-  // Draw canvas connectors
-  useEffect(() => {
+  // Debounced canvas drawing function
+  const drawConnectors = useCallback(() => {
     const canvas = canvasRef.current;
     const container = containerRef.current;
-    if (!canvas || !container) return;
+    if (!canvas || !container || isDrawing) return;
 
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    setIsDrawing(true);
 
-    // Set canvas size to match container
-    const rect = container.getBoundingClientRect();
-    canvas.width = container.scrollWidth;
-    canvas.height = container.scrollHeight;
+    // Use requestAnimationFrame for smooth rendering
+    requestAnimationFrame(() => {
+      const ctx = canvas.getContext('2d', { alpha: true });
+      if (!ctx) {
+        setIsDrawing(false);
+        return;
+      }
 
-    // Clear canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // Set canvas size to match container
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = container.scrollWidth * dpr;
+      canvas.height = container.scrollHeight * dpr;
+      canvas.style.width = `${container.scrollWidth}px`;
+      canvas.style.height = `${container.scrollHeight}px`;
+      ctx.scale(dpr, dpr);
 
-    // Draw connectors for winner bracket
-    winners.forEach((round, roundIdx) => {
-      if (roundIdx >= winners.length - 1) return; // Skip last round
+      // Clear canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      round.matches.forEach((match, matchIdx) => {
-        const matchEl = matchRefs.current[match.id];
-        if (!matchEl) return;
+      // Draw connectors for winner bracket
+      winners.forEach((round, roundIdx) => {
+        if (roundIdx >= winners.length - 1) return;
 
-        const matchRect = matchEl.getBoundingClientRect();
-        const containerRect = container.getBoundingClientRect();
+        round.matches.forEach((match, matchIdx) => {
+          const matchEl = matchRefs.current[match.id];
+          if (!matchEl) return;
 
-        // Calculate positions relative to canvas
-        const x1 = matchRect.right - containerRect.left + container.scrollLeft;
-        const y1 = matchRect.top + matchRect.height / 2 - containerRect.top + container.scrollTop;
+          const matchRect = matchEl.getBoundingClientRect();
+          const containerRect = container.getBoundingClientRect();
 
-        // Draw horizontal line from match
-        ctx.strokeStyle = '#52525b'; // zinc-600
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(x1, y1);
-        ctx.lineTo(x1 + CONNECTOR_WIDTH, y1);
-        ctx.stroke();
+          const x1 = matchRect.right - containerRect.left + container.scrollLeft;
+          const y1 = matchRect.top + matchRect.height / 2 - containerRect.top + container.scrollTop;
 
-        // Connect pairs of matches
-        if (matchIdx % 2 === 0 && matchIdx + 1 < round.matches.length) {
-          const nextMatch = round.matches[matchIdx + 1];
-          const nextMatchEl = matchRefs.current[nextMatch.id];
-          if (!nextMatchEl) return;
-
-          const nextMatchRect = nextMatchEl.getBoundingClientRect();
-          const y2 = nextMatchRect.top + nextMatchRect.height / 2 - containerRect.top + container.scrollTop;
-
-          // Vertical line connecting the two matches
-          const midX = x1 + CONNECTOR_WIDTH;
+          ctx.strokeStyle = '#52525b';
+          ctx.lineWidth = 2;
           ctx.beginPath();
-          ctx.moveTo(midX, y1);
-          ctx.lineTo(midX, y2);
+          ctx.moveTo(x1, y1);
+          ctx.lineTo(x1 + CONNECTOR_WIDTH, y1);
           ctx.stroke();
 
-          // Horizontal line to next round
-          const midY = (y1 + y2) / 2;
-          ctx.beginPath();
-          ctx.moveTo(midX, midY);
-          ctx.lineTo(midX + CONNECTOR_WIDTH, midY);
-          ctx.stroke();
-        }
+          if (matchIdx % 2 === 0 && matchIdx + 1 < round.matches.length) {
+            const nextMatch = round.matches[matchIdx + 1];
+            const nextMatchEl = matchRefs.current[nextMatch.id];
+            if (!nextMatchEl) return;
+
+            const nextMatchRect = nextMatchEl.getBoundingClientRect();
+            const y2 = nextMatchRect.top + nextMatchRect.height / 2 - containerRect.top + container.scrollTop;
+
+            const midX = x1 + CONNECTOR_WIDTH;
+            ctx.beginPath();
+            ctx.moveTo(midX, y1);
+            ctx.lineTo(midX, y2);
+            ctx.stroke();
+
+            const midY = (y1 + y2) / 2;
+            ctx.beginPath();
+            ctx.moveTo(midX, midY);
+            ctx.lineTo(midX + CONNECTOR_WIDTH, midY);
+            ctx.stroke();
+          }
+        });
       });
+
+      // Draw connectors for loser bracket
+      losers.forEach((round, roundIdx) => {
+        if (roundIdx >= losers.length - 1) return;
+
+        round.matches.forEach((match, matchIdx) => {
+          const matchEl = matchRefs.current[match.id];
+          if (!matchEl) return;
+
+          const matchRect = matchEl.getBoundingClientRect();
+          const containerRect = container.getBoundingClientRect();
+
+          const x1 = matchRect.right - containerRect.left + container.scrollLeft;
+          const y1 = matchRect.top + matchRect.height / 2 - containerRect.top + container.scrollTop;
+
+          ctx.strokeStyle = 'rgba(249, 115, 22, 0.4)';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(x1, y1);
+          ctx.lineTo(x1 + CONNECTOR_WIDTH, y1);
+          ctx.stroke();
+
+          if (matchIdx % 2 === 0 && matchIdx + 1 < round.matches.length) {
+            const nextMatch = round.matches[matchIdx + 1];
+            const nextMatchEl = matchRefs.current[nextMatch.id];
+            if (!nextMatchEl) return;
+
+            const nextMatchRect = nextMatchEl.getBoundingClientRect();
+            const y2 = nextMatchRect.top + nextMatchRect.height / 2 - containerRect.top + container.scrollTop;
+
+            const midX = x1 + CONNECTOR_WIDTH;
+            ctx.beginPath();
+            ctx.moveTo(midX, y1);
+            ctx.lineTo(midX, y2);
+            ctx.stroke();
+
+            const midY = (y1 + y2) / 2;
+            ctx.beginPath();
+            ctx.moveTo(midX, midY);
+            ctx.lineTo(midX + CONNECTOR_WIDTH, midY);
+            ctx.stroke();
+          }
+        });
+      });
+
+      setIsDrawing(false);
+    });
+  }, [winners, losers, isDrawing]);
+
+  // Debounced draw trigger
+  useEffect(() => {
+    if (drawTimeoutRef.current) {
+      clearTimeout(drawTimeoutRef.current);
+    }
+
+    drawTimeoutRef.current = setTimeout(() => {
+      drawConnectors();
+    }, 100); // 100ms debounce
+
+    return () => {
+      if (drawTimeoutRef.current) {
+        clearTimeout(drawTimeoutRef.current);
+      }
+    };
+  }, [matches, drawConnectors]);
+
+  // Handle resize with ResizeObserver
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    resizeObserverRef.current = new ResizeObserver(() => {
+      if (drawTimeoutRef.current) {
+        clearTimeout(drawTimeoutRef.current);
+      }
+      drawTimeoutRef.current = setTimeout(drawConnectors, 150);
     });
 
-    // Draw connectors for loser bracket
-    losers.forEach((round, roundIdx) => {
-      if (roundIdx >= losers.length - 1) return;
+    resizeObserverRef.current.observe(container);
 
-      round.matches.forEach((match, matchIdx) => {
-        const matchEl = matchRefs.current[match.id];
-        if (!matchEl) return;
-
-        const matchRect = matchEl.getBoundingClientRect();
-        const containerRect = container.getBoundingClientRect();
-
-        const x1 = matchRect.right - containerRect.left + container.scrollLeft;
-        const y1 = matchRect.top + matchRect.height / 2 - containerRect.top + container.scrollTop;
-
-        // Draw horizontal line
-        ctx.strokeStyle = 'rgba(249, 115, 22, 0.4)'; // orange-500/40
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(x1, y1);
-        ctx.lineTo(x1 + CONNECTOR_WIDTH, y1);
-        ctx.stroke();
-
-        // Connect pairs
-        if (matchIdx % 2 === 0 && matchIdx + 1 < round.matches.length) {
-          const nextMatch = round.matches[matchIdx + 1];
-          const nextMatchEl = matchRefs.current[nextMatch.id];
-          if (!nextMatchEl) return;
-
-          const nextMatchRect = nextMatchEl.getBoundingClientRect();
-          const y2 = nextMatchRect.top + nextMatchRect.height / 2 - containerRect.top + container.scrollTop;
-
-          const midX = x1 + CONNECTOR_WIDTH;
-          ctx.beginPath();
-          ctx.moveTo(midX, y1);
-          ctx.lineTo(midX, y2);
-          ctx.stroke();
-
-          const midY = (y1 + y2) / 2;
-          ctx.beginPath();
-          ctx.moveTo(midX, midY);
-          ctx.lineTo(midX + CONNECTOR_WIDTH, midY);
-          ctx.stroke();
-        }
-      });
-    });
-  }, [matches, winners, losers]);
+    return () => {
+      if (resizeObserverRef.current) {
+        resizeObserverRef.current.disconnect();
+      }
+    };
+  }, [drawConnectors]);
 
   return (
     <div ref={containerRef} className="overflow-x-auto pb-8 bg-zinc-950 relative">

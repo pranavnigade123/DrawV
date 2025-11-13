@@ -3,6 +3,9 @@ import { connectDB } from "@/lib/db";
 import Bracket from "@/lib/models/Brackets";
 import Tournament from "@/lib/models/Tournament";
 
+// Cache bracket data for 30 seconds to improve performance
+export const revalidate = 30;
+
 /**
  * GET /api/brackets/[bracketId]
  */
