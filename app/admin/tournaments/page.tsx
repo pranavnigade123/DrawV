@@ -89,8 +89,9 @@ export default async function TournamentsManagePage(props: {
         </div>
       )}
 
-      <div className="rounded-2xl border border-zinc-800/70 bg-zinc-900/60">
-        <div className="grid grid-cols-12 bg-zinc-900/60 text-xs text-zinc-500 px-4 py-2 rounded-t-2xl border-b border-zinc-800/70">
+      <div className="rounded-2xl border border-zinc-800/70 bg-zinc-900/60 overflow-x-auto">
+        {/* Desktop Header - Hidden on mobile */}
+        <div className="hidden md:grid grid-cols-12 bg-zinc-900/60 text-xs text-zinc-500 px-4 py-2 rounded-t-2xl border-b border-zinc-800/70">
           <div className="col-span-5">Name</div>
           <div className="col-span-2">Game</div>
           <div className="col-span-2">Status</div>
@@ -105,9 +106,10 @@ export default async function TournamentsManagePage(props: {
             {items.map((t: any) => (
               <li
                 key={t._id.toString()}
-                className="grid grid-cols-12 px-4 py-3 items-center text-sm"
+                className="md:grid md:grid-cols-12 px-4 py-3 md:items-center text-sm"
               >
-                <div className="col-span-5">
+                {/* Mobile Layout - Stacked */}
+                <div className="md:col-span-5 mb-3 md:mb-0">
                   <div className="font-medium">
                     <Link
                       href={`/admin/tournaments/${t._id.toString()}/edit`}
@@ -120,9 +122,13 @@ export default async function TournamentsManagePage(props: {
                   <div className="text-xs text-zinc-500">slug: {t.slug || "—"}</div>
                 </div>
 
-                <div className="col-span-2">{t.game || "—"}</div>
+                <div className="md:col-span-2 mb-2 md:mb-0">
+                  <span className="md:hidden text-xs text-zinc-500 mr-2">Game:</span>
+                  {t.game || "—"}
+                </div>
 
-                <div className="col-span-2">
+                <div className="md:col-span-2 mb-2 md:mb-0">
+                  <span className="md:hidden text-xs text-zinc-500 mr-2">Status:</span>
                   <span
                     className={[
                       "inline-flex items-center rounded px-2 py-0.5 text-xs font-medium",
@@ -139,7 +145,7 @@ export default async function TournamentsManagePage(props: {
                   </span>
                 </div>
 
-                <div className="col-span-2">
+                <div className="md:col-span-2 mb-3 md:mb-0">
                   <div className="text-xs text-zinc-500">
                     Reg: {formatRange(t.registrationOpenAt, t.registrationCloseAt)}
                   </div>
@@ -148,7 +154,7 @@ export default async function TournamentsManagePage(props: {
                   </div>
                 </div>
 
-                <div className="col-span-1 text-right">
+                <div className="md:col-span-1 md:text-right">
                   <div className="inline-flex items-center gap-2 sm:gap-3">
                     {/* Manage (new management hub) */}
                     <Link
@@ -196,8 +202,8 @@ export default async function TournamentsManagePage(props: {
       </div>
 
       {totalPages > 1 && (
-        <div className="mt-4 flex items-center justify-between text-sm">
-          <div className="text-zinc-500">
+        <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm">
+          <div className="text-zinc-500 text-center sm:text-left">
             Page {page} of {totalPages} • {total} total
           </div>
           <div className="flex gap-2">

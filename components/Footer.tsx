@@ -117,7 +117,7 @@ export default function Footer() {
           <div className="text-center sm:text-left">
             <Link href="/" className="inline-block mb-4">
               <img
-                src={resolvedTheme === "dark" ? "DVDark_bg.png" : "logo-light.png"}
+                src={resolvedTheme === "dark" ? "/DVDark_bg.png" : "/logo-light.png"}
                 alt="Draw V Logo"
                 className="h-8 w-auto"
               />
