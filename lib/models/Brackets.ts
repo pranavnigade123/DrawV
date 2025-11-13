@@ -25,6 +25,16 @@ const MatchSchema = new Schema(
     finished: { type: Boolean, default: false },
     winnerto: { type: String, default: null },
     loserto: { type: String, default: null },
+    // Scheduling fields
+    scheduledAt: { type: Date, default: null },
+    scheduledEndAt: { type: Date, default: null },
+    venue: { type: String, default: null },
+    streamUrl: { type: String, default: null },
+    status: { 
+      type: String, 
+      enum: ["pending", "scheduled", "live", "completed"], 
+      default: "pending" 
+    },
     metadata: { type: Schema.Types.Mixed, default: {} },
   },
   { _id: false }

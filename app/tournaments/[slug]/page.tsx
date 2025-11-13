@@ -2,7 +2,10 @@
 import { notFound } from "next/navigation";
 import { connectDB } from "@/lib/db";
 import Tournament from "@/lib/models/Tournament";
+import Bracket from "@/lib/models/Brackets";
 import Link from "next/link";
+import BracketViewer from "@/components/brackets/BracketViewer";
+import ScheduleViewer from "@/components/tournaments/ScheduleViewer";
 
 function formatDate(d?: Date | null) {
   if (!d) return "—";
@@ -53,8 +56,8 @@ export default async function TournamentDetailPage(props: {
     archivedAt: null,
   })
     .select(
-      // ADDED: teamSize in projection
-      "name slug game status coverImage description rules format entryType teamSize registrationOpenAt registrationCloseAt startDate endDate"
+      // ADDED: teamSize, bracketId, bracketPublished, resultsPublished in projection
+      "name slug game status coverImage description rules format entryType teamSize registrationOpenAt registrationCloseAt startDate endDate bracketId bracketPublished resultsPublished"
     )
     .lean();
 
@@ -63,6 +66,15 @@ export default async function TournamentDetailPage(props: {
   }
 
   const canRegister = t.status === "open";
+
+  // Fetch bracket data if published
+  let bracketMatches = null;
+  if ((t as any).bracketPublished && (t as any).bracketId) {
+    const bracket = await Bracket.findOne({ bracketId: (t as any).bracketId }).lean();
+    if (bracket) {
+      bracketMatches = (bracket as any).matches;
+    }
+  }
 
   return (
     <div className="mx-auto max-w-5xl px-3 md:px-0 py-6 md:py-8 mt-24">
@@ -148,6 +160,67 @@ export default async function TournamentDetailPage(props: {
           ) : null}
         </div>
       </div>
+
+      {/* Schedule Section */}
+      <div className="mt-6 rounded-2xl border border-zinc-800/70 overflow-hidden bg-zinc-900/60">
+        <div className="p-5 md:p-6">
+          <h2 className="text-lg font-semibold text-zinc-100 mb-4" id="schedule">
+            Match Schedule
+          </h2>
+          <ScheduleViewer tournamentSlug={t.slug} />
+        </div>
+      </div>
+
+      {/* Results Section */}
+      {(t as any).resultsPublished && (t as any).bracketId ? (
+        <div className="mt-6 rounded-2xl border border-zinc-800/70 overflow-hidden bg-zinc-900/60">
+          <div className="p-5 md:p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-zinc-100" id="results">
+                {t.status === "completed" ? "Final Results" : "Current Standings"}
+              </h2>
+              <Link
+                href={`/tournaments/${t.slug}/results`}
+                className="text-sm text-indigo-400 hover:text-indigo-300"
+              >
+                View Details →
+              </Link>
+            </div>
+            <p className="text-sm text-zinc-400">
+              {t.status === "completed"
+                ? "Tournament has concluded. View final standings and match history."
+                : "Tournament is in progress. Standings update as matches are completed."}
+            </p>
+          </div>
+        </div>
+      ) : null}
+
+      {/* Bracket Section */}
+      {(t as any).bracketPublished && (t as any).bracketId && bracketMatches ? (
+        <div className="mt-6 rounded-2xl border border-zinc-800/70 overflow-hidden bg-zinc-900/60">
+          <div className="p-5 md:p-6">
+            <h2 className="text-lg font-semibold text-zinc-100 mb-4" id="bracket">
+              Tournament Bracket
+            </h2>
+            <BracketViewer 
+              bracketId={(t as any).bracketId} 
+              matches={bracketMatches}
+              isEditable={false}
+            />
+          </div>
+        </div>
+      ) : (t as any).bracketId ? (
+        <div className="mt-6 rounded-2xl border border-amber-800/70 overflow-hidden bg-amber-900/20">
+          <div className="p-5 md:p-6">
+            <h2 className="text-lg font-semibold text-amber-300 mb-2">
+              Bracket Not Published Yet
+            </h2>
+            <p className="text-sm text-amber-200/70">
+              The tournament bracket has been generated but is not yet published. Check back later!
+            </p>
+          </div>
+        </div>
+      ) : null}
 
       {t.status !== "open" ? (
         <div className="mt-4 text-xs text-zinc-400">

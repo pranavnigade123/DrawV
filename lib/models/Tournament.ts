@@ -9,6 +9,10 @@ export interface ITournament extends Document {
   name: string;
   slug: string;
   bracket?: any | null;
+  bracketId?: string | null;
+  bracketGenerated?: boolean;
+  bracketPublished?: boolean;
+  resultsPublished?: boolean;
   game?: string | null;
   format: "single_elim" | "double_elim" | "round_robin" | "groups_playoffs";
   entryType: "solo" | "team";
@@ -41,8 +45,12 @@ const TournamentSchema = new Schema<ITournament>(
       trim: true,
     },
 
-    // add to TournamentSchema
-bracket: { type: Schema.Types.Mixed, default: null },
+    // Bracket fields
+    bracket: { type: Schema.Types.Mixed, default: null },
+    bracketId: { type: String, default: null, index: true },
+    bracketGenerated: { type: Boolean, default: false },
+    bracketPublished: { type: Boolean, default: false },
+    resultsPublished: { type: Boolean, default: false },
 
     // Core fields
     game: { type: String, default: null },

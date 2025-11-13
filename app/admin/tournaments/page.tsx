@@ -7,7 +7,7 @@ import Tournament from "@/lib/models/Tournament";
 import AdminToolbar from "@/app/admin/admin-ui/AdminToolbar";
 
 // Icons (Heroicons v2)
-import { PencilSquareIcon, ArchiveBoxIcon } from "@heroicons/react/24/outline";
+import { PencilSquareIcon, ArchiveBoxIcon, Cog6ToothIcon } from "@heroicons/react/24/outline";
 
 const PAGE_SIZE = 20;
 
@@ -54,7 +54,7 @@ export default async function TournamentsManagePage(props: {
 
   await connectDB();
 
-  const [items, total] = await Promise.all([
+  const [itemsRaw, total] = await Promise.all([
     Tournament.find({ archivedAt: null })
       .select(
         "name game status registrationOpenAt registrationCloseAt startDate endDate slug createdAt"
@@ -65,6 +65,17 @@ export default async function TournamentsManagePage(props: {
       .lean(),
     Tournament.countDocuments({ archivedAt: null }),
   ]);
+
+  // Convert to plain objects for client components
+  const items = itemsRaw.map((item: any) => ({
+    ...item,
+    _id: item._id.toString(),
+    createdAt: item.createdAt?.toISOString(),
+    registrationOpenAt: item.registrationOpenAt?.toISOString() || null,
+    registrationCloseAt: item.registrationCloseAt?.toISOString() || null,
+    startDate: item.startDate?.toISOString() || null,
+    endDate: item.endDate?.toISOString() || null,
+  }));
 
   const totalPages = Math.max(Math.ceil(total / PAGE_SIZE), 1);
 
@@ -139,6 +150,16 @@ export default async function TournamentsManagePage(props: {
 
                 <div className="col-span-1 text-right">
                   <div className="inline-flex items-center gap-2 sm:gap-3">
+                    {/* Manage (new management hub) */}
+                    <Link
+                      href={`/admin/tournaments/${t._id.toString()}/manage`}
+                      className="inline-flex items-center justify-center rounded-md p-1.5 text-indigo-400 hover:bg-indigo-900/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                      aria-label="Manage tournament"
+                      title="Manage tournament"
+                    >
+                      <Cog6ToothIcon className="h-5 w-5" aria-hidden="true" />
+                    </Link>
+
                     {/* Edit (as icon link) */}
                     <Link
                       href={`/admin/tournaments/${t._id.toString()}/edit`}

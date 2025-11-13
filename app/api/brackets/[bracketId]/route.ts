@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import Bracket from "@/lib/models/Brackets";
+import Tournament from "@/lib/models/Tournament";
 
 /**
  * GET /api/brackets/[bracketId]
@@ -31,13 +32,38 @@ export async function PATCH(req: NextRequest, context: { params: Promise<{ brack
     const { bracketId } = await context.params;
 
     const body = await req.json();
-    const bracket = await Bracket.findOneAndUpdate({ bracketId }, body, { new: true }).lean();
+    const bracket = await Bracket.findOneAndUpdate({ bracketId }, body, { new: true });
 
     if (!bracket) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
-    return NextResponse.json(bracket, { status: 200 });
+    // Check if all real matches (excluding BYEs) are complete and auto-update tournament status
+    const totalMatches = bracket.matches.filter((m: any) => {
+      if (!m.opponentA?.label || !m.opponentB?.label) return false;
+      
+      // Exclude BYE matches
+      const isByeMatch = m.opponentA.label === "BYE" || m.opponentB.label === "BYE";
+      return !isByeMatch;
+    }).length;
+    
+    const finishedMatches = bracket.matches.filter((m: any) => {
+      if (!m.finished) return false;
+      
+      // Exclude BYE matches
+      const isByeMatch = m.opponentA.label === "BYE" || m.opponentB.label === "BYE";
+      return !isByeMatch;
+    }).length;
+    
+    if (totalMatches > 0 && finishedMatches === totalMatches) {
+      // All real matches complete - update tournament status
+      await Tournament.findOneAndUpdate(
+        { bracketId, status: { $ne: "completed" } },
+        { status: "completed" }
+      );
+    }
+
+    return NextResponse.json(bracket.toObject(), { status: 200 });
   } catch (err) {
     console.error("PATCH /api/brackets/[bracketId] error:", err);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
