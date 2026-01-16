@@ -12,14 +12,19 @@ type VetoSelections = {
 };
 
 const MAPS: Map[] = [
-  { value: "haven", name: "Haven" },
-  { value: "ascent", name: "Ascent" },
-  { value: "abyss", name: "Abyss" },
-  { value: "sunset", name: "Sunset" },
   { value: "corrode", name: "Corrode" },
-  { value: "lotus", name: "Lotus" },
+  { value: "split", name: "Split" },
+  { value: "abyss", name: "Abyss" },
+  { value: "pearl", name: "Pearl" },
   { value: "bind", name: "Bind" },
+  { value: "haven", name: "Haven" },
+  { value: "breeze", name: "Breeze" },
 ];
+
+// Helper function to get the correct image extension
+const getMapImagePath = (mapValue: string) => {
+  return mapValue === "breeze" ? `/maps/${mapValue}.png` : `/maps/${mapValue}.jpg`;
+};
 
 const getBanTeamOrder = (tossWinner: string | null, tossLoser: string | null) => {
   if (!tossWinner || !tossLoser) return [];
@@ -59,11 +64,17 @@ const MapVeto = () => {
       return;
     }
     const teams = [teamA.trim(), teamB.trim()];
-    const winner = teams[Math.floor(Math.random() * 2)];
+    // Use Date.now() as additional entropy for better randomization
+    const randomIndex = Math.floor((Math.random() + Date.now() % 2) * teams.length) % teams.length;
+    const winner = teams[randomIndex];
     const loser = teams.find((team) => team !== winner) ?? "";
     setTossWinner(winner);
     setTossLoser(loser);
-    setVetoStep(1);
+    setVetoStep(0.5); // Show toss result first
+  };
+
+  const handleStartVeto = () => {
+    setVetoStep(1); // Start the veto process
   };
 
   const handleMapBan = (mapValue: string) => {
@@ -78,7 +89,7 @@ const MapVeto = () => {
       return;
     }
     const otherSide = chosenSide === "Attack" ? "Defense" : "Attack";
-    setTeamSides(`${tossLoser} chooses ${chosenSide}, ${tossWinner} starts ${otherSide}`);
+    setTeamSides(`${tossWinner} chooses ${chosenSide}, ${tossLoser} starts ${otherSide}`);
     setVetoStep(8); // Move to final summary
   };
 
@@ -118,6 +129,33 @@ const MapVeto = () => {
           </div>
         );
 
+      case 0.5:
+        return (
+          <div className="max-w-xl w-full mx-auto text-center">
+            <h2 className="text-3xl font-bold mb-8 text-white">
+              Toss Result
+            </h2>
+            <div className="bg-gradient-to-r from-green-900/30 to-green-800/30 border-2 border-green-500 rounded-xl p-8 mb-8">
+              <p className="text-xl text-gray-300 mb-4">Toss Winner</p>
+              <p className="text-4xl font-bold text-green-400 mb-2">{tossWinner}</p>
+              <p className="text-sm text-gray-400 mt-4">
+                {tossWinner} will ban the first map
+              </p>
+            </div>
+            <div className="bg-zinc-900/50 border border-zinc-700 rounded-xl p-6 mb-8">
+              <p className="text-lg text-gray-400">
+                <span className="font-semibold text-white">{tossLoser}</span> will ban second
+              </p>
+            </div>
+            <button
+              onClick={handleStartVeto}
+              className="w-full px-6 py-3 bg-[#383bff] rounded font-semibold text-white hover:bg-[#5359ff] transition"
+            >
+              Start Veto Process
+            </button>
+          </div>
+        );
+
       case 1:
       case 2:
       case 3:
@@ -143,7 +181,7 @@ const MapVeto = () => {
                     `}
                   >
                     <img
-                      src={`/maps/${map.value}.jpg`}
+                      src={getMapImagePath(map.value)}
                       alt={map.name}
                       className="absolute inset-0 w-full h-full object-cover"
                       onError={(e) => {
@@ -158,7 +196,9 @@ const MapVeto = () => {
                       </p>
                     </div>
                     {isSelected && (
-                      <div className="absolute inset-0 bg-gradient-to-t from-red-900/80 to-transparent"></div>
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-[2px]">
+                        <div className="absolute inset-0 border-2 border-gray-500/50"></div>
+                      </div>
                     )}
                   </button>
                 );
@@ -171,7 +211,7 @@ const MapVeto = () => {
         return (
           <div className="max-w-md w-full text-center mx-auto">
             <h2 className="text-2xl font-semibold text-blue-400 mb-6">
-              {tossLoser}, choose your starting side for <span className="font-bold">{finalMapInfo?.name}</span>
+              {tossWinner}, choose your starting side for <span className="font-bold">{finalMapInfo?.name}</span>
             </h2>
             <div className="flex justify-center gap-12">
               {["Attack", "Defense"].map((side) => (
@@ -195,7 +235,7 @@ const MapVeto = () => {
             </h2>
             <div className="flex justify-center mb-8">
                 {finalMapInfo && (
-                     <div className="bg-gray-900/50 border border-gray-700 rounded-lg overflow-hidden flex flex-col w-full max-w-xs">
+                     <div className="bg-zinc-900/80 border border-zinc-700/50 rounded-xl overflow-hidden flex flex-col w-full max-w-xs hover:border-blue-500/50 transition-all duration-300">
                         <div className="relative w-full aspect-[4/3]">
                              <img
                                 src={`/maps/${finalMapInfo.value}.jpg`}
@@ -207,22 +247,23 @@ const MapVeto = () => {
                                     target.src='https://placehold.co/400x300/121212/FFFFFF?text=Map+Image';
                                 }}
                             />
-                        </div>
-                        <div className="p-2 md:p-3 text-center flex-grow flex flex-col justify-between">
-                            <div>
-                                <p className="text-[10px] sm:text-xs text-blue-400">DECIDER MAP</p>
-                                <h3 className="text-base sm:text-lg font-bold text-white my-1">{finalMapInfo.name}</h3>
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                            <div className="absolute bottom-0 left-0 right-0 p-4">
+                                <p className="text-xs text-blue-400 font-semibold tracking-wider mb-1">DECIDER MAP</p>
+                                <h3 className="text-2xl font-bold text-white drop-shadow-lg">{finalMapInfo.name}</h3>
                             </div>
-                            {teamSides && (
-                                <p className="text-gray-300 text-xs sm:text-sm mt-2">{teamSides}</p>
-                            )}
                         </div>
+                        {teamSides && (
+                            <div className="p-4 bg-zinc-800/50">
+                                <p className="text-gray-300 text-sm text-center">{teamSides}</p>
+                            </div>
+                        )}
                     </div>
                 )}
             </div>
-            <div>
-              <h3 className="text-center text-lg font-semibold text-gray-400 mb-2">Banned Maps</h3>
-              <p className="text-center text-gray-500">{MAPS.filter(m => bannedMaps.includes(m.value)).map(m => m.name).join(" • ")}</p>
+            <div className="bg-zinc-900/50 border border-zinc-800/50 rounded-xl p-5">
+              <h3 className="text-center text-base font-semibold text-gray-400 mb-2">Banned Maps</h3>
+              <p className="text-center text-gray-500 text-sm">{MAPS.filter(m => bannedMaps.includes(m.value)).map(m => m.name).join(" • ")}</p>
             </div>
           </div>
         );
