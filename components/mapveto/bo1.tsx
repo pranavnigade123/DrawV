@@ -238,7 +238,7 @@ const MapVeto = () => {
                      <div className="bg-zinc-900/80 border border-zinc-700/50 rounded-xl overflow-hidden flex flex-col w-full max-w-xs hover:border-blue-500/50 transition-all duration-300">
                         <div className="relative w-full aspect-[4/3]">
                              <img
-                                src={`/maps/${finalMapInfo.value}.jpg`}
+                                src={getMapImagePath(finalMapInfo.value)}
                                 alt={finalMapInfo.name}
                                 className="absolute inset-0 w-full h-full object-cover"
                                 onError={(e) => {
