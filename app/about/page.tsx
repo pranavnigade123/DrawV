@@ -1,9 +1,8 @@
 "use client";
 
-import { ColourfulText } from "@/components/aceternity/colourful-text";
 import { FeaturesSectionDemo } from "@/components/aceternity/FeaturesSectionDemo";
 
-// Main team (8 members -> 4x4 on large screens)
+// Main team
 const teamPins = [
   { 
     title: "Pin One", 
@@ -61,29 +60,13 @@ const teamPins = [
     designation: "Design Mentor",
     linkedin: "https://www.linkedin.com/in/virajnpawar/"
   },
-  
-];
-
-// Innovation hub team
-const innovationPins = [
-  { 
-    title: "Pin Six", 
-    img: "/Shaswat.jpg", 
-    name: "Shashwat Nande", 
-    designation: "Innovation Hub President",
-    linkedin: "https://www.linkedin.com/in/shashwat-nande-786bb0289?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app/"
-  },
   { 
     title: "Pin Seven", 
     img: "/swastik.jpg", 
     name: "Swastik Singh", 
-    designation: "Innovation Hub Vice President",
+    designation: "Vice President",
     linkedin: "https://www.linkedin.com/in/swastik-singh-b40466304?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app/"
   },
-];
-
-// Faculty Mentor team
-const facultyPins = [
   { 
     title: "Faculty Mentor", 
     img: "/nilam.png",  
@@ -142,7 +125,7 @@ function TeamCard({ pin }: { pin: Pin }) {
 export default function AboutPage() {
   return (
     <main className="w-full flex flex-col items-center py-12 bg-[var(--background)] text-[var(--foreground)] min-h-screen">
-      {/* --- MODIFIED VIDEO SECTION --- */}
+      {/* Video Section */}
       <div
         style={{
           position: "relative",
@@ -185,75 +168,65 @@ export default function AboutPage() {
         />
       </div>
 
-      {/* About Us Section */}
-      <div className="w-full max-w-6xl px-4 pt-20">
-        {/* Top Row: DRAW V */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-40">
-          <section className="flex flex-col justify-center p-6 pt-6 pb-2">
-            <h2 className="text-left font-extrabold text-3xl sm:text-4xl tracking-tight mb-6 text-white">
-              What is <ColourfulText text="DRAW V" colorTheme="blue" />?
+      {/* About DrawV Section */}
+      <div className="w-full max-w-5xl px-4 sm:px-6 md:px-8 pt-16 pb-12 mx-auto">
+        <section className="space-y-8">
+          {/* Title Section */}
+          <div className="space-y-4 text-center">
+            <h2 className="font-extrabold text-4xl sm:text-5xl lg:text-6xl tracking-tight">
+              <span className="text-white">DRAW FI</span>
+              <span className="text-blue-500">V</span>
+              <span className="text-white">E</span>
             </h2>
-            <p className="text-gray-300 text-base leading-relaxed text-justify">
-             Draw Five is the Game Tech Community of the Innovation Hub, dedicated to empowering the next generation of gaming professionals. We focus on building technical expertise and creative skills across game tech and tool development, esports and streaming, technical operations, design and web development, and community management. By combining innovation with hands-on learning, Draw Five equips aspiring creators, developers, and event professionals with the knowledge and experience needed to thrive in the fast-evolving gaming industry.
-            </p>
-          </section>
-          <div className="flex items-center justify-center p-6">
-            <img src="/DVDark_bg.png" alt="Draw V Logo" className="h-24 w-auto hidden md:block" />
+            <div className="flex justify-center">
+              <div className="h-1 w-24 bg-gradient-to-r from-transparent via-blue-500 to-transparent rounded-full"></div>
+            </div>
           </div>
-        </div>
 
-        {/* Bottom Row: Innovation Hub */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-          <div className="flex items-center justify-center p-6">
-            <img src="/ih-logo2.png" alt="Innovation Hub Logo" className="h-36 w-auto" />
-          </div>
-          <section className="flex flex-col justify-center p-6 ">
-            <h2 className="text-left font-extrabold text-3xl sm:text-4xl tracking-tight mb-3 text-white">
-              What is <ColourfulText text="Innovation Hub" colorTheme="redYellow" />?
-            </h2>
-            <p className="text-gray-300 text-base leading-relaxed text-justify">
-              The Innovation Hub at MIT-WPU is the official Student Innovation Council, fueled by curiosity and collaboration. It cultivates a culture of innovation by equipping students with practical skills through workshops, hackathons, and mentorship in technology, design, and entrepreneurship. With a diverse team and strong community, it drives impactful projects, national wins, and research publications. The Hub supports students’ journeys from ideation to execution, bridging gaps in confidence and career readiness to shape future leaders and changemakers.
+          {/* Content Section */}
+          <div className="space-y-6 text-gray-300 text-base sm:text-lg leading-relaxed max-w-4xl mx-auto">
+            <p className="text-center">
+              <span className="font-bold text-white">DrawV (Draw Five)</span> is the premier Game Tech Community at MIT-WPU, dedicated to revolutionizing the gaming and esports ecosystem.
             </p>
-          </section>
-        </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+              <div className="bg-zinc-900/50 backdrop-blur-sm border border-zinc-800 rounded-xl p-5 hover:border-blue-500/50 transition-all duration-300">
+                <p className="text-sm sm:text-base">
+                  We are a <span className="text-blue-400 font-semibold">dynamic collective</span> of passionate developers, designers, and gaming enthusiasts committed to empowering the next generation of gaming professionals.
+                </p>
+              </div>
+              
+              <div className="bg-zinc-900/50 backdrop-blur-sm border border-zinc-800 rounded-xl p-5 hover:border-blue-500/50 transition-all duration-300">
+                <p className="text-sm sm:text-base">
+                  Our mission encompasses <span className="text-blue-400 font-semibold">game development</span>, <span className="text-blue-400 font-semibold">esports tournament management</span>, <span className="text-blue-400 font-semibold">streaming infrastructure</span>, and <span className="text-blue-400 font-semibold">creative design</span>.
+                </p>
+              </div>
+            </div>
+            
+            <p className="text-center text-lg sm:text-xl font-medium pt-3">
+              At DrawV, we don't just learn about gaming technology — <span className="text-blue-500 font-bold">we build it</span>.
+            </p>
+            
+            <p className="text-center text-sm sm:text-base text-gray-400">
+              Our flagship <span className="text-blue-400 font-semibold">DrawV Tournament Management Platform</span> exemplifies our commitment to solving real-world problems in the esports community.
+            </p>
+          </div>
+        </section>
       </div>
 
       {/* Team Section */}
-      <div className="w-full max-w-6xl px-6 md:px-8 py-16 t-10 mt-8">
+      <div className="w-full max-w-6xl px-6 md:px-8 py-16 mt-8">
         <h2 className="text-center text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-12">
           Meet Our Team
         </h2>
 
-        {/* 1 col (mobile), 2 cols (sm), 4 cols (lg and up) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 justify-center">
+        {/* Grid layout for all team members including Swastik and Faculty Mentor */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4 justify-center">
           {teamPins.map((pin, index) => (
             <TeamCard key={index} pin={pin} />
           ))}
         </div>
-
-        {/* Innovation Hub section */}
-        <h3 className="text-center text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mt-16 mb-8">
-          Innovation Hub
-        </h3>
-
-        <div className="flex flex-col sm:flex-row gap-4 lg:gap-32 justify-center items-center">
-          {innovationPins.map((pin, index) => (
-            <TeamCard key={index} pin={pin} />
-          ))}
-        </div>
       </div>
-
-{/* Faculty Mentor section */}
-<h3 className="text-center text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mt-12 mb-8">
-  Faculty Mentor
-</h3>
-
-<div className="flex flex-col sm:flex-row gap-4 lg:gap-32 justify-center items-center">
-  {facultyPins.map((pin, index) => (
-    <TeamCard key={index} pin={pin} />
-  ))}
-</div>
-
 
       {/* Features Section */}
       <div className="px-3 sm:px-6 md:px-8 py-10 w-full max-w-7xl">
