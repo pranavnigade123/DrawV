@@ -1,11 +1,16 @@
 "use client";
 
-import React, { useEffect, useState, useRef, useCallback, useMemo } from "react";
+import React, { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import toast from "react-hot-toast";
+
+// ============================================================================
+// TYPES
+// ============================================================================
 
 interface Opponent {
   type: "team" | "player" | "placeholder";
   label?: string | null;
+  seed?: number | null;
 }
 
 interface Match {
@@ -19,6 +24,8 @@ interface Match {
   scoreB: number | null;
   winner: "A" | "B" | null;
   finished: boolean;
+  winnerto?: string | null;
+  loserto?: string | null;
 }
 
 interface BracketViewerProps {
@@ -27,32 +34,416 @@ interface BracketViewerProps {
   isEditable?: boolean;
 }
 
+// ============================================================================
+// CONSTANTS - Challonge-style dimensions
+// ============================================================================
+
+const MATCH_WIDTH = 200;
+const MATCH_HEIGHT = 56;
+const TEAM_HEIGHT = 28;
+const ROUND_GAP = 60;
+const VERTICAL_GAP = 16;
+
+// ============================================================================
+// SCORE MODAL COMPONENT
+// ============================================================================
+
+interface ScoreModalProps {
+  match: Match;
+  onClose: () => void;
+  onSubmit: (scoreA: number, scoreB: number) => void;
+  updating: boolean;
+}
+
+function ScoreModal({ match, onClose, onSubmit, updating }: ScoreModalProps) {
+  const [scoreA, setScoreA] = useState(match.scoreA ?? 0);
+  const [scoreB, setScoreB] = useState(match.scoreB ?? 0);
+  const [winnerA, setWinnerA] = useState(match.winner === "A");
+  const [winnerB, setWinnerB] = useState(match.winner === "B");
+
+  const handleWinnerSelect = (side: "A" | "B") => {
+    if (side === "A") {
+      setWinnerA(true);
+      setWinnerB(false);
+    } else {
+      setWinnerA(false);
+      setWinnerB(true);
+    }
+  };
+
+  const handleSubmit = () => {
+    // Ensure winner has higher score
+    let finalScoreA = scoreA;
+    let finalScoreB = scoreB;
+    
+    if (winnerA && finalScoreA <= finalScoreB) {
+      finalScoreA = finalScoreB + 1;
+    } else if (winnerB && finalScoreB <= finalScoreA) {
+      finalScoreB = finalScoreA + 1;
+    }
+    
+    onSubmit(finalScoreA, finalScoreB);
+  };
+
+  const handleReset = () => {
+    setScoreA(0);
+    setScoreB(0);
+    setWinnerA(false);
+    setWinnerB(false);
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50" onClick={onClose}>
+      <div 
+        className="bg-zinc-800 rounded-lg shadow-2xl w-[420px] max-w-[95vw]" 
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="flex border-b border-zinc-700">
+          <button className="px-6 py-3 text-zinc-400 hover:text-white transition-colors">
+            Match Info
+          </button>
+          <button className="px-6 py-3 text-white font-medium border-b-2 border-cyan-500">
+            Report Scores
+          </button>
+          <button 
+            onClick={onClose}
+            className="ml-auto px-4 py-3 text-zinc-400 hover:text-white text-xl"
+          >
+            ×
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="p-6">
+          {/* Headers */}
+          <div className="flex items-center mb-2 text-xs text-zinc-400 uppercase tracking-wider">
+            <div className="flex-1"></div>
+            <div className="w-20 text-center">Winner</div>
+            <div className="w-24 text-center">Score</div>
+          </div>
+
+          {/* Team A */}
+          <div className={`flex items-center p-3 rounded mb-2 ${winnerA ? 'bg-zinc-700' : 'bg-zinc-900'}`}>
+            <div className="flex items-center flex-1 gap-3">
+              <span className="text-sm font-medium text-zinc-400 w-6">
+                {match.opponentA.seed || "-"}
+              </span>
+              <span className="text-white font-medium">
+                {match.opponentA.label || "TBD"}
+              </span>
+            </div>
+            <button 
+              onClick={() => handleWinnerSelect("A")}
+              className={`w-20 flex justify-center ${winnerA ? 'text-cyan-400' : 'text-zinc-600 hover:text-zinc-400'}`}
+            >
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </button>
+            <div className="w-24 flex items-center justify-center gap-1">
+              <input
+                type="number"
+                min={0}
+                value={scoreA}
+                onChange={(e) => setScoreA(Math.max(0, parseInt(e.target.value) || 0))}
+                className="w-12 bg-zinc-800 border border-zinc-600 rounded px-2 py-1 text-center text-white text-sm focus:border-cyan-500 focus:outline-none"
+              />
+              <div className="flex flex-col">
+                <button 
+                  onClick={() => setScoreA(s => s + 1)}
+                  className="text-zinc-400 hover:text-white text-xs leading-none"
+                >+</button>
+                <button 
+                  onClick={() => setScoreA(s => Math.max(0, s - 1))}
+                  className="text-zinc-400 hover:text-white text-xs leading-none"
+                >-</button>
+              </div>
+            </div>
+          </div>
+
+          {/* Team B */}
+          <div className={`flex items-center p-3 rounded mb-4 ${winnerB ? 'bg-zinc-700' : 'bg-zinc-900'}`}>
+            <div className="flex items-center flex-1 gap-3">
+              <span className="text-sm font-medium text-zinc-400 w-6">
+                {match.opponentB.seed || "-"}
+              </span>
+              <span className="text-white font-medium">
+                {match.opponentB.label || "TBD"}
+              </span>
+            </div>
+            <button 
+              onClick={() => handleWinnerSelect("B")}
+              className={`w-20 flex justify-center ${winnerB ? 'text-cyan-400' : 'text-zinc-600 hover:text-zinc-400'}`}
+            >
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </button>
+            <div className="w-24 flex items-center justify-center gap-1">
+              <input
+                type="number"
+                min={0}
+                value={scoreB}
+                onChange={(e) => setScoreB(Math.max(0, parseInt(e.target.value) || 0))}
+                className="w-12 bg-zinc-800 border border-zinc-600 rounded px-2 py-1 text-center text-white text-sm focus:border-cyan-500 focus:outline-none"
+              />
+              <div className="flex flex-col">
+                <button 
+                  onClick={() => setScoreB(s => s + 1)}
+                  className="text-zinc-400 hover:text-white text-xs leading-none"
+                >+</button>
+                <button 
+                  onClick={() => setScoreB(s => Math.max(0, s - 1))}
+                  className="text-zinc-400 hover:text-white text-xs leading-none"
+                >-</button>
+              </div>
+            </div>
+          </div>
+
+          {/* Add Set */}
+          <div className="text-right mb-6">
+            <button className="text-zinc-400 hover:text-white text-sm">
+              + ADD SET
+            </button>
+          </div>
+
+          {/* Actions */}
+          <div className="flex gap-4">
+            <button
+              onClick={handleSubmit}
+              disabled={updating || (!winnerA && !winnerB)}
+              className={`flex-1 py-3 rounded font-semibold transition-colors ${
+                updating || (!winnerA && !winnerB)
+                  ? 'bg-zinc-700 text-zinc-500 cursor-not-allowed'
+                  : 'bg-cyan-600 text-white hover:bg-cyan-500'
+              }`}
+            >
+              {updating ? 'SAVING...' : 'SUBMIT SCORES'}
+            </button>
+            <button
+              onClick={handleReset}
+              className="px-6 py-3 text-zinc-400 hover:text-white transition-colors"
+            >
+              RESET SCORES
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// MATCH CARD COMPONENT - Challonge style
+// ============================================================================
+
+interface MatchCardProps {
+  match: Match;
+  matchIndex: number;
+  onClick?: () => void;
+  isEditable: boolean;
+}
+
+function MatchCard({ match, matchIndex, onClick, isEditable }: MatchCardProps) {
+  const isWinnerA = match.finished && match.winner === "A";
+  const isWinnerB = match.finished && match.winner === "B";
+  const isFinals = match.bracket === "F";
+  const isLoserBracket = match.bracket === "L";
+
+  const getTeamLabel = (opponent: Opponent, slot: "A" | "B") => {
+    if (opponent.type === "placeholder") {
+      // Check if we can show "Loser of X" or "Winner of X"
+      return opponent.label || "TBD";
+    }
+    return opponent.label || "TBD";
+  };
+
+  return (
+    <div className="flex items-center">
+      {/* Match Number */}
+      <div 
+        className={`w-7 h-14 flex items-center justify-center text-xs font-medium mr-2 ${
+          isLoserBracket ? 'text-zinc-500' : 'text-zinc-500'
+        }`}
+      >
+        {matchIndex}
+      </div>
+
+      {/* Match Box */}
+      <div 
+        className={`relative cursor-pointer transition-all duration-150 hover:brightness-110 ${
+          isFinals ? 'ring-1 ring-indigo-500/50' : ''
+        }`}
+        style={{ width: MATCH_WIDTH }}
+        onClick={isEditable ? onClick : undefined}
+      >
+        {/* Team A */}
+        <div 
+          className={`flex items-center border-b ${
+            isWinnerA 
+              ? 'bg-zinc-700 border-zinc-600' 
+              : 'bg-zinc-800 border-zinc-700'
+          } ${isLoserBracket ? 'bg-opacity-80' : ''}`}
+          style={{ height: TEAM_HEIGHT }}
+        >
+          {/* Seed */}
+          <div className={`w-7 flex items-center justify-center text-xs font-medium ${
+            isWinnerA ? 'text-yellow-500' : 'text-zinc-500'
+          }`}>
+            {match.opponentA.seed || ""}
+          </div>
+          
+          {/* Team Name */}
+          <div className={`flex-1 px-2 text-sm truncate ${
+            isWinnerA ? 'text-white font-medium' : 'text-zinc-300'
+          }`}>
+            {getTeamLabel(match.opponentA, "A")}
+          </div>
+          
+          {/* Score */}
+          <div className={`w-8 flex items-center justify-center text-sm font-medium ${
+            isWinnerA ? 'bg-zinc-600 text-white' : 'bg-zinc-900 text-zinc-400'
+          }`} style={{ height: TEAM_HEIGHT }}>
+            {match.scoreA ?? "-"}
+          </div>
+        </div>
+
+        {/* Team B */}
+        <div 
+          className={`flex items-center ${
+            isWinnerB 
+              ? 'bg-zinc-700' 
+              : 'bg-zinc-800'
+          } ${isLoserBracket ? 'bg-opacity-80' : ''}`}
+          style={{ height: TEAM_HEIGHT }}
+        >
+          {/* Seed */}
+          <div className={`w-7 flex items-center justify-center text-xs font-medium ${
+            isWinnerB ? 'text-yellow-500' : 'text-zinc-500'
+          }`}>
+            {match.opponentB.seed || ""}
+          </div>
+          
+          {/* Team Name */}
+          <div className={`flex-1 px-2 text-sm truncate ${
+            isWinnerB ? 'text-white font-medium' : 'text-zinc-300'
+          }`}>
+            {getTeamLabel(match.opponentB, "B")}
+          </div>
+          
+          {/* Score */}
+          <div className={`w-8 flex items-center justify-center text-sm font-medium ${
+            isWinnerB ? 'bg-zinc-600 text-white' : 'bg-zinc-900 text-zinc-400'
+          }`} style={{ height: TEAM_HEIGHT }}>
+            {match.scoreB ?? "-"}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// BRACKET ROUND COMPONENT
+// ============================================================================
+
+interface RoundData {
+  round: number;
+  matches: Match[];
+}
+
+interface BracketRoundProps {
+  roundData: RoundData;
+  roundIndex: number;
+  totalRounds: number;
+  bracketType: "W" | "L" | "F";
+  matchIndexMap: Map<string, number>;
+  onMatchClick: (match: Match) => void;
+  isEditable: boolean;
+}
+
+function BracketRound({
+  roundData,
+  roundIndex,
+  bracketType,
+  matchIndexMap,
+  onMatchClick,
+  isEditable,
+}: BracketRoundProps) {
+  // Calculate vertical spacing that doubles each round for proper bracket alignment
+  const getVerticalSpacing = () => {
+    if (bracketType === "F") return MATCH_HEIGHT + VERTICAL_GAP * 2;
+    
+    // For losers bracket, spacing increases every 2 rounds
+    if (bracketType === "L") {
+      const spacingLevel = Math.floor(roundIndex / 2);
+      return (MATCH_HEIGHT + VERTICAL_GAP) * Math.pow(2, spacingLevel);
+    }
+    
+    // Winners bracket doubles each round
+    return (MATCH_HEIGHT + VERTICAL_GAP) * Math.pow(2, roundIndex);
+  };
+
+  const verticalSpacing = getVerticalSpacing();
+
+  return (
+    <div className="flex flex-col" style={{ marginLeft: roundIndex > 0 ? ROUND_GAP : 0 }}>
+      {/* Round Header */}
+      <div className="text-xs font-medium text-zinc-400 mb-3 h-5">
+        {bracketType === "F" 
+          ? (roundData.round === 1 ? "Grand Final" : "(if necessary)")
+          : bracketType === "L" 
+            ? `LB Round ${roundData.round}`
+            : `Round ${roundData.round}`
+        }
+      </div>
+
+      {/* Matches */}
+      <div className="flex flex-col" style={{ gap: verticalSpacing - MATCH_HEIGHT }}>
+        {roundData.matches.map((match) => {
+          const matchNum = matchIndexMap.get(match.id) ?? 0;
+
+          return (
+            <MatchCard
+              key={match.id}
+              match={match}
+              matchIndex={matchNum}
+              onClick={() => onMatchClick(match)}
+              isEditable={isEditable}
+            />
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// MAIN BRACKET VIEWER COMPONENT
+// ============================================================================
+
 export default function BracketViewer({
   bracketId,
   matches: initialMatches,
   isEditable = true,
 }: BracketViewerProps) {
   const [matches, setMatches] = useState<Match[]>(initialMatches || []);
-  const [updating, setUpdating] = useState<string | null>(null);
-  const [isDrawing, setIsDrawing] = useState(false);
-  const matchRefs = useRef<Record<string, HTMLDivElement | null>>({});
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const drawTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const resizeObserverRef = useRef<ResizeObserver | null>(null);
+  const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
+  const [updating, setUpdating] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
+  // Fetch bracket data
   const fetchBracket = useCallback(async () => {
     try {
-      const res = await fetch(`/api/brackets/${bracketId}`, {
-        next: { revalidate: 30 } // Cache for 30 seconds
-      });
+      const res = await fetch(`/api/brackets/${bracketId}`);
       const data = await res.json();
       if (!res.ok || !data?.matches) {
         toast.error(data?.error || "Failed to load bracket");
         return;
       }
       setMatches(data.matches || []);
-    } catch (err) {
+    } catch {
       toast.error("Failed to load bracket");
     }
   }, [bracketId]);
@@ -61,330 +452,190 @@ export default function BracketViewer({
     if (!initialMatches) fetchBracket();
   }, [initialMatches, fetchBracket]);
 
-  async function handleUpdateScore(matchId: string, scoreA: number, scoreB: number) {
+  // Handle score submission
+  const handleUpdateScore = async (scoreA: number, scoreB: number) => {
+    if (!selectedMatch) return;
+    
     try {
-      setUpdating(matchId);
+      setUpdating(true);
       const res = await fetch(`/api/brackets/${bracketId}/resolve-result`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ matchId, scoreA, scoreB }),
+        body: JSON.stringify({ 
+          matchId: selectedMatch.id, 
+          scoreA, 
+          scoreB 
+        }),
       });
+      
       if (!res.ok) throw new Error("Failed to update score");
+      
       toast.success("Result updated!");
+      setSelectedMatch(null);
       fetchBracket();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Error updating score");
     } finally {
-      setUpdating(null);
+      setUpdating(false);
     }
-  }
+  };
 
-  // Memoize grouping function to avoid recalculation
-  const groupByRound = useCallback((matches: Match[], type: "W" | "L" | "F") => {
+  // Group matches by bracket type and round
+  const groupByRound = useCallback((matches: Match[], type: "W" | "L" | "F"): RoundData[] => {
     const filtered = matches.filter((m) => m.bracket === type);
     const byRound: Record<number, Match[]> = {};
+    
     filtered.forEach((m) => {
       byRound[m.round] = byRound[m.round] || [];
       byRound[m.round].push(m);
     });
+    
     return Object.entries(byRound)
-      .map(([r, ms]) => ({ round: Number(r), matches: ms.sort((a, b) => a.matchNumber - b.matchNumber) }))
+      .map(([r, ms]) => ({ 
+        round: Number(r), 
+        matches: ms.sort((a, b) => a.matchNumber - b.matchNumber) 
+      }))
       .sort((a, b) => a.round - b.round);
   }, []);
 
-  // Memoize grouped matches to prevent recalculation on every render
   const winners = useMemo(() => groupByRound(matches, "W"), [matches, groupByRound]);
   const losers = useMemo(() => groupByRound(matches, "L"), [matches, groupByRound]);
-  const finals = useMemo(() => matches.filter((m) => m.bracket === "F"), [matches]);
+  const finals = useMemo(() => groupByRound(matches, "F"), [matches, groupByRound]);
 
-  // Memoized MatchCard component to prevent unnecessary re-renders
-  const MatchCard = React.memo(({ m }: { m: Match }) => {
-    const [scoreA, setScoreA] = useState<number | string>(m.scoreA ?? "");
-    const [scoreB, setScoreB] = useState<number | string>(m.scoreB ?? "");
-    const winner = m.finished && m.winner === "A" ? "A" : m.finished && m.winner === "B" ? "B" : null;
-
-    // Sync local state with prop changes
-    useEffect(() => {
-      setScoreA(m.scoreA ?? "");
-      setScoreB(m.scoreB ?? "");
-    }, [m.scoreA, m.scoreB]);
-
-    return (
-      <div 
-        ref={(el) => { matchRefs.current[m.id] = el; }}
-        className={`border rounded-lg bg-zinc-900 p-3 shadow-lg w-[240px] ${
-          m.bracket === "F" ? 'border-indigo-500' : m.bracket === "L" ? 'border-orange-500/40' : 'border-zinc-700'
-        }`}
-      >
-        <div className="text-[10px] text-zinc-500 mb-2 font-mono">{m.id}</div>
-        <div className={`flex justify-between items-center px-3 py-2 rounded mb-1 ${
-          winner === "A" ? "bg-emerald-600/30 border border-emerald-500/60" : "bg-zinc-800/60"
-        }`}>
-          <div className="flex items-center gap-2 flex-1 min-w-0">
-            {winner === "A" && <span className="text-emerald-400">✓</span>}
-            <span className={`text-sm truncate ${winner === "A" ? "text-white font-bold" : "text-zinc-300"}`}>
-              {m.opponentA?.label || "TBD"}
-            </span>
-          </div>
-          {isEditable ? (
-            <input type="number" min={0} className="w-14 text-center text-sm bg-zinc-900 border border-zinc-600 rounded px-2 py-1 text-white focus:border-indigo-500 focus:outline-none"
-              value={scoreA} onChange={(e) => setScoreA(e.target.value)} placeholder="-" />
-          ) : (
-            <span className="text-sm text-zinc-400 font-mono">{m.scoreA ?? "-"}</span>
-          )}
-        </div>
-        <div className={`flex justify-between items-center px-3 py-2 rounded ${
-          winner === "B" ? "bg-emerald-600/30 border border-emerald-500/60" : "bg-zinc-800/60"
-        }`}>
-          <div className="flex items-center gap-2 flex-1 min-w-0">
-            {winner === "B" && <span className="text-emerald-400">✓</span>}
-            <span className={`text-sm truncate ${winner === "B" ? "text-white font-bold" : "text-zinc-300"}`}>
-              {m.opponentB?.label || "TBD"}
-            </span>
-          </div>
-          {isEditable ? (
-            <input type="number" min={0} className="w-14 text-center text-sm bg-zinc-900 border border-zinc-600 rounded px-2 py-1 text-white focus:border-indigo-500 focus:outline-none"
-              value={scoreB} onChange={(e) => setScoreB(e.target.value)} placeholder="-" />
-          ) : (
-            <span className="text-sm text-zinc-400 font-mono">{m.scoreB ?? "-"}</span>
-          )}
-        </div>
-        {isEditable && (
-          <button onClick={() => handleUpdateScore(m.id, Number(scoreA), Number(scoreB))} disabled={updating === m.id}
-            className={`mt-3 w-full text-xs py-2 rounded font-semibold transition-colors ${
-              updating === m.id ? "bg-zinc-700 text-zinc-400 cursor-not-allowed" : "bg-indigo-600 text-white hover:bg-indigo-500"
-            }`}>
-            {updating === m.id ? "Saving..." : "Save Result"}
-          </button>
-        )}
-      </div>
-    );
-  });
-
-  const MATCH_HEIGHT = 140;
-  const ROUND_GAP = 100;
-  const CONNECTOR_WIDTH = 50;
-
-  // Debounced canvas drawing function
-  const drawConnectors = useCallback(() => {
-    const canvas = canvasRef.current;
-    const container = containerRef.current;
-    if (!canvas || !container || isDrawing) return;
-
-    setIsDrawing(true);
-
-    // Use requestAnimationFrame for smooth rendering
-    requestAnimationFrame(() => {
-      const ctx = canvas.getContext('2d', { alpha: true });
-      if (!ctx) {
-        setIsDrawing(false);
-        return;
-      }
-
-      // Set canvas size to match container
-      const dpr = window.devicePixelRatio || 1;
-      canvas.width = container.scrollWidth * dpr;
-      canvas.height = container.scrollHeight * dpr;
-      canvas.style.width = `${container.scrollWidth}px`;
-      canvas.style.height = `${container.scrollHeight}px`;
-      ctx.scale(dpr, dpr);
-
-      // Clear canvas
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // Draw connectors for winner bracket
-      winners.forEach((round, roundIdx) => {
-        if (roundIdx >= winners.length - 1) return;
-
-        round.matches.forEach((match, matchIdx) => {
-          const matchEl = matchRefs.current[match.id];
-          if (!matchEl) return;
-
-          const matchRect = matchEl.getBoundingClientRect();
-          const containerRect = container.getBoundingClientRect();
-
-          const x1 = matchRect.right - containerRect.left + container.scrollLeft;
-          const y1 = matchRect.top + matchRect.height / 2 - containerRect.top + container.scrollTop;
-
-          ctx.strokeStyle = '#52525b';
-          ctx.lineWidth = 2;
-          ctx.beginPath();
-          ctx.moveTo(x1, y1);
-          ctx.lineTo(x1 + CONNECTOR_WIDTH, y1);
-          ctx.stroke();
-
-          if (matchIdx % 2 === 0 && matchIdx + 1 < round.matches.length) {
-            const nextMatch = round.matches[matchIdx + 1];
-            const nextMatchEl = matchRefs.current[nextMatch.id];
-            if (!nextMatchEl) return;
-
-            const nextMatchRect = nextMatchEl.getBoundingClientRect();
-            const y2 = nextMatchRect.top + nextMatchRect.height / 2 - containerRect.top + container.scrollTop;
-
-            const midX = x1 + CONNECTOR_WIDTH;
-            ctx.beginPath();
-            ctx.moveTo(midX, y1);
-            ctx.lineTo(midX, y2);
-            ctx.stroke();
-
-            const midY = (y1 + y2) / 2;
-            ctx.beginPath();
-            ctx.moveTo(midX, midY);
-            ctx.lineTo(midX + CONNECTOR_WIDTH, midY);
-            ctx.stroke();
-          }
-        });
+  // Pre-compute match index map (deterministic, no mutable state)
+  const matchIndexMap = useMemo(() => {
+    const map = new Map<string, number>();
+    let idx = 1;
+    
+    // Winners bracket matches first
+    winners.forEach((round) => {
+      round.matches.forEach((match) => {
+        map.set(match.id, idx++);
       });
-
-      // Draw connectors for loser bracket
-      losers.forEach((round, roundIdx) => {
-        if (roundIdx >= losers.length - 1) return;
-
-        round.matches.forEach((match, matchIdx) => {
-          const matchEl = matchRefs.current[match.id];
-          if (!matchEl) return;
-
-          const matchRect = matchEl.getBoundingClientRect();
-          const containerRect = container.getBoundingClientRect();
-
-          const x1 = matchRect.right - containerRect.left + container.scrollLeft;
-          const y1 = matchRect.top + matchRect.height / 2 - containerRect.top + container.scrollTop;
-
-          ctx.strokeStyle = 'rgba(249, 115, 22, 0.4)';
-          ctx.lineWidth = 2;
-          ctx.beginPath();
-          ctx.moveTo(x1, y1);
-          ctx.lineTo(x1 + CONNECTOR_WIDTH, y1);
-          ctx.stroke();
-
-          if (matchIdx % 2 === 0 && matchIdx + 1 < round.matches.length) {
-            const nextMatch = round.matches[matchIdx + 1];
-            const nextMatchEl = matchRefs.current[nextMatch.id];
-            if (!nextMatchEl) return;
-
-            const nextMatchRect = nextMatchEl.getBoundingClientRect();
-            const y2 = nextMatchRect.top + nextMatchRect.height / 2 - containerRect.top + container.scrollTop;
-
-            const midX = x1 + CONNECTOR_WIDTH;
-            ctx.beginPath();
-            ctx.moveTo(midX, y1);
-            ctx.lineTo(midX, y2);
-            ctx.stroke();
-
-            const midY = (y1 + y2) / 2;
-            ctx.beginPath();
-            ctx.moveTo(midX, midY);
-            ctx.lineTo(midX + CONNECTOR_WIDTH, midY);
-            ctx.stroke();
-          }
-        });
+    });
+    
+    // Finals
+    finals.forEach((round) => {
+      round.matches.forEach((match) => {
+        map.set(match.id, idx++);
       });
-
-      setIsDrawing(false);
     });
-  }, [winners, losers, isDrawing]);
-
-  // Debounced draw trigger
-  useEffect(() => {
-    if (drawTimeoutRef.current) {
-      clearTimeout(drawTimeoutRef.current);
-    }
-
-    drawTimeoutRef.current = setTimeout(() => {
-      drawConnectors();
-    }, 100); // 100ms debounce
-
-    return () => {
-      if (drawTimeoutRef.current) {
-        clearTimeout(drawTimeoutRef.current);
-      }
-    };
-  }, [matches, drawConnectors]);
-
-  // Handle resize with ResizeObserver
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    resizeObserverRef.current = new ResizeObserver(() => {
-      if (drawTimeoutRef.current) {
-        clearTimeout(drawTimeoutRef.current);
-      }
-      drawTimeoutRef.current = setTimeout(drawConnectors, 150);
+    
+    // Losers bracket
+    losers.forEach((round) => {
+      round.matches.forEach((match) => {
+        map.set(match.id, idx++);
+      });
     });
+    
+    return map;
+  }, [winners, losers, finals]);
 
-    resizeObserverRef.current.observe(container);
-
-    return () => {
-      if (resizeObserverRef.current) {
-        resizeObserverRef.current.disconnect();
-      }
-    };
-  }, [drawConnectors]);
+  // Calculate total dimensions
+  const hasDoubleElim = losers.length > 0;
 
   return (
-    <div ref={containerRef} className="overflow-x-auto pb-8 bg-zinc-950 relative">
-      <canvas
-        ref={canvasRef}
-        className="absolute top-0 left-0 pointer-events-none"
-        style={{ zIndex: 0 }}
-      />
-      <div className="flex gap-24 p-8 min-w-max relative" style={{ zIndex: 1 }}>
-        {/* Winner Bracket */}
-        {winners.map((r, roundIdx) => {
-          const verticalGap = MATCH_HEIGHT * Math.pow(2, roundIdx);
-          
-          return (
-            <div key={`W${r.round}`} className="flex flex-col relative">
-              <div className="text-sm font-bold text-zinc-300 mb-6 px-2 h-8">
-                Round {r.round}
-              </div>
-              
-              <div className="flex flex-col relative" style={{ gap: `${verticalGap}px` }}>
-                {r.matches.map((m) => (
-                  <div key={m.id} className="relative">
-                    <MatchCard m={m} />
-                  </div>
-                ))}
-              </div>
-            </div>
-          );
-        })}
+    <div className="bg-zinc-950 min-h-screen">
+      {/* Score Modal */}
+      {selectedMatch && (
+        <ScoreModal
+          match={selectedMatch}
+          onClose={() => setSelectedMatch(null)}
+          onSubmit={handleUpdateScore}
+          updating={updating}
+        />
+      )}
 
-        {/* Finals */}
-        {finals.length > 0 && (
-          <div className="flex flex-col">
-            <div className="text-sm font-bold text-indigo-400 mb-6 px-2 h-8">🏆 Finals</div>
-            <div className="flex flex-col gap-8">
-              {finals.map((m) => <MatchCard key={m.id} m={m} />)}
-            </div>
-          </div>
-        )}
+      {/* Bracket Container */}
+      <div 
+        ref={containerRef}
+        className="overflow-auto p-6 relative"
+      >
 
-        {/* Loser Bracket */}
-        {losers.length > 0 && (
-          <div className="border-l-2 border-orange-500/30 pl-20 ml-10">
-            <div className="text-sm font-bold text-orange-400 mb-6 px-2 h-8">Loser&apos;s Bracket</div>
-            <div className="flex gap-24">
-              {losers.map((r, roundIdx) => {
-                const verticalGap = MATCH_HEIGHT * Math.pow(2, Math.floor(roundIdx / 2));
-                
-                return (
-                  <div key={`L${r.round}`} className="flex flex-col relative">
-                    <div className="text-xs font-semibold text-zinc-400 mb-6 px-2 h-8">LB R{r.round}</div>
-                    <div className="flex flex-col relative" style={{ gap: `${verticalGap}px` }}>
-                      {r.matches.map((m) => (
-                        <div key={m.id} className="relative">
-                          <MatchCard m={m} />
+        {/* Winners Bracket */}
+        <div className="mb-8">
+          <h3 className="text-sm font-bold text-zinc-300 mb-4 uppercase tracking-wider">
+            Winners Bracket
+          </h3>
+          <div className="flex items-start">
+            {winners.map((roundData, roundIdx) => (
+              <BracketRound
+                key={`W-${roundData.round}`}
+                roundData={roundData}
+                roundIndex={roundIdx}
+                totalRounds={winners.length}
+                bracketType="W"
+                matchIndexMap={matchIndexMap}
+                onMatchClick={setSelectedMatch}
+                isEditable={isEditable}
+              />
+            ))}
+
+            {/* Grand Finals */}
+            {finals.length > 0 && (
+              <div className="flex flex-col" style={{ marginLeft: ROUND_GAP }}>
+                <div className="text-xs font-medium text-indigo-400 mb-3 h-5">
+                  Grand Finals
+                </div>
+                <div className="flex flex-col gap-4">
+                  {finals.map((roundData) => (
+                    roundData.matches.map((match) => {
+                      const matchNum = matchIndexMap.get(match.id) ?? 0;
+                      return (
+                        <div key={match.id}>
+                          <MatchCard
+                            match={match}
+                            matchIndex={matchNum}
+                            onClick={() => setSelectedMatch(match)}
+                            isEditable={isEditable}
+                          />
+                          {match.id === "GF2" && (
+                            <div className="text-xs text-zinc-500 mt-1 ml-9 italic">
+                              (if necessary)
+                            </div>
+                          )}
                         </div>
-                      ))}
-                    </div>
-                  </div>
-                );
-              })}
+                      );
+                    })
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Losers Bracket */}
+        {hasDoubleElim && (
+          <div className="mt-12 pt-8 border-t border-zinc-800">
+            <h3 className="text-sm font-bold text-orange-400 mb-4 uppercase tracking-wider">
+              Losers Bracket
+            </h3>
+            <div className="flex items-start">
+              {losers.map((roundData, roundIdx) => (
+                <BracketRound
+                  key={`L-${roundData.round}`}
+                  roundData={roundData}
+                  roundIndex={roundIdx}
+                  totalRounds={losers.length}
+                  bracketType="L"
+                  matchIndexMap={matchIndexMap}
+                  onMatchClick={setSelectedMatch}
+                  isEditable={isEditable}
+                />
+              ))}
             </div>
           </div>
         )}
+
+        {/* Zoom Controls */}
+        <div className="fixed bottom-6 right-6 flex items-center gap-2 bg-zinc-800 rounded-lg p-2 shadow-lg">
+          <span className="text-xs text-zinc-400 px-2">100%</span>
+          <button className="text-zinc-400 hover:text-white p-1">
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
   );
