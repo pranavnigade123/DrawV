@@ -110,6 +110,13 @@ export default async function AdminOverviewPage() {
             >
               Tournament Applicants
             </Link>
+
+            <Link
+              href="/admin/notifications"
+              className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-[#1B56FD] text-white hover:bg-[#0118D8] transition"
+            >
+              Push Notifications
+            </Link>
           </div>
 
           {/* Tournament Stats */}

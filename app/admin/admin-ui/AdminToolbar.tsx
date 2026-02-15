@@ -12,6 +12,7 @@ const links: Item[] = [
   { label: 'Manage', href: '/admin/tournaments' },
   { label: 'Archived', href: '/admin/tournaments/archived' },
   { label: 'Users', href: '/admin/users' },
+  { label: 'Notifications', href: '/admin/notifications' },
 ]
 
 export default function AdminToolbar({

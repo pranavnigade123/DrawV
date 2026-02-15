@@ -4,7 +4,8 @@ import { TypewriterEffect } from "@/components/aceternity/typewriter-effect";
 import { ContainerScroll } from "@/components/aceternity/container-scroll-animation";
 import { FeaturesSectionDemo } from "@/components/aceternity/FeaturesSectionDemo"; 
 import BorderMagicButton from "@/components/aceternity/BorderMagicButton";
-import { BorderStaticButton } from "@/components/border-static-btn"; 
+import { BorderStaticButton } from "@/components/border-static-btn";
+import NotificationMarquee from "@/components/NotificationMarquee"; 
 
 
 export default function LandingPage() {
@@ -52,7 +53,7 @@ export default function LandingPage() {
 
 
       {/* Typewriter effect */}
-      <section className="w-full flex flex-col items-center mt-32 py-8">
+      <section className="w-full flex flex-col items-center mt-32 py-8 mb-12">
         <TypewriterEffect
           words={[
             { text: "Welcome to DRAW", className: "text-blue-500" },
@@ -63,8 +64,11 @@ export default function LandingPage() {
         />
       </section>
 
+      {/* Notification Marquee Section */}
+      <NotificationMarquee />
+
     {/* Scroll animation section */}
-<div className="w-full flex flex-col items-center justify-center">
+<div className="w-full flex flex-col items-center justify-center mt-16">
   <ContainerScroll
     titleComponent={
       <div>
