@@ -109,9 +109,9 @@ export default function NotificationMarquee() {
           <div className="flex-1 overflow-hidden">
             <div className="marquee-container">
               <div className="marquee-content">
-                {[...notifications, ...notifications].map((notification, index) => (
+                {notifications.map((notification) => (
                   <button
-                    key={`${notification._id}-${index}`}
+                    key={notification._id}
                     onClick={() => handleNotificationClick(notification)}
                     className={`inline-flex items-center gap-2.5 px-6 py-2.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 hover:border-[var(--primary)] hover:bg-white/15 hover:scale-105 transition-all duration-300 cursor-pointer mx-2 shadow-lg hover:shadow-2xl ${getTypeColor(notification.type)}`}
                   >
@@ -209,7 +209,7 @@ export default function NotificationMarquee() {
             transform: translateX(0);
           }
           100% {
-            transform: translateX(-50%);
+            transform: translateX(calc(-100% - 1rem));
           }
         }
 

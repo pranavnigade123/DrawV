@@ -8,7 +8,7 @@ import Notification from "@/lib/models/Notification";
 // DELETE - Remove notification (Admin only)
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -19,7 +19,8 @@ export async function DELETE(
 
     await connectDB();
 
-    const notification = await Notification.findByIdAndDelete(params.id);
+    const { id } = await context.params;
+    const notification = await Notification.findByIdAndDelete(id);
 
     if (!notification) {
       return NextResponse.json(
@@ -44,7 +45,7 @@ export async function DELETE(
 // PATCH - Update notification status (Admin only)
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -58,8 +59,9 @@ export async function PATCH(
     const body = await req.json();
     const { isActive } = body;
 
+    const { id } = await context.params;
     const notification = await Notification.findByIdAndUpdate(
-      params.id,
+      id,
       { isActive },
       { new: true }
     );
