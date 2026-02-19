@@ -2,6 +2,69 @@
 
 import React, { useState, useEffect } from "react";
 
+// Toss animation styles
+const tossAnimationStyles = `
+  @keyframes coinFlip {
+    0% { transform: rotateY(0deg); }
+    100% { transform: rotateY(1800deg); }
+  }
+  
+  @keyframes shimmer {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
+  }
+  
+  @keyframes glow {
+    0%, 100% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.3), 0 0 40px rgba(99, 102, 241, 0.1); }
+    50% { box-shadow: 0 0 30px rgba(99, 102, 241, 0.5), 0 0 60px rgba(99, 102, 241, 0.2); }
+  }
+  
+  @keyframes floatUp {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+  
+  @keyframes fadeInScale {
+    0% { opacity: 0; transform: scale(0.8); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  
+  .coin-container {
+    perspective: 1000px;
+    transform-style: preserve-3d;
+  }
+  
+  .coin-flip {
+    animation: coinFlip 2.5s cubic-bezier(0.17, 0.67, 0.12, 0.99) forwards;
+    transform-style: preserve-3d;
+  }
+  
+  .shimmer-text {
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0.4) 50%,
+      rgba(255, 255, 255, 0.1) 100%
+    );
+    background-size: 200% auto;
+    background-clip: text;
+    -webkit-background-clip: text;
+    animation: shimmer 2s linear infinite;
+  }
+  
+  .glow-box {
+    animation: glow 1.5s ease-in-out infinite;
+  }
+  
+  .float-animation {
+    animation: floatUp 2s ease-in-out infinite;
+  }
+  
+  .fade-in-scale {
+    animation: fadeInScale 0.3s ease-out forwards;
+  }
+`;
+
 interface Map {
   value: string;
   name: string;
@@ -46,6 +109,56 @@ const MapVetoBo3 = () => {
   const [deciderMap, setDeciderMap] = useState<Map | null>(null);
   const [deciderMapSides, setDeciderMapSides] = useState<string | null>(null);
 
+  // Toss animation state
+  const [isTossing, setIsTossing] = useState(false);
+  const [tossDisplayTeam, setTossDisplayTeam] = useState<string | null>(null);
+  const [pendingWinner, setPendingWinner] = useState<string | null>(null);
+  const [pendingLoser, setPendingLoser] = useState<string | null>(null);
+  const [tossPhase, setTossPhase] = useState<'spinning' | 'revealing' | 'done'>('spinning');
+
+  // Toss animation effect
+  useEffect(() => {
+    if (!isTossing) return;
+    
+    const teams = [teamA.trim(), teamB.trim()];
+    let iteration = 0;
+    const totalIterations = 16;
+    const baseInterval = 80;
+    
+    setTossPhase('spinning');
+    
+    const animate = () => {
+      if (iteration >= totalIterations) {
+        // Show revealing phase
+        setTossPhase('revealing');
+        setTossDisplayTeam(pendingWinner);
+        
+        // After a brief pause, complete the animation
+        setTimeout(() => {
+          setTossPhase('done');
+          setIsTossing(false);
+          setTossWinner(pendingWinner);
+          setTossLoser(pendingLoser);
+          setTossDisplayTeam(null);
+          setVetoStep(0.5);
+        }, 1200);
+        return;
+      }
+      
+      // Alternate between teams with slowing effect
+      setTossDisplayTeam(teams[iteration % 2]);
+      iteration++;
+      
+      // Smooth easing curve for natural slowdown
+      const progress = iteration / totalIterations;
+      const easeOut = 1 - Math.pow(1 - progress, 3);
+      const delay = baseInterval + (easeOut * 400);
+      setTimeout(animate, delay);
+    };
+    
+    animate();
+  }, [isTossing, teamA, teamB, pendingWinner, pendingLoser]);
+
   // --- HANDLER FUNCTIONS ---
   const handleToss = () => {
     if (!teamA.trim() || !teamB.trim()) {
@@ -56,9 +169,13 @@ const MapVetoBo3 = () => {
     // Use Date.now() as additional entropy for better randomization
     const randomIndex = Math.floor((Math.random() + Date.now() % 2) * teams.length) % teams.length;
     const winner = teams[randomIndex];
-    setTossWinner(winner);
-    setTossLoser(teams.find((t) => t !== winner) ?? null);
-    setVetoStep(0.5); // Show toss result first
+    const loser = teams.find((t) => t !== winner) ?? null;
+    
+    // Start animation instead of showing result immediately
+    setPendingWinner(winner);
+    setPendingLoser(loser);
+    setIsTossing(true);
+    setVetoStep(0.25); // Animation step
   };
 
   const handleStartVeto = () => {
@@ -362,6 +479,112 @@ const MapVetoBo3 = () => {
                 Toss
             </button>
           </div>
+        ) : vetoStep === 0.25 ? (
+          // Toss animation step
+          <>
+            <style>{tossAnimationStyles}</style>
+            <div className="max-w-2xl w-full mx-auto text-center">
+              {/* Header */}
+              <div className="mb-10">
+                <h2 className="text-2xl font-medium text-zinc-400 mb-2">Deciding who goes first</h2>
+                <div className="h-1 w-24 mx-auto bg-gradient-to-r from-transparent via-indigo-500 to-transparent rounded-full" />
+              </div>
+              
+              {/* Main coin/card area */}
+              <div className="relative h-64 flex items-center justify-center coin-container">
+                {/* Background glow */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className={`w-48 h-48 rounded-full bg-indigo-500/10 blur-3xl transition-all duration-500 ${
+                    tossPhase === 'revealing' ? 'scale-150 bg-green-500/20' : ''
+                  }`} />
+                </div>
+                
+                {/* Orbiting particles */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className={`w-56 h-56 rounded-full border border-indigo-500/20 ${
+                    tossPhase !== 'revealing' ? 'animate-spin' : ''
+                  }`} style={{ animationDuration: '3s' }}>
+                    <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-indigo-400" />
+                    <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-purple-400" />
+                  </div>
+                </div>
+                
+                {/* Team name card */}
+                <div className={`relative z-10 ${
+                  tossPhase === 'revealing' ? 'fade-in-scale' : ''
+                }`}>
+                  <div className={`
+                    relative px-12 py-8 rounded-2xl
+                    bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900
+                    border-2 transition-all duration-300
+                    ${tossPhase === 'revealing' 
+                      ? 'border-green-500 glow-box float-animation' 
+                      : 'border-indigo-500/50'}
+                    ${tossPhase !== 'revealing' ? 'coin-flip' : ''}
+                  `} style={{
+                    boxShadow: tossPhase === 'revealing' 
+                      ? '0 0 40px rgba(34, 197, 94, 0.3)' 
+                      : '0 0 30px rgba(99, 102, 241, 0.2)'
+                  }}>
+                    {/* Inner glow */}
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/5 to-transparent" />
+                    
+                    {/* Team name */}
+                    <p className={`relative text-4xl font-bold tracking-wide ${
+                      tossPhase === 'revealing' 
+                        ? 'text-green-400' 
+                        : 'text-white shimmer-text'
+                    }`}>
+                      {tossDisplayTeam || teamA.trim()}
+                    </p>
+                    
+                    {tossPhase === 'revealing' && (
+                      <p className="text-sm text-green-400/80 mt-2 font-medium uppercase tracking-widest">
+                        Winner
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+              
+              {/* Team indicators */}
+              <div className="mt-10 flex justify-center items-center gap-6">
+                <div className={`
+                  relative px-6 py-3 rounded-xl border-2 transition-all duration-200
+                  ${tossDisplayTeam === teamA.trim() 
+                    ? 'border-indigo-500 bg-indigo-500/10 scale-105' 
+                    : 'border-zinc-700/50 bg-zinc-900/30'}
+                `}>
+                  {tossDisplayTeam === teamA.trim() && (
+                    <div className="absolute inset-0 rounded-xl bg-indigo-500/5 animate-pulse" />
+                  )}
+                  <span className={`relative font-semibold ${
+                    tossDisplayTeam === teamA.trim() ? 'text-indigo-300' : 'text-zinc-500'
+                  }`}>{teamA.trim()}</span>
+                </div>
+                
+                <div className="flex flex-col items-center">
+                  <div className="w-8 h-px bg-gradient-to-r from-transparent via-zinc-600 to-transparent" />
+                  <span className="text-zinc-600 text-sm my-1">vs</span>
+                  <div className="w-8 h-px bg-gradient-to-r from-transparent via-zinc-600 to-transparent" />
+                </div>
+                
+                <div className={`
+                  relative px-6 py-3 rounded-xl border-2 transition-all duration-200
+                  ${tossDisplayTeam === teamB.trim() 
+                    ? 'border-indigo-500 bg-indigo-500/10 scale-105' 
+                    : 'border-zinc-700/50 bg-zinc-900/30'}
+                `}>
+                  {tossDisplayTeam === teamB.trim() && (
+                    <div className="absolute inset-0 rounded-xl bg-indigo-500/5 animate-pulse" />
+                  )}
+                  <span className={`relative font-semibold ${
+                    tossDisplayTeam === teamB.trim() ? 'text-indigo-300' : 'text-zinc-500'
+                  }`}>{teamB.trim()}</span>
+                </div>
+              </div>
+            </div>
+          </>
         ) : (
           renderStepContent()
         )}
